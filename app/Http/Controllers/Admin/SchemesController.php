@@ -7,6 +7,7 @@ use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\SchemeTypes;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
@@ -62,7 +63,7 @@ class SchemesController extends Controller
         ]);
 
     
-        Scheme::create([
+        $created = Scheme::create([
             'name' => $request->name,
             'account' => $request->account,
             'initiate_url' => $request->initiate_url,
@@ -77,6 +78,25 @@ class SchemesController extends Controller
             'description' => $request->description,
             'created_by' => User::getLoggedInUserId()
         ]);
+
+        // add related scheme types
+        if(!$request->scheme_types){
+            SchemeTypes::create([
+                "name" => "Default",
+                "Description" => "This is a default scheme type",
+                "scheme_id" => $created->id
+            ]);
+        }
+
+        else{
+            foreach ($request->scheme_types as $type){
+                SchemeTypes::create([
+                    "name" => $type->name,
+                    "Description" => $type->description,
+                    "scheme_id" => $created->id
+                ]);
+            }
+        }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Scheme with name: ". $request->name);
 
@@ -133,6 +153,17 @@ class SchemesController extends Controller
                 'description' => $request->description,
                 'updated_by' => User::getLoggedInUserId()
             ]);
+
+            // add related scheme types
+        if($request->scheme_types){
+            foreach ($request->scheme_types as $type){
+                SchemeTypes::create([
+                    "name" => $type->name,
+                    "Description" => $type->description,
+                    "scheme_id" => $existing[0]['id']
+                ]);
+            }
+        }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Scheme with name: ". $request->name);
 

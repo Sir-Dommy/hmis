@@ -83,6 +83,7 @@ class Scheme extends Model
                 'password' => $scheme->password,
                 'other_details' => $scheme->other_details,
                 'description' => $scheme->description,
+                'schemeTypes' => $scheme->schemeTypes,
                 
                 // 'created_by' => $scheme->createdBy ? $scheme->createdBy->email : null,
                 // 'created_at' => $scheme->created_at,
