@@ -41,8 +41,7 @@ class Patient extends Model
         $patients_query = Patient::with([
             'createdBy:id,email',
             'updatedBy:id,email',
-            'approvedBy:id,email',
-            'disabledBy:id,email'
+            'approvedBy:id,email'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
