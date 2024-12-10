@@ -96,7 +96,7 @@ class EmergencyVisitController extends Controller
     }
 
 //     //Gettind a single emergency visit 
-    public function getSinglePatient($id){
+    public function getSingleEmergencyVisit($id){
 
         $emergency_visit = EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null);
 
