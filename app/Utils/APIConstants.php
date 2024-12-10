@@ -43,4 +43,5 @@ class APIConstants
     public const NAME_PAYMENT_TYPE = 'Payment type';
     public const NAME_CLINIC = 'Clinic';
     public const NAME_VISIT = 'Visit';
+    public const NAME_EMERGENCY_VISIT = 'Emeregency visit';
 }

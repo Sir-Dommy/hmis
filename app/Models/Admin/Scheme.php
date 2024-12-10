@@ -39,7 +39,6 @@ class Scheme extends Model
     ];
 
     //relationship with schemes
-
     public function schemeTypes()
     {
         return $this->hasMany(SchemeTypes::class, 'scheme_id', 'id');
@@ -99,6 +98,7 @@ class Scheme extends Model
             return array_merge($scheme_details, $related_user);
         });
     }
+
 
 
 }
