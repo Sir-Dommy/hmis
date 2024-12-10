@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('scheme_types', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('scheme_id');
+            $table->string('name');
             $table->timestamps();
+
+            $table->foreign('scheme_id')
+                    ->references('id')
+                    ->on('schemes')
+                    ->onDelete('cascade');
         });
     }
 
