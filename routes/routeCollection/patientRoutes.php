@@ -17,7 +17,7 @@ Route::group(['prefix'=>'patients'], function(){
 });
 
 
-Route::group(['prefix'=>'emeregencyVisits'], function(){
+Route::group(['prefix'=>'emergencyVisits'], function(){
     Route::post('create', [PatientController::class, 'createEmergencyVisit']);
     Route::put('update', [PatientController::class, 'updateEmergencyVisit']);
     Route::get('get/{id}', [PatientController::class, 'getSinglePatient']);
