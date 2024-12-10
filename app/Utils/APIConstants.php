@@ -21,7 +21,7 @@ class APIConstants
 
 
 
-    public const MESSAGE_ALREADY_EXISTS = 'Already exists';
+    public const MESSAGE_ALREADY_EXISTS = 'With similar details already exists';
     public const MESSAGE_NOT_FOUND = 'Not found';
     public const MESSAGE_MISSING_OR_INVALID_INPUTS = 'Missing or ivalid inputs';
 
@@ -43,4 +43,5 @@ class APIConstants
     public const NAME_PAYMENT_TYPE = 'Payment type';
     public const NAME_CLINIC = 'Clinic';
     public const NAME_VISIT = 'Visit';
+    public const NAME_EMERGENCY_VISIT = 'Emeregency visit';
 }

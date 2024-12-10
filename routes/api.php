@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\Patient\EmergencyVisitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
