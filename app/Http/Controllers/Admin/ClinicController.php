@@ -78,7 +78,7 @@ class ClinicController extends Controller
         $clinic = Clinic::selectClinics($request->id, $request->name);
 
         if(count($clinic) < 1){
-            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE);
+            throw new NotFoundException(APIConstants::NAME_CLINIC);
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a clinic with id: ". $clinic[0]['id']);

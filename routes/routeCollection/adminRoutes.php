@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\SchemesController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,12 +62,12 @@ Route::group(['prefix'=>'clinics'], function(){
 //schemes payment types 
 Route::group(['prefix'=>'paymentTypes'], function(){
 
-    Route::post('create', [ClinicController::class, 'createPaymentType']);
-    Route::put('update', [ClinicController::class, 'updatePaymentType']);
-    Route::get('get', [ClinicController::class, 'getSinglePaymentType']);
-    Route::get('', [ClinicController::class, 'getAllPaymentTypes']);
-    Route::put('approve/{id}', [ClinicController::class, 'approvePaymentType']);
-    Route::put('softDelete/{id}', [ClinicController::class, 'softDelete']);
-    Route::delete('permanentlyDelete/{id}', [ClinicController::class, 'permanentlyDelete']);
+    Route::post('create', [PaymentTypeController::class, 'createPaymentType']);
+    Route::put('update', [PaymentTypeController::class, 'updatePaymentType']);
+    Route::get('get', [PaymentTypeController::class, 'getSinglePaymentType']);
+    Route::get('', [PaymentTypeController::class, 'getAllPaymentTypes']);
+    Route::put('approve/{id}', [PaymentTypeController::class, 'approvePaymentType']);
+    Route::put('softDelete/{id}', [PaymentTypeController::class, 'softDelete']);
+    Route::delete('permanentlyDelete/{id}', [PaymentTypeController::class, 'permanentlyDelete']);
 
 });
