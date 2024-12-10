@@ -4,6 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Admin\Clinic;
+use App\Models\Admin\PaymentType;
 use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -28,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         //call the define roles and permissions function to run  on start up
         $this->defineRolesAndPermissions();
+
+        // $this->createDefaultClinics();
+
+        // $this->createDefaultPaymentTypes();
     }
 
     private function defineRolesAndPermissions()
@@ -84,5 +90,49 @@ class AuthServiceProvider extends ServiceProvider
             // }
         }
         
+    }
+
+    private function createDefaultPaymentTypes(){
+        PaymentType::firstOrCreate([
+            "name" => "Cash",
+            "description" => "Used when patient has cash at hand"
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Bank",
+            "description" => "Used when patient offers to pay via bank"
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Mpesa",
+            "description" => "Used when patient offers to pay via mpesa"
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Insurance",
+            "description" => "Used when patient has and wishes to use their health insurance cover"
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Other",
+            "description" => "Any other payment methods"
+        ]);
+    }
+
+    private function createDefaultClinics(){
+        Clinic::firstOrCreate([
+            "name" => "ENT",
+            "description" => "Ear, Nose, and Throat"
+        ]);
+
+        Clinic::firstOrCreate([
+            "name" => "Dentist",
+            "description" => "Dentist Clinic"
+        ]);
+
+        Clinic::firstOrCreate([
+            "name" => "Other",
+            "description" => "Any other not yet listed"
+        ]);
     }
 }

@@ -20,10 +20,6 @@ trait CustomUserRelations {
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function disabledBy()
-    {
-        return $this->belongsTo(User::class, 'disabled_by');
-    }
     public function deletedBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
@@ -37,8 +33,6 @@ trait CustomUserRelations {
             'updated_at' => $data->updated_at,
             'approved_by' => $data->approvedBy ? $data->approvedBy->email : null,
             'approved_at' => $data->approved_at,
-            'disabled_by' => $data->disabledBy ? $data->disabledBy->email : null,
-            'disabled_at' => $data->disabled_at,
         ];
 
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\SchemesController;
@@ -16,6 +17,7 @@ Route::group(['prefix'=>'departments'], function(){
     Route::put('disable/{id}', [DepartmentController::class, 'disableDepartment']);
 });
 
+//employee routes
 Route::group(['prefix'=>'employees'], function(){
     Route::post('create', [EmployeeController::class, 'createEmployee']);
     Route::put('update', [EmployeeController::class, 'updateEmployee']);
@@ -38,5 +40,33 @@ Route::group(['prefix'=>'schemes'], function(){
     Route::put('disable/{id}', [SchemesController::class, 'disableScheme']);
     Route::put('softDelete/{id}', [SchemesController::class, 'softDeleteScheme']);
     Route::delete('permanentlyDelete/{id}', [SchemesController::class, 'permanentDeleteScheme']);
+
+});
+
+
+//schemes clinics 
+Route::group(['prefix'=>'clinics'], function(){
+
+    Route::post('create', [ClinicController::class, 'createClinic']);
+    Route::put('update', [ClinicController::class, 'updateClinic']);
+    Route::get('get', [ClinicController::class, 'getSingleClinic']);
+    Route::get('', [ClinicController::class, 'getAllClinics']);
+    Route::put('approve/{id}', [ClinicController::class, 'approveClinic']);
+    Route::put('softDelete/{id}', [ClinicController::class, 'softDelete']);
+    Route::delete('permanentlyDelete/{id}', [ClinicController::class, 'permanentlyDelete']);
+
+});
+
+
+//schemes payment types 
+Route::group(['prefix'=>'paymentTypes'], function(){
+
+    Route::post('create', [ClinicController::class, 'createPaymentType']);
+    Route::put('update', [ClinicController::class, 'updatePaymentType']);
+    Route::get('get', [ClinicController::class, 'getSinglePaymentType']);
+    Route::get('', [ClinicController::class, 'getAllPaymentTypes']);
+    Route::put('approve/{id}', [ClinicController::class, 'approvePaymentType']);
+    Route::put('softDelete/{id}', [ClinicController::class, 'softDelete']);
+    Route::delete('permanentlyDelete/{id}', [ClinicController::class, 'permanentlyDelete']);
 
 });
