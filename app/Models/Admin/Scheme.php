@@ -38,6 +38,13 @@ class Scheme extends Model
         "deleted_at",
     ];
 
+    //relationship with schemes
+
+    public function schemeTypes()
+    {
+        return $this->hasMany(SchemeTypes::class, 'scheme_id', 'id');
+    }
+
 
     //perform selection
     public static function selectSchemes($id, $name){
@@ -47,7 +54,8 @@ class Scheme extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'disabledBy:id,email'
+            'disabledBy:id,email',
+            'schemeTypes:id,scheme_id,name'
         ])->whereNull('schemes.deleted_by')
           ->whereNull('schemes.deleted_at');
 
