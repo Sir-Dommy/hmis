@@ -42,7 +42,7 @@ return new class extends Migration
 
             $table->foreign('fee_type')
                     ->references('id')
-                    ->on('payment_types')
+                    ->on('payment_details')
                     ->onDelete('cascade');
 
             $table->foreign('scheme_id')
