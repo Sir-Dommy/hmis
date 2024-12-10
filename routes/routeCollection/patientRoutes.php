@@ -18,10 +18,10 @@ Route::group(['prefix'=>'patients'], function(){
 
 
 Route::group(['prefix'=>'emergencyVisits'], function(){
-    Route::post('create', [PatientController::class, 'createEmergencyVisit']);
-    Route::put('update', [PatientController::class, 'updateEmergencyVisit']);
-    Route::get('get/{id}', [PatientController::class, 'getSinglePatient']);
+    Route::post('create', [EmergencyVisitController::class, 'createEmergencyVisit']);
+    Route::put('update', [EmergencyVisitController::class, 'updateEmergencyVisit']);
+    Route::get('get/{id}', [EmergencyVisitController::class, 'getSingleEmergencyVisit']);
     Route::get('', [EmergencyVisitController::class, 'getAllEmergencyVisists']);
-    Route::put('softDelete/{id}', [PatientController::class, 'softDeleteEmergencyVisit']);
-    Route::delete('permanentlyDelete/{id}', [PatientController::class, 'permanentlyDelete']);
+    Route::put('softDelete/{id}', [EmergencyVisitController::class, 'softDeleteEmergencyVisit']);
+    Route::delete('permanentlyDelete/{id}', [EmergencyVisitController::class, 'permanentlyDelete']);
 });
