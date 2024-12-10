@@ -38,6 +38,13 @@ class Scheme extends Model
         "deleted_at",
     ];
 
+    //relationship with schemes
+
+    public function schemeTypes()
+    {
+        return $this->hasMany(SchemeTypes::class, 'scheme_id', 'id');
+    }
+
 
     //perform selection
     public static function selectSchemes($id, $name){
@@ -47,7 +54,7 @@ class Scheme extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'disabledBy:id,email'
+            'schemeTypes:id,scheme_id,name'
         ])->whereNull('schemes.deleted_by')
           ->whereNull('schemes.deleted_at');
 
@@ -58,7 +65,7 @@ class Scheme extends Model
             $schemes_query->where('schemes.name', $name);
         }
 
-
+        // return $schemes_query->get();
 
         return $schemes_query->get()->map(function ($scheme) {
             $scheme_details = [
@@ -75,6 +82,7 @@ class Scheme extends Model
                 'password' => $scheme->password,
                 'other_details' => $scheme->other_details,
                 'description' => $scheme->description,
+                'schemeTypes' => $scheme->schemeTypes,
                 
                 // 'created_by' => $scheme->createdBy ? $scheme->createdBy->email : null,
                 // 'created_at' => $scheme->created_at,

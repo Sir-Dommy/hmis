@@ -59,7 +59,7 @@ class PatientController extends Controller
    // updating a patient
     public function updatePatient(Request $request){
         $request->validate([
-            'id' => 'required|integer|min:0|exists:users,id',
+            'id' => 'required|integer|min:0|exists:patients,id',
             'firstname' => 'string|min:2|max:30',
             'lastname'=>'string|min:2|max:255',
             'dob' => 'date|before:today',

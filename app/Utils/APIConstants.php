@@ -40,4 +40,7 @@ class APIConstants
     public const NAME_EMPLOYEE = 'Employee';
     public const NAME_SCHEME = 'Scheme';
     public const NAME_PATIENT = 'Patient';
+    public const NAME_PAYMENT_TYPE = 'Payment type';
+    public const NAME_CLINIC = 'Clinic';
+    public const NAME_VISIT = 'Visit';
 }

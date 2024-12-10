@@ -4,6 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Admin\Clinic;
+use App\Models\Admin\PaymentType;
 use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -28,6 +30,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         //call the define roles and permissions function to run  on start up
         $this->defineRolesAndPermissions();
+
+        $user = User::where('email', 'maimoon@maimoon.com')->get();
+
+        $this->createDefaultClinics($user[0]['id']);
+
+        $this->createDefaultPaymentTypes($user[0]['id']);
     }
 
     private function defineRolesAndPermissions()
@@ -84,5 +92,57 @@ class AuthServiceProvider extends ServiceProvider
             // }
         }
         
+    }
+
+    private function createDefaultPaymentTypes($user_id){
+        PaymentType::firstOrCreate([
+            "name" => "Cash",
+            "description" => "Used when patient has cash at hand",
+            "created_by" => $user_id
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Bank",
+            "description" => "Used when patient offers to pay via bank",
+            "created_by" => $user_id
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Mpesa",
+            "description" => "Used when patient offers to pay via mpesa",
+            "created_by" => $user_id
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Insurance",
+            "description" => "Used when patient has and wishes to use their health insurance cover",
+            "created_by" => $user_id
+        ]);
+
+        PaymentType::firstOrCreate([
+            "name" => "Other",
+            "description" => "Any other payment methods",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultClinics($user_id){
+        Clinic::firstOrCreate([
+            "name" => "ENT",
+            "description" => "Ear, Nose, and Throat",
+            "created_by" => $user_id
+        ]);
+
+        Clinic::firstOrCreate([
+            "name" => "Dentist",
+            "description" => "Dentist Clinic",
+            "created_by" => $user_id
+        ]);
+
+        Clinic::firstOrCreate([
+            "name" => "Other",
+            "description" => "Any other not yet listed",
+            "created_by" => $user_id
+        ]);
     }
 }
