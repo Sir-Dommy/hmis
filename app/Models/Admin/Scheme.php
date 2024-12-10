@@ -54,7 +54,6 @@ class Scheme extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'disabledBy:id,email',
             'schemeTypes:id,scheme_id,name'
         ])->whereNull('schemes.deleted_by')
           ->whereNull('schemes.deleted_at');
@@ -66,7 +65,7 @@ class Scheme extends Model
             $schemes_query->where('schemes.name', $name);
         }
 
-
+        // return $schemes_query->get();
 
         return $schemes_query->get()->map(function ($scheme) {
             $scheme_details = [
