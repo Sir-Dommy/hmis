@@ -20,7 +20,7 @@ class EmergencyVisitController extends Controller
         $request->validate([
             'age' => 'required|integer|min:0|max:200',
             'gender' => 'required|string|min:0|max:200',
-            'payment_type'=>'string|min:1|exists:payment_type,name',
+            'payment_type'=>'string|min:1|exists:payment_types,name',
             'contact_info' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'doctor'=>'required|string|min:1|exists:users,email',
             'clinic'=>'required|string|min:1|exists:clinics,name'
@@ -60,7 +60,7 @@ class EmergencyVisitController extends Controller
             'id' => 'required|integer|exists:emergency_visits,id',
             'age' => 'required|integer|min:0|max:200',
             'gender' => 'required|string|min:0|max:200',
-            'payment_type'=>'string|min:1|exists:payment_type,name',
+            'payment_type'=>'string|min:1|exists:payment_types,name',
             'contact_info' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'doctor'=>'required|string|min:1|exists:users,email',
             'clinic'=>'required|string|min:1|exists:clinics,name'
