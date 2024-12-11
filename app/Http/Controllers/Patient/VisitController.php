@@ -111,7 +111,7 @@ class VisitController extends Controller
         // return response()->file($path);
         // echo $department[0]['id'];
         Visit::where('id', $request->id)
-            ->create([
+            ->update([
                 'patient_id' => $request->patient_id,
                 'claim_number' => $request->claim_number, 
                 'amount' => $request->amount,
