@@ -99,8 +99,10 @@ class Visit extends Model
             $visit_query->where('visits.id', $id);
         }
 
+        $id ? $visit_query->get() : $visit_query->paginate(10);
+
         // return $schemes_query->get();
-        return $visit_query->get()->map(function ($visit) {
+        return $visit_query->map(function ($visit) {
             $visit_details = [
                 'id' => $visit->id,
                 'patient_id' => $visit->patient_id,
