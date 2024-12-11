@@ -32,19 +32,19 @@ class EmergencyVisit extends Model
     //relationship with payment Type
     public function paymentType()
     {
-        return $this->hasMany(PaymentType::class, 'payment_type_id', 'id');
+        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
     //relationship with payment Type
     public function clinic()
     {
-        return $this->hasMany(Clinic::class, 'clinic_id', 'id');
+        return $this->belongsTo(Clinic::class, 'clinic_id');
     }
 
     //relationship with payment Type
     public function doctor()
     {
-        return $this->hasMany(User::class, 'doctor_id', 'id');
+        return $this->belongsTo(User::class, 'doctor_id');
     }
 
     public function createdBy()
@@ -70,9 +70,9 @@ class EmergencyVisit extends Model
         $emergency_visit_query = EmergencyVisit::with([
             'createdBy:id,email',
             'updatedBy:id,email',
-            'paymentType:id,payment_type_id,name',
-            'clinic:id,payment_type_id,name',
-            'doctor:id,doctor_id,name'
+            'paymentType:id,name',
+            'clinic:id,name',
+            'doctor:id,email'
         ])->whereNull('emergency_visits.deleted_by')
           ->whereNull('emergency_visits.deleted_at');
 
@@ -97,10 +97,10 @@ class EmergencyVisit extends Model
                 'patient_type' => $emergency_visit->patient_type,
                 'gender' => $emergency_visit->gender,
                 'age' => $emergency_visit->age,
-                'payment_type' => $emergency_visit->paymentType ? $emergency_visit->paymentType[0]['name'] : null,
+                'payment_type' => $emergency_visit->paymentType ? $emergency_visit->paymentType->name : null,
                 'contact_info' => $emergency_visit->contact_info,
-                'clinic' => $emergency_visit->clinic ? $emergency_visit->clinic[0]['name'] : null,
-                'doctor' => $emergency_visit->doctor ? $emergency_visit->doctor[0]['email'] : null,
+                'clinic' => $emergency_visit->clinic ? $emergency_visit->clinic->name : null,
+                'doctor' => $emergency_visit->doctor ? $emergency_visit->doctor->email : null,
                 'created_by' => $emergency_visit->createdBy ? $emergency_visit->createdBy->email : null,
                 'created_at' => $emergency_visit->created_at,
                 'updated_by' => $emergency_visit->updatedBy ? $emergency_visit->updatedBy->email : null,
