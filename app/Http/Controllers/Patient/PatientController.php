@@ -215,6 +215,13 @@ class PatientController extends Controller
                 $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
                 echo "TUKO HAPA 22222!!!";
             }
+            $image = $request->file('id_card_image');
+
+            // Generate a new unique name for the image
+            $newName = uniqid() . '.' . $image->getClientOriginalExtension();
+    
+            // Store the image in the public folder
+            $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
 
             DB::beginTransaction();
             Patient::where('id', $request->id)
