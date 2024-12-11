@@ -32,9 +32,9 @@ Route::group(['prefix'=>'emergencyVisits'], function(){
 
 Route::group(['prefix'=>'visits'], function(){
     Route::post('create', [VisitController::class, 'createVisit']);
-    // Route::put('update', [VisitController::class, 'updateEmergencyVisit']);
-    // Route::get('get/{id}', [VisitController::class, 'getSingleEmergencyVisit']);
+    Route::put('update', [VisitController::class, 'updateVisit']);
+    Route::get('get/{id}', [VisitController::class, 'getSingleVisit']);
     Route::get('', [VisitController::class, 'getAllVisits']);
-    // Route::put('softDelete/{id}', [VisitController::class, 'softDeleteEmergencyVisit']);
-    // Route::delete('permanentlyDelete/{id}', [VisitController::class, 'permanentlyDelete']);
+    Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
+    Route::delete('permanentlyDelete/{id}', [VisitController::class, 'permanentlyDelete']);
 });

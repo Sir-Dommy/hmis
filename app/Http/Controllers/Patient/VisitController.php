@@ -134,7 +134,7 @@ class VisitController extends Controller
     }
 
 //     //Getting a single visit 
-    public function getSingleEmergencyVisit($id){
+    public function getSingleVisit($id){
 
         $visit = Visit::selectVisits($id);
 
@@ -162,7 +162,7 @@ class VisitController extends Controller
         ,200);
     }
 
-    public function softDeleteEmergencyVisit($id){
+    public function softDeleteVisit($id){
             
         $existing = Visit::selectVisits($id);
 
