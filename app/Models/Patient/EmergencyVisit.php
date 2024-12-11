@@ -80,10 +80,14 @@ class EmergencyVisit extends Model
             $emergency_visit_query->where('emergency_visits.id', $id);
         }
 
-        $emergency_visit_query->orWhere('emergency_visits.patient_type', 'LIKE', '%'.$patient_type.'%');
-        $emergency_visit_query->orWhere('emergency_visits.patient_name', 'LIKE', '%'.$patient_name.'%');
-        $emergency_visit_query->orWhere('emergency_visits.gender', 'LIKE', '%'.$gender.'%');
-        $emergency_visit_query->orWhere('emergency_visits.contact_info', 'LIKE', '%'.$contact.'%');
+        else{
+            $emergency_visit_query->orWhere('emergency_visits.patient_type', 'LIKE', '%'.$patient_type.'%');
+            $emergency_visit_query->orWhere('emergency_visits.patient_name', 'LIKE', '%'.$patient_name.'%');
+            $emergency_visit_query->orWhere('emergency_visits.gender', 'LIKE', '%'.$gender.'%');
+            $emergency_visit_query->orWhere('emergency_visits.contact_info', 'LIKE', '%'.$contact.'%');
+        }
+
+        
         // $emergency_visit_query->orWhere('payment_types.name', 'LIKE', '%'.$payment_type.'%');
         // $emergency_visit_query->orWhere('clinics.name', 'LIKE', '%'.$clinic.'%');
         // $emergency_visit_query->orWhere('users.email', 'LIKE', '%'.$doctor.'%');
