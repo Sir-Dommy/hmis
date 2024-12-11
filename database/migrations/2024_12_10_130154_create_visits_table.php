@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('fee_type')->nullable();
             $table->string('stage');
             $table->boolean('open')->default(true);
-            $table->string('document_path');
+            $table->string('document_path')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
