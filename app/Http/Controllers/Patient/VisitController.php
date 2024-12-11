@@ -48,31 +48,31 @@ class VisitController extends Controller
         $scheme = Scheme::where('name', $request->scheme)->get("id");
         $fee_type = PaymentType::where('name', $request->fee_type)->get("id");
 
-        return response()->file($path);
-        echo $department[0]['id'];
-        // $visit = Visit::create([
-        //     'patient_id' => $request->patient_id,
-        //     'claim_number' => $request->claim_number, 
-        //     'amount' => $request->amount,
-        //     'department_id'=>$department,
-        //     'clinic_id'=>$clinic, 
-        //     'visit_type' => $request->visit_type,
-        //     'scheme_id' => $scheme,
-        //     'fee_type'=>$fee_type,
-        //     'stage'=>0,
-        //     'document_path'=>$path,
-        //     'created_by' => User::getLoggedInUserId()
-        // ]);
+        // return response()->file($path);
+        // echo $department[0]['id'];
+        $visit = Visit::create([
+            'patient_id' => $request->patient_id,
+            'claim_number' => $request->claim_number, 
+            'amount' => $request->amount,
+            'department_id'=>$department[0]['id'],
+            'clinic_id'=>$clinic[0]['id'], 
+            'visit_type' => $request->visit_type,
+            'scheme_id' => $scheme[0]['id'],
+            'fee_type'=>$fee_type[0]['id'],
+            'stage'=>0,
+            'document_path'=>$path,
+            'created_by' => User::getLoggedInUserId()
+        ]);
 
-        // UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a visit with id: ". $visit->id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a visit with id: ". $visit->id);
 
-        // return response()->json(
-        //     Visit::selectVisits($visit->id)
-        // ,200);
+        return [response()->json(
+            Visit::selectVisits($visit->id)
+        ,200), response()->file($path)];
 
     }
 
-//     //update emergency visit
+    // update emergency visit
 //     public function updateEmergencyVisit(Request $request){
 //         $request->validate([
 //             'id' => 'required|exists:emergency_visits,id',
