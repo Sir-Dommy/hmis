@@ -31,7 +31,7 @@ Route::group(['prefix'=>'emergencyVisits'], function(){
 
 
 Route::group(['prefix'=>'visits'], function(){
-    // Route::post('create', [VisitController::class, 'createEmergencyVisit']);
+    Route::post('create', [VisitController::class, 'createVisit']);
     // Route::put('update', [VisitController::class, 'updateEmergencyVisit']);
     // Route::get('get/{id}', [VisitController::class, 'getSingleEmergencyVisit']);
     Route::get('', [VisitController::class, 'getAllVisits']);
