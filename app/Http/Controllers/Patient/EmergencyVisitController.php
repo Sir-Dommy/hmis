@@ -67,6 +67,8 @@ class EmergencyVisitController extends Controller
             
         ]);
 
+        return "sir";
+
         $paymentType = PaymentType::selectPaymentTypes(null, $request->payment_type);
 
         $doctor = User::where('email', $request->doctor)->get();
