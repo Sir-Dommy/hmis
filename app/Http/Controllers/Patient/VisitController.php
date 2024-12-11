@@ -67,9 +67,9 @@ class VisitController extends Controller
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a visit with id: ". $visit->id);
 
-        return [response()->json(
+        return response()->json(
             Visit::selectVisits($visit->id)
-        ,200), response()->file($path)];
+        ,200);
 
     }
 
