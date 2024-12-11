@@ -291,14 +291,15 @@ class PatientController extends Controller
             ,200);
 
     }
-    //Gettind a single patients details 
+
+    //Getting a single patients details 
     public function getSinglePatient(Request $request){
 
-        if($request->id == null && $request->email == null && $request->patient_code == null){
-            throw new InputsValidationException("id or email or patient code required!");
+        if($request->id == null && $request->email == null && $request->patient_code == null && $request->id_no == null){
+            throw new InputsValidationException("id or email or patient code or id_no required!");
         }
 
-        $patient = Patient::selectPatients($request->id, $request->email, $request->patient_code);
+        $patient = Patient::selectPatients($request->id, $request->email, $request->patient_code, $request->id_no);
 
         if(count($patient) < 1){
             throw new NotFoundException(APIConstants::NAME_PATIENT);
@@ -313,7 +314,7 @@ class PatientController extends Controller
     //getting all patients Details
     public function getAllPatients(){
 
-        $patients = Patient::selectPatients(null, null, null);
+        $patients = Patient::selectPatients(null, null, null, null);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all patients");
 
@@ -326,7 +327,7 @@ class PatientController extends Controller
     //approving a patient
     public function approvePatient($id){
             
-        $existing = Patient::selectPatients($id, null, null);
+        $existing = Patient::selectPatients($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_PATIENT. " with id: ". $id);
@@ -343,14 +344,14 @@ class PatientController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved a patient with id : ". $id);
 
         return response()->json(
-            Patient::selectPatients($id, null, null)
+            Patient::selectPatients($id, null, null, null)
         ,200);
     }
 
     // Disabling a patient
     public function disablePatient($id){
             
-        $existing = Patient::selectPatients($id, null, null);
+        $existing = Patient::selectPatients($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_PATIENT. " with id: ". $id);
@@ -368,13 +369,13 @@ class PatientController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_DISABLE, "Disabled a patient with id: ". $id);
 
         return response()->json(
-            Patient::selectPatients($id, null, null)
+            Patient::selectPatients($id, null, null, null)
         ,200);
     }
 
     public function softDelete($id){
             
-        $existing = Patient::selectPatients($id, null, null);
+        $existing = Patient::selectPatients($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_PATIENT. " with id: ". $id);
@@ -390,7 +391,7 @@ class PatientController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a patient with id: ". $id);
 
         return response()->json(
-            Patient::selectPatients($id, null, null)
+            []
         ,200);
     }
 
