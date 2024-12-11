@@ -57,7 +57,7 @@ class EmergencyVisitController extends Controller
     //update emergency visit
     public function updateEmergencyVisit(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:emergency_visits,id',
+            'id' => 'required|exists:emergency_visits,id',
             'age' => 'required|integer|min:0|max:200',
             'gender' => 'required|string|min:0|max:200',
             'payment_type'=>'string|min:1|exists:payment_types,name',
