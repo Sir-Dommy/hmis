@@ -311,6 +311,7 @@ class PatientController extends Controller
             $patient
         ,200);
     }
+    
     //getting all patients Details
     public function getAllPatients(){
 
