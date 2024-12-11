@@ -87,6 +87,17 @@ class PatientController extends Controller
                 ]);
 
             if($request->insurer){
+
+                $request->validate([
+                    'insurer' => 'required|string|exists:schemes,name',
+                    'scheme_type' => 'required|string|exists:scheme_types,name',
+                    'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                    'principal_member_name' => 'required|string|min:3|max:255',
+                    'principal_member_number' => 'required|string|min:3|max:255',
+                    'member_validity' => 'required|string|min:3|max:255',
+                    
+                ]);
+
                 $scheme = Scheme::with([
                     'schemeTypes:id,scheme_id,name'
                 ])->where('schemes.name', $request->insurer)
@@ -213,6 +224,17 @@ class PatientController extends Controller
                 ]);
 
             if($request->insurer){
+
+                $request->validate([
+                    'insurer' => 'required|string|exists:schemes,name',
+                    'scheme_type' => 'required|string|exists:scheme_types,name',
+                    'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                    'principal_member_name' => 'required|string|min:3|max:255',
+                    'principal_member_number' => 'required|string|min:3|max:255',
+                    'member_validity' => 'required|string|min:3|max:255',
+                    
+                ]);
+                
                 $scheme = Scheme::with([
                     'schemeTypes:id,scheme_id,name'
                 ])->where('schemes.name', $request->insurer)
@@ -311,7 +333,7 @@ class PatientController extends Controller
             $patient
         ,200);
     }
-    
+
     //getting all patients Details
     public function getAllPatients(){
 
