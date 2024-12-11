@@ -74,11 +74,8 @@ class EmergencyVisitController extends Controller
 
         $clinic = Clinic::selectClinics(null, $request->clinic);
 
-        echo $doctor[0]['id'];
 
-        return "sir " . $clinic[0]['id'] ;
-
-        $emeregency_visit = EmergencyVisit::where('id', $request->id)
+        EmergencyVisit::where('id', $request->id)
             ->update([
                 'patient_type' => $request->patient_type,
                 'patient_name' => $request->patient_name, 
@@ -91,10 +88,10 @@ class EmergencyVisitController extends Controller
                 'created_by' => User::getLoggedInUserId()
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Emergency visit with id: ". $emeregency_visit->id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Emergency visit with id: ". $request->id);
 
         return response()->json(
-            EmergencyVisit::selectEmergencyVisits($emeregency_visit->id, null, null, null, null, null, null, null)
+            EmergencyVisit::selectEmergencyVisits($request->id, null, null, null, null, null, null, null)
         ,200);
 
     }
