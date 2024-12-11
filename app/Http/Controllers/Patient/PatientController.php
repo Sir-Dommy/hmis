@@ -212,7 +212,7 @@ class PatientController extends Controller
                 $newName = uniqid() . '.' . $image->getClientOriginalExtension();
         
                 // Store the image in the public folder
-                $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
+                $id_card_image_path = $image->move(public_path('images/ids'), $newName);
                 echo "TUKO HAPA 22222!!!";
             }
             $image = $request->file('id_card_image');
