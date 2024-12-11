@@ -100,18 +100,18 @@ class Visit extends Model
 
             // return $schemes_query->get();
             return $visit_query->get()->map(function ($visit) {
-                $visit_details = $this->mapResponse($visit);
+                $visit_details = Visit::mapResponse($visit);
 
                 return $visit_details;
             });
         }
 
         echo "TUNAFANYANINI HUKU!!!!!!";
-        
+
         $paginated_visits = $visit_query->paginate(10);
         
         $paginated_visits->getCollection()->transform(function ($visit) {
-            return $this->mapResponse($visit);
+            return Visit::mapResponse($visit);
         });
 
         return $paginated_visits;
@@ -122,7 +122,7 @@ class Visit extends Model
         
     }
 
-    private function mapResponse($visit){
+    private static function mapResponse($visit){
         return [
             'id' => $visit->id,
             'patient_id' => $visit->patient_id,
