@@ -32,6 +32,7 @@ class VisitController extends Controller
 
         //store image first 
         // Get the uploaded file
+        $path = null;
         if($request->file('image')){
             $image = $request->file('image');
 
