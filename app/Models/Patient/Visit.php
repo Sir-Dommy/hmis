@@ -106,7 +106,9 @@ class Visit extends Model
             });
         }
 
-        return $visit_query->paginate(10)->getCollection->transform(function ($visit) {
+        $paginated_visits = $visit_query->paginate(10);
+        
+        return $visit_query->paginate(10)->getCollection()->transform(function ($visit) {
             return $this->mapResponse($visit);
         });
 
