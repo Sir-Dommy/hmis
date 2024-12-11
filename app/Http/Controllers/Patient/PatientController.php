@@ -196,32 +196,16 @@ class PatientController extends Controller
 
             //handle image ya id
             $id_card_image_path = null;
-            if($request->file('image')){
-
-                echo "TUKO HAPA 000!!! " . $request->image;
-            }
-            else{
-                echo "NO IMAGE SELECTED";
-            }
 
             if($request->file('id_card_image')){
                 $image = $request->file('id_card_image');
-                echo "TUKO HAPA!!!";
 
                 // Generate a new unique name for the image
                 $newName = uniqid() . '.' . $image->getClientOriginalExtension();
         
                 // Store the image in the public folder
-                $id_card_image_path = $image->move(public_path('images/ids'), $newName);
-                echo "TUKO HAPA 22222!!!";
+                $id_card_image_path = $image->move(public_path('images/patients/ids'), $newName);
             }
-            $image = $request->file('id_card_image');
-
-            // Generate a new unique name for the image
-            $newName = uniqid() . '.' . $image->getClientOriginalExtension();
-    
-            // Store the image in the public folder
-            $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
 
             DB::beginTransaction();
             Patient::where('id', $request->id)
