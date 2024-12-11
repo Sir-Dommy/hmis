@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
@@ -73,63 +74,80 @@ class VisitController extends Controller
 
     }
 
-    // update emergency visit
-//     public function updateEmergencyVisit(Request $request){
-//         $request->validate([
-//             'id' => 'required|exists:emergency_visits,id',
-//             'age' => 'required|integer|min:0|max:200',
-//             'gender' => 'required|string|min:0|max:200',
-//             'payment_type'=>'string|min:1|exists:payment_types,name',
-//             'contact_info' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-//             'doctor'=>'required|string|min:1|exists:users,email',
-//             'clinic'=>'required|string|min:1|exists:clinics,name'
-            
-//         ]);
+    public function updateVisit(Request $request){
+        $request->validate([
+            'id' => 'required|exists:visits,id',
+            'patient_id' => 'required|exists:patients,id',
+            'claim_number' => 'required|string|min:1|max:255',
+            'amount'=>'required|numeric|min:0|',
+            'department' => 'required|string|exists:departments,name',
+            'clinic'=>'required|string|exists:clinics,name',
+            'visit_type'=>'required|string|min:1|max:255',
+            'scheme' => 'required|string|exists:schemes,name',
+            'fee_type'=>'required|string|exists:payment_types,name',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+        
+        ]);
 
+        //store image first 
+        // Get the uploaded file
+        $path = null;
+        if($request->file('image')){
+            $image = $request->file('image');
 
-//         $paymentType = PaymentType::selectPaymentTypes(null, $request->payment_type);
+            // Generate a new unique name for the image
+            $newName = uniqid() . '.' . $image->getClientOriginalExtension();
+    
+            // Store the image in the public folder
+            $path = $image->move(public_path('images/claims'), $newName);
+        }
+        
 
-//         $doctor = User::where('email', $request->doctor)->get();
+        $department = Department::where('name', $request->department)->get("id");
+        $clinic = Clinic::where('name', $request->clinic)->get("id");
+        $scheme = Scheme::where('name', $request->scheme)->get("id");
+        $fee_type = PaymentType::where('name', $request->fee_type)->get("id");
 
-//         $clinic = Clinic::selectClinics(null, $request->clinic);
+        // return response()->file($path);
+        // echo $department[0]['id'];
+        Visit::where('id', $request->id)
+            ->create([
+                'patient_id' => $request->patient_id,
+                'claim_number' => $request->claim_number, 
+                'amount' => $request->amount,
+                'department_id'=>$department[0]['id'],
+                'clinic_id'=>$clinic[0]['id'], 
+                'visit_type' => $request->visit_type,
+                'scheme_id' => $scheme[0]['id'],
+                'fee_type'=>$fee_type[0]['id'],
+                'stage'=>0,
+                'document_path'=>$path,
+                'created_by' => User::getLoggedInUserId()
+            ]);
 
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a visit with id: ". $request->id);
 
-//         EmergencyVisit::where('id', $request->id)
-//             ->update([
-//                 'patient_type' => $request->patient_type,
-//                 'patient_name' => $request->patient_name, 
-//                 'gender' => $request->gender,
-//                 'age'=>$request->age,
-//                 'payment_type_id'=>$paymentType[0]['id'], 
-//                 'contact_info' => $request->contact_info,
-//                 'clinic_id' => $clinic[0]['id'],
-//                 'doctor_id'=>$doctor[0]['id'],
-//                 'created_by' => User::getLoggedInUserId()
-//         ]);
+        return response()->json(
+            Visit::selectVisits($request->id)
+        ,200);
 
-//         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Emergency visit with id: ". $request->id);
+    }
 
-//         return response()->json(
-//             EmergencyVisit::selectEmergencyVisits($request->id, null, null, null, null, null, null, null)
-//         ,200);
+//     //Getting a single visit 
+    public function getSingleEmergencyVisit($id){
 
-//     }
+        $visit = Visit::selectVisits($id);
 
-// //     //Gettind a single emergency visit 
-//     public function getSingleEmergencyVisit($id){
+        if(count($visit) < 1){
+            throw new NotFoundException(APIConstants::NAME_VISIT);
+        }
 
-//         $emergency_visit = EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a visit with id: ". $visit[0]['id']);
 
-//         if(count($emergency_visit) < 1){
-//             throw new NotFoundException(APIConstants::NAME_EMERGENCY_VISIT);
-//         }
-
-//         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched an emergency visit with id: ". $emergency_visit[0]['id']);
-
-//         return response()->json(
-//             $emergency_visit
-//         ,200);
-//     }
+        return response()->json(
+            $visit
+        ,200);
+    }
 
 
     //getting all patients Details
@@ -144,44 +162,44 @@ class VisitController extends Controller
         ,200);
     }
 
-    // public function softDeleteEmergencyVisit($id){
+    public function softDeleteEmergencyVisit($id){
             
-    //     $existing = EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null);
+        $existing = Visit::selectVisits($id);
 
-    //     if(count($existing) < 1){
-    //         throw new NotFoundException(APIConstants::NAME_EMERGENCY_VISIT. " with id: ". $id);
-    //     }
+        if(count($existing) < 1){
+            throw new NotFoundException(APIConstants::NAME_VISIT. " with id: ". $id);
+        }
         
-    //     EmergencyVisit::where('id', $id)
-    //             ->update([
-    //                 'deleted_at' => now(),
-    //                 'deleted_by' => User::getLoggedInUserId(),
-    //             ]);
+        Visit::where('id', $id)
+                ->update([
+                    'deleted_at' => now(),
+                    'deleted_by' => User::getLoggedInUserId(),
+                ]);
 
 
-    //     UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a patient with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a visit with id: ". $id);
 
-    //     return response()->json(
-    //         EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null)
-    //     ,200);
-    // }
+        return response()->json(
+            []
+        ,200);
+    }
 
-    // public function permanentlyDelete($id){
+    public function permanentlyDelete($id){
             
-    //     $existing = EmergencyVisit::where("id",$id)->get();
+        $existing = Visit::where("id",$id)->get();
 
-    //     if(count($existing) < 1){
-    //         throw new NotFoundException(APIConstants::NAME_EMERGENCY_VISIT. " with id: ". $id);
-    //     }
+        if(count($existing) < 1){
+            throw new NotFoundException(APIConstants::NAME_VISIT. " with id: ". $id);
+        }
         
-    //     EmergencyVisit::destroy($id);
+        Visit::destroy($id);
 
 
-    //     UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Deleted an emergency visit with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Deleted a visit with id: ". $id);
 
-    //     return response()->json(
-    //         []
-    //     ,200);
-    // }
+        return response()->json(
+            []
+        ,200);
+    }
 
 }
