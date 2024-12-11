@@ -196,14 +196,14 @@ class PatientController extends Controller
 
             //handle image ya id
             $id_card_image_path = null;
-            if($request->id_card_image){
+            if($request->image){
 
-                echo "TUKO HAPA 000!!! " . $request->id_card_image;
+                echo "TUKO HAPA 000!!! " . $request->image;
             }
             else{
                 echo "NO IMAGE SELECTED";
             }
-            
+
             if($request->file('id_card_image')){
                 $image = $request->file('id_card_image');
                 echo "TUKO HAPA!!!";
