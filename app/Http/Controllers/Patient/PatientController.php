@@ -28,7 +28,7 @@ class PatientController extends Controller
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'required|string|min:3|max:255',
+            'identification_type' => 'required|string|min:1|max:255',
             'id_no' => 'required|string|unique:patients,id_no',
             'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -160,7 +160,7 @@ class PatientController extends Controller
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'required|string|min:3|max:255',
+            'identification_type' => 'required|string|min:1|max:255',
             'id_no' => 'required|string|min:3|max:255',
             'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -234,7 +234,7 @@ class PatientController extends Controller
                     'member_validity' => 'required|string|min:3|max:255',
                     
                 ]);
-                
+
                 $scheme = Scheme::with([
                     'schemeTypes:id,scheme_id,name'
                 ])->where('schemes.name', $request->insurer)
