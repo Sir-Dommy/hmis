@@ -108,10 +108,11 @@ class Visit extends Model
 
         $paginated_visits = $visit_query->paginate(10);
         
-        return $visit_query->paginate(10)->getCollection()->transform(function ($visit) {
+        $paginated_visits->getCollection()->transform(function ($visit) {
             return $this->mapResponse($visit);
         });
 
+        return $paginated_visits;
         // $visit_query = $visit_query->paginate(10);
 
         
