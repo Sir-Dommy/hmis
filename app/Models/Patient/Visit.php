@@ -105,7 +105,7 @@ class Visit extends Model
                 return $visit_details;
             });
         }
-        
+
 
         $paginated_visits = $visit_query->paginate(10);
         
@@ -115,9 +115,6 @@ class Visit extends Model
 
         return $paginated_visits;
         // $visit_query = $visit_query->paginate(10);
-
-        
-
         
     }
 
