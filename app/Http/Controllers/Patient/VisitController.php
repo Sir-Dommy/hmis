@@ -32,7 +32,7 @@ class VisitController extends Controller
 
         //store image first 
         // Get the uploaded file
-        if($request->image){
+        if($request->file('image')){
             $image = $request->file('image');
 
             // Generate a new unique name for the image
@@ -49,7 +49,7 @@ class VisitController extends Controller
         $fee_type = PaymentType::where('name', $request->fee_type)->get("id");
 
 
-        echo $department;
+        echo $department->id;
         // $visit = Visit::create([
         //     'patient_id' => $request->patient_id,
         //     'claim_number' => $request->claim_number, 
