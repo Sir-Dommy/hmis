@@ -32,13 +32,16 @@ class VisitController extends Controller
 
         //store image first 
         // Get the uploaded file
-        $image = $request->file('image');
+        if($request->image){
+            $image = $request->file('image');
 
-        // Generate a new unique name for the image
-        $newName = uniqid() . '.' . $image->getClientOriginalExtension();
-
-        // Store the image in the public folder
-        $path = $image->move(public_path('images/claims'), $newName);
+            // Generate a new unique name for the image
+            $newName = uniqid() . '.' . $image->getClientOriginalExtension();
+    
+            // Store the image in the public folder
+            $path = $image->move(public_path('images/claims'), $newName);
+        }
+        
 
         $department = Department::where('name', $request->department)->get("id");
         $clinic = Clinic::where('name', $request->clinic)->get("id");
