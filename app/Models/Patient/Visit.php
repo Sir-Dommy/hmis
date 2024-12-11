@@ -101,6 +101,8 @@ class Visit extends Model
 
         $id ? $visit_query->get() : null;
 
+        return $visit_query->paginate(10);
+
         // return $schemes_query->get();
         return $visit_query->map(function ($visit) {
             $visit_details = [
