@@ -67,7 +67,6 @@ class EmergencyVisitController extends Controller
             
         ]);
 
-        return "sir";
 
         $paymentType = PaymentType::selectPaymentTypes(null, $request->payment_type);
 
@@ -75,6 +74,7 @@ class EmergencyVisitController extends Controller
 
         $clinic = Clinic::selectClinics(null, $request->clinic);
 
+        return "sir";
 
         $emeregency_visit = EmergencyVisit::where('id', $request->id)
             ->update([
