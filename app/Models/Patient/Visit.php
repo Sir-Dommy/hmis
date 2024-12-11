@@ -97,39 +97,46 @@ class Visit extends Model
 
         if($id != null){
             $visit_query->where('visits.id', $id);
+
+            // return $schemes_query->get();
+            return $visit_query->get()->map(function ($visit) {
+                $visit_details = $this->mapResponse($visit);
+
+                return $visit_details;
+            });
         }
 
-        $id ? $visit_query->get() : null;
-
-        $visit_query = $visit_query->paginate(10);
-
-        // return $schemes_query->get();
-        return $visit_query->map(function ($visit) {
-            $visit_details = [
-                'id' => $visit->id,
-                'patient_id' => $visit->patient_id,
-                'patient_code' => $visit->patient->patient_code,
-                'claim_number' => $visit->claim_number,
-                'amount' => $visit->amount,
-                'department' => $visit->department->name,
-                'clinic' => $visit->clinic ? $visit->clinic->name : null,
-                'visit_type' => $visit->visit_type,
-                'scheme' => $visit->scheme->name,
-                'fee_type' => $visit->feeType ? $visit->feeType->name : null,
-                'open' => $visit->stage,
-                'open' => $visit->open,
-                'document_path' => $visit->document_path,
-                'created_by' => $visit->createdBy ? $visit->createdBy->email : null,
-                'created_at' => $visit->created_at,
-                'updated_by' => $visit->updatedBy ? $visit->updatedBy->email : null,
-                'updated_at' => $visit->updated_at,
-                
-            ];
-
-            return $visit_details;
+        return $visit_query->paginate(10)->getCollection->transform(function ($visit) {
+            return $this->mapResponse($visit);
         });
 
-        // $visit_query->paginate(10)
+        // $visit_query = $visit_query->paginate(10);
+
+        
+
+        
+    }
+
+    private function mapResponse($visit){
+        return [
+            'id' => $visit->id,
+            'patient_id' => $visit->patient_id,
+            'patient_code' => $visit->patient->patient_code,
+            'claim_number' => $visit->claim_number,
+            'amount' => $visit->amount,
+            'department' => $visit->department->name,
+            'clinic' => $visit->clinic ? $visit->clinic->name : null,
+            'visit_type' => $visit->visit_type,
+            'scheme' => $visit->scheme->name,
+            'fee_type' => $visit->feeType ? $visit->feeType->name : null,
+            'open' => $visit->stage,
+            'open' => $visit->open,
+            'document_path' => $visit->document_path,
+            'created_by' => $visit->createdBy ? $visit->createdBy->email : null,
+            'created_at' => $visit->created_at,
+            'updated_by' => $visit->updatedBy ? $visit->updatedBy->email : null,
+            'updated_at' => $visit->updated_at,
+        ];
     }
 
 }
