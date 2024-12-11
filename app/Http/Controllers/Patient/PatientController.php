@@ -164,7 +164,7 @@ class PatientController extends Controller
             'id_no' => 'required|string|min:3|max:255',
             'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'email' => 'required|string|email|max:255|unique:patients',
+            'email' => 'required|string|email|max:255|',
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
@@ -189,6 +189,10 @@ class PatientController extends Controller
             $existing = Patient::selectPatients(null, null, null, $request->id_no);
 
             count($existing) > 0 ?? $existing[0]['id'] != $request->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
+
+            $existing2 = Patient::selectPatients(null, $request->email, null, null);
+
+            count($existing2) > 0 ?? $existing[0]['id'] != $request->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
 
             //handle image ya id
             $id_card_image_path = null;
