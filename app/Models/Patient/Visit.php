@@ -99,7 +99,7 @@ class Visit extends Model
             $visit_query->where('visits.id', $id);
         }
 
-        $id ? $visit_query->get() : $visit_query->paginate(10);
+        $id ? $visit_query->get() : null;
 
         // return $schemes_query->get();
         return $visit_query->map(function ($visit) {
@@ -126,6 +126,8 @@ class Visit extends Model
 
             return $visit_details;
         });
+
+        // $visit_query->paginate(10)
     }
 
 }
