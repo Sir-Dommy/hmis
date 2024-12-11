@@ -149,7 +149,7 @@ class EmergencyVisitController extends Controller
 
     public function permanentlyDelete($id){
             
-        $existing = EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null);
+        $existing = EmergencyVisit::where("id",$id)->get();
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMERGENCY_VISIT. " with id: ". $id);
