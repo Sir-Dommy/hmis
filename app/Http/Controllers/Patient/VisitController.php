@@ -116,7 +116,7 @@ class VisitController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all visits");
 
         return response()->json(
-            $$visits
+            $visits
         ,200);
     }
 
