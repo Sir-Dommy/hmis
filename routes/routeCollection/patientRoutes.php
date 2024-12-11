@@ -20,7 +20,7 @@ Route::group(['prefix'=>'patients'], function(){
 
 Route::group(['prefix'=>'emergencyVisits'], function(){
     Route::post('create', [EmergencyVisitController::class, 'createEmergencyVisit']);
-    Route::post('update', [EmergencyVisitController::class, 'updateEmergencyVisit']);
+    Route::put('update', [EmergencyVisitController::class, 'updateEmergencyVisit']);
     Route::get('get/{id}', [EmergencyVisitController::class, 'getSingleEmergencyVisit']);
     Route::get('', [EmergencyVisitController::class, 'getAllEmergencyVisists']);
     Route::put('softDelete/{id}', [EmergencyVisitController::class, 'softDeleteEmergencyVisit']);
@@ -32,7 +32,7 @@ Route::group(['prefix'=>'emergencyVisits'], function(){
 
 Route::group(['prefix'=>'visits'], function(){
     Route::post('create', [VisitController::class, 'createVisit']);
-    Route::put('update', [VisitController::class, 'updateVisit']);
+    Route::post('update', [VisitController::class, 'updateVisit']);
     Route::get('get/{id}', [VisitController::class, 'getSingleVisit']);
     Route::get('', [VisitController::class, 'getAllVisits']);
     Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
