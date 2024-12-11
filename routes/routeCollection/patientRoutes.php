@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix'=>'patients'], function(){
     Route::post('create', [PatientController::class, 'createPatient']);
-    Route::put('update', [PatientController::class, 'updatePatient']);
+    Route::post('update', [PatientController::class, 'updatePatient']);
     Route::get('get', [PatientController::class, 'getSinglePatient']);
     Route::get('', [PatientController::class, 'getAllPatients']);
     Route::put('approve/{id}', [PatientController::class, 'approvePatient']);
@@ -32,7 +32,7 @@ Route::group(['prefix'=>'emergencyVisits'], function(){
 
 Route::group(['prefix'=>'visits'], function(){
     Route::post('create', [VisitController::class, 'createVisit']);
-    Route::post('update', [VisitController::class, 'updateVisit']);
+    Route::put('update', [VisitController::class, 'updateVisit']);
     Route::get('get/{id}', [VisitController::class, 'getSingleVisit']);
     Route::get('', [VisitController::class, 'getAllVisits']);
     Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
