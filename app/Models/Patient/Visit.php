@@ -106,6 +106,8 @@ class Visit extends Model
             });
         }
 
+        echo "TUNAFANYANINI HUKU!!!!!!";
+        
         $paginated_visits = $visit_query->paginate(10);
         
         $paginated_visits->getCollection()->transform(function ($visit) {
