@@ -74,7 +74,9 @@ class EmergencyVisitController extends Controller
 
         $clinic = Clinic::selectClinics(null, $request->clinic);
 
-        return "sir " . $paymentType[0]['id'] ;
+        echo $doctor[0]['id'];
+
+        return "sir " . $clinic[0]['id'] ;
 
         $emeregency_visit = EmergencyVisit::where('id', $request->id)
             ->update([
