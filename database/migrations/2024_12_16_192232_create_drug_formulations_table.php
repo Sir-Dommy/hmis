@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('drug_formulations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('formula')->unique();
+            $table->string('formula');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
