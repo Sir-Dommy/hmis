@@ -12,6 +12,7 @@ use App\Utils\APIConstants;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\SchemeTypes;
 use App\Models\Patient\InsuranceDetail;
 use App\Models\User;
 use Carbon\Carbon;
