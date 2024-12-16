@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\Patient\EmergencyVisitController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Patient\VisitController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix'=>'patients'], function(){
     Route::post('create', [PatientController::class, 'createPatient']);
-    Route::put('update', [PatientController::class, 'updatePatient']);
+    Route::post('update', [PatientController::class, 'updatePatient']);
     Route::get('get', [PatientController::class, 'getSinglePatient']);
     Route::get('', [PatientController::class, 'getAllPatients']);
     Route::put('approve/{id}', [PatientController::class, 'approvePatient']);
@@ -24,4 +25,16 @@ Route::group(['prefix'=>'emergencyVisits'], function(){
     Route::get('', [EmergencyVisitController::class, 'getAllEmergencyVisists']);
     Route::put('softDelete/{id}', [EmergencyVisitController::class, 'softDeleteEmergencyVisit']);
     Route::delete('permanentlyDelete/{id}', [EmergencyVisitController::class, 'permanentlyDelete']);
+});
+
+
+
+
+Route::group(['prefix'=>'visits'], function(){
+    Route::post('create', [VisitController::class, 'createVisit']);
+    Route::put('update', [VisitController::class, 'updateVisit']);
+    Route::get('get/{id}', [VisitController::class, 'getSingleVisit']);
+    Route::get('', [VisitController::class, 'getAllVisits']);
+    Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
+    Route::delete('permanentlyDelete/{id}', [VisitController::class, 'permanentlyDelete']);
 });

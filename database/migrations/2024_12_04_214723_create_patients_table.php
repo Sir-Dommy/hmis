@@ -17,11 +17,17 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->date('dob');
-            $table->string('phonenumber1');
+            $table->string('identification_type');
+            $table->string('id_no')->unique();
+            $table->string('scan_id_photo')->nullable();
+            $table->string('phonenumber1')->unique();
             $table->string('phonenumber2')->nullable();
             $table->string('email')->unique();
             $table->string('address');
             $table->string('residence');
+            $table->string('next_of_kin_name');
+            $table->string('next_of_kin_contact');
+            $table->string('next_of_kin_relationship');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->unsignedBigInteger('disabled_by')->nullable();

@@ -11,48 +11,35 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visits', function (Blueprint $table) {
+        Schema::create('insurance_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->string('claim_number');
-            $table->double('amount', 8, 2);
-            $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('clinic_id')->nullable();
-            $table->string('visit_type');
-            $table->unsignedBigInteger('scheme_id')->nullable();
-            $table->unsignedBigInteger('fee_type')->nullable();
-            $table->string('stage');
-            $table->boolean('open')->default(true);
-            $table->string('document_path')->nullable();
+            $table->unsignedBigInteger('insurer_id')->nullable();
+            $table->unsignedBigInteger('scheme_type_id')->nullable();
+            $table->string('mobile_number')->nullable();
+            $table->string('insurance_card_path')->nullable();
+            $table->string('principal_member_name')->nullable();
+            $table->string('principal_member_number')->nullable();
+            $table->string('member_validity');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('patient_id')
-                    ->references('id')
-                    ->on('patients')
-                    ->onDelete('cascade');
-
-            $table->foreign('department_id')
-                    ->references('id')
-                    ->on('departments')
-                    ->onDelete('cascade');
-
-            $table->foreign('fee_type')
-                    ->references('id')
-                    ->on('payment_types')
-                    ->onDelete('cascade');
-
-            $table->foreign('scheme_id')
+            $table->foreign('insurer_id')
                     ->references('id')
                     ->on('schemes')
                     ->onDelete('cascade');
 
-            $table->foreign('clinic_id')
+            $table->foreign('scheme_type_id')
                     ->references('id')
-                    ->on('clinics')
+                    ->on('scheme_types')
+                    ->onDelete('cascade');
+
+            $table->foreign('patient_id')
+                    ->references('id')
+                    ->on('patients')
                     ->onDelete('cascade');
 
             $table->foreign('created_by')
@@ -69,6 +56,7 @@ return new class extends Migration
                     ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
+
         });
     }
 
@@ -77,6 +65,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('visits');
+        Schema::dropIfExists('insurance_details');
     }
 };

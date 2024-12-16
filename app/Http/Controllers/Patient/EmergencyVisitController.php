@@ -57,7 +57,7 @@ class EmergencyVisitController extends Controller
     //update emergency visit
     public function updateEmergencyVisit(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:emergency_visits,id',
+            'id' => 'required|exists:emergency_visits,id',
             'age' => 'required|integer|min:0|max:200',
             'gender' => 'required|string|min:0|max:200',
             'payment_type'=>'string|min:1|exists:payment_types,name',
@@ -67,6 +67,7 @@ class EmergencyVisitController extends Controller
             
         ]);
 
+
         $paymentType = PaymentType::selectPaymentTypes(null, $request->payment_type);
 
         $doctor = User::where('email', $request->doctor)->get();
@@ -74,7 +75,7 @@ class EmergencyVisitController extends Controller
         $clinic = Clinic::selectClinics(null, $request->clinic);
 
 
-        $emeregency_visit = EmergencyVisit::where('id', $request->id)
+        EmergencyVisit::where('id', $request->id)
             ->update([
                 'patient_type' => $request->patient_type,
                 'patient_name' => $request->patient_name, 
@@ -87,10 +88,10 @@ class EmergencyVisitController extends Controller
                 'created_by' => User::getLoggedInUserId()
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Emergency visit with id: ". $emeregency_visit->id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Emergency visit with id: ". $request->id);
 
         return response()->json(
-            EmergencyVisit::selectEmergencyVisits($emeregency_visit->id, null, null, null, null, null, null, null)
+            EmergencyVisit::selectEmergencyVisits($request->id, null, null, null, null, null, null, null)
         ,200);
 
     }
@@ -148,7 +149,7 @@ class EmergencyVisitController extends Controller
 
     public function permanentlyDelete($id){
             
-        $existing = EmergencyVisit::selectEmergencyVisits($id, null, null, null, null, null, null, null);
+        $existing = EmergencyVisit::where("id",$id)->get();
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMERGENCY_VISIT. " with id: ". $id);
