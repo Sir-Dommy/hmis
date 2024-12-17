@@ -138,7 +138,7 @@ class BrandsController extends Controller
     //restore
     public function restoreSoftDeletedBrand($id){ 
         
-        count(Brand::where('id', $id)->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
+        count(Brand::where('id', $id)->whereNotNull('deleted_by')->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
         
         Brand::where('id', $id)
                 ->update([
