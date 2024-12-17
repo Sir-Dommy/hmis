@@ -101,7 +101,7 @@ class BrandsController extends Controller
     //approve
     public function approveBrand($id){
 
-        count(Brand::selectBrands($id, null)) < 1 ?? throw new NotFoundException(APIConstants::NAME_BRAND);
+        count(Brand::selectBrands($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
 
         Brand::where('id', $id)
             ->update([
