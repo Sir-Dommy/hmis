@@ -174,7 +174,7 @@ Route::group(['prefix'=>'drugs'], function(){
 });
 
 //physical Examination Types
-Route::group(['prefix'=>'drugs'], function(){
+Route::group(['prefix'=>'physicalExaminationTypes'], function(){
 
     Route::post('create', [PhysicalExaminationTypesController::class, 'createPhysicalExaminationType']);
     Route::put('update', [PhysicalExaminationTypesController::class, 'updatePhysicalExaminationType']);
