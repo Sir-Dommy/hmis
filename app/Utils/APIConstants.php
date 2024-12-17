@@ -33,6 +33,7 @@ class APIConstants
     public const NAME_APPROVE = 'APPROVE';
     public const NAME_DISABLE = 'DISABLE';
     public const NAME_SOFT_DELETE = 'SOFT_DELETE';
+    public const NAME_RESTORE = 'Restore';
     public const NAME_PERMANENT_DELETE = 'PERMANENT_DELETE';
 
 
@@ -45,4 +46,19 @@ class APIConstants
     public const NAME_VISIT = 'Visit';
     public const NAME_VITAL = 'Vital';
     public const NAME_EMERGENCY_VISIT = 'Emeregency visit';
+    public const NAME_EMERGENCY_VISIT = 'Emergency visit';
+    public const NAME_PHYSICAL_EXAMINATION_TYPE = 'Physical Examination Type';
+    public const NAME_DIAGNOSIS= 'Diagnosis';
+    public const NAME_CONSULTATION_TYPE = 'Consultation type';
+    public const NAME_SYMPTOM = 'Symptom';
+    public const NAME_CHRONIC_DISEASE = 'Chronic disease';
+    public const NAME_LAB_TEST_TYPE = 'Lab test type';
+    public const NAME_LAB_TEST_CLASS = 'Lab test class';
+    public const NAME_LAB_TEST_REQUEST = 'Lab test request';
+    public const NAME_IMAGE_TEST_REQUEST = 'Image test request';
+    public const NAME_IMAGE_TEST_CLASS = 'Image test class';
+    public const NAME_IMAGE_TEST_TYPE = 'Image test type';
+    public const NAME_BRAND = 'Brand';
+    public const NAME_DRUG_FORMULATION = 'Drug formulation';
+    public const NAME_DRUG = 'Drug';
 }

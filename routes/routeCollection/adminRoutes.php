@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\SchemesController;
+use App\Http\Controllers\BranchController;
 use Illuminate\Support\Facades\Route;
 
 //department routes
@@ -69,5 +70,20 @@ Route::group(['prefix'=>'paymentTypes'], function(){
     Route::put('approve/{id}', [PaymentTypeController::class, 'approvePaymentType']);
     Route::put('softDelete/{id}', [PaymentTypeController::class, 'softDelete']);
     Route::delete('permanentlyDelete/{id}', [PaymentTypeController::class, 'permanentlyDelete']);
+
+});
+
+//schemes payment types 
+Route::group(['prefix'=>'brands'], function(){
+
+    Route::post('create', [BranchController::class, 'createBrand']);
+    Route::put('update', [BranchController::class, 'updateBrand']);
+    Route::get('get', [BranchController::class, 'getSingleBrand']);
+    Route::get('', [BranchController::class, 'getAllBrands']);
+    Route::put('approve/{id}', [BranchController::class, 'approveBrand']);
+    Route::put('softDelete/{id}', [BranchController::class, 'softDeleteBrand']);
+    Route::delete('restore/{id}', [BranchController::class, 'restoreSoftDeletedBrand']);
+    Route::delete('permanentlyDelete/{id}', [BranchController::class, 'permanentlyDelete']);
+
 
 });
