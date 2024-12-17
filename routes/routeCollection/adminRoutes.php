@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DrugFormulationsController;
 use App\Http\Controllers\Admin\DrugsController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PaymentTypeController;
+use App\Http\Controllers\Admin\PhysicalExaminationTypesController;
 use App\Http\Controllers\Admin\SchemesController;
 use App\Http\Controllers\BranchController;
 use App\Models\Admin\Diagnosis;
@@ -167,6 +168,21 @@ Route::group(['prefix'=>'drugs'], function(){
     Route::put('softDelete/{id}', [DrugsController::class, 'softDeleteDrug']);
     Route::put('restore/{id}', [DrugsController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [DrugsController::class, 'permanentlyDelete']);
+
+
+});
+
+//physical Examination Types
+Route::group(['prefix'=>'drugs'], function(){
+
+    Route::post('create', [PhysicalExaminationTypesController::class, 'createPhysicalExaminationType']);
+    Route::put('update', [PhysicalExaminationTypesController::class, 'updatePhysicalExaminationType']);
+    Route::get('get', [PhysicalExaminationTypesController::class, 'getSinglePhysicalExaminationType']);
+    Route::get('', [PhysicalExaminationTypesController::class, 'getAllPhysicalExaminationTypes']);
+    Route::put('approve/{id}', [PhysicalExaminationTypesController::class, 'approvePhysicalExaminationType']);
+    Route::put('softDelete/{id}', [PhysicalExaminationTypesController::class, 'softDeletePhysicalExaminationType']);
+    Route::put('restore/{id}', [PhysicalExaminationTypesController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [PhysicalExaminationTypesController::class, 'permanentlyDelete']);
 
 
 });
