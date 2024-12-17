@@ -152,7 +152,7 @@ class BrandsController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a brand with id: ". $id);
 
         return response()->json(
-            []
+            Brand::selectBrands($id, null)
         ,200);
     }
 
