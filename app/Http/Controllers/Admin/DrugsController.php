@@ -73,7 +73,7 @@ class DrugsController extends Controller
                 "price_per_item" => $request->price_per_item,
                 "description" => $request->description,
                 "expiry_date" => $request->expiry_date,
-                'updated' => Carbon::now(),
+                'updated_at' => Carbon::now(),
                 'updated_by' => User::getLoggedInUserId(),
                 'approved_by' => null,
                 'approved_at' => null

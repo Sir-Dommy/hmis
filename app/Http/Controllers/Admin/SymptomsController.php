@@ -50,7 +50,7 @@ class SymptomsController extends Controller
         Symptom::where('id', $request->id)
             ->update([
                 'name' => $request->name,
-                'updated' => Carbon::now(),
+                'updated_at' => Carbon::now(),
                 'updated_by' => User::getLoggedInUserId(),
                 'approved_by' => null,
                 'approved_at' => null
