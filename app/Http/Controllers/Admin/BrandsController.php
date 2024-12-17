@@ -59,7 +59,9 @@ class BrandsController extends Controller
                 'company' => $request->company, 
                 'description' => $request->description,
                 'updated' => Carbon::now(),
-                'updated_by' => User::getLoggedInUserId()
+                'updated_by' => User::getLoggedInUserId(),
+                'approved_by' => null,
+                'approved_at' => null
         ]);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Brand with name: ". $request->name);

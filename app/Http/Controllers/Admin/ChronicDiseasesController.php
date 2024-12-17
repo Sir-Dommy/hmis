@@ -17,7 +17,7 @@ class ChronicDiseasesController extends Controller
     //create
     public function createChronicDisease(Request $request){
         $request->validate([
-            'name' => 'required|string|min:1|max:255|unique:brands,name',
+            'name' => 'required|string|min:1|max:255|unique:chronic_diseases,name',
             'description'=>'string|min:1|max:255'            
         ]);
 
@@ -39,7 +39,7 @@ class ChronicDiseasesController extends Controller
     //update
     public function updateChronicDisease(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:brands,id',
+            'id' => 'required|integer|exists:chronic_diseases,id',
             'name' => 'required|string|min:1|max:255',
             'description'=>'string|min:1|max:255'
             
@@ -55,7 +55,9 @@ class ChronicDiseasesController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'updated' => Carbon::now(),
-                'updated_by' => User::getLoggedInUserId()
+                'updated_by' => User::getLoggedInUserId(),
+                'approved_by' => null,
+                'approved_at' => null
         ]);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Chronic disease with name: ". $request->name);
