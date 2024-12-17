@@ -36,7 +36,7 @@ class Drug extends Model
     //perform selection
     public static function selectDrug($id, $name){
 
-        $drug_query = Diagnosis::with([
+        $drug_query = Drug::with([
             'brand:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
