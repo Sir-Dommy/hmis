@@ -19,7 +19,7 @@ class DrugsController extends Controller
     public function createDrug(Request $request){
         $request->validate([
             "brand" => 'string|min:1|max:255|exists:brands,name',
-            "name" => 'required|string|min:1|max:255|unique:drug,name',
+            "name" => 'required|string|min:1|max:255|unique:drugs,name',
             "in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "description" =>'string|min:1|max:255',
