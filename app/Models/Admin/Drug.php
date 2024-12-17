@@ -18,6 +18,7 @@ class Drug extends Model
         "brand_id",
         "name",
         "in_stock",
+        "price_per_item",
         "description",
         "expiry_date",
         "created_by",
@@ -33,9 +34,9 @@ class Drug extends Model
     }
 
     //perform selection
-    public static function selectDiagnosis($id, $name){
+    public static function selectDrug($id, $name){
 
-        $diagnosis_query = Diagnosis::with([
+        $drug_query = Diagnosis::with([
             'brand:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
@@ -44,25 +45,28 @@ class Drug extends Model
           ->whereNull('drugs.deleted_at');
 
         if($id != null){
-            $diagnosis_query->where('drugs.id', $id);
+            $drug_query->where('drugs.id', $id);
         }
         elseif($name != null){
-            $diagnosis_query->where('drugs.name', $name);
+            $drug_query->where('drugs.name', $name);
         }
 
 
 
-        return $diagnosis_query->get()->map(function ($diagnosis) {
-            $diagnosis_details = [
-                'id' => $diagnosis->id,
-                'name' => $diagnosis->name,
-                'description' => $diagnosis->description,
+        return $drug_query->get()->map(function ($drug) {
+            $drug_details = [
+                'id' => $drug->id,
+                'name' => $drug->name,
+                'brand' => $drug->brand->name,
+                'in_stock' => $drug->in_stock,
+                'expiry_date' => $drug->expiry_date,
+                'description' => $drug->description,
                 
             ];
 
-            $related_user =  CustomUserRelations::relatedUsersDetails($diagnosis);
+            $related_user =  CustomUserRelations::relatedUsersDetails($drug);
 
-            return array_merge($diagnosis_details, $related_user);
+            return array_merge($drug_details, $related_user);
         });
 
     }
