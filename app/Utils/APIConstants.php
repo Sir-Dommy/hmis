@@ -45,7 +45,6 @@ class APIConstants
     public const NAME_CLINIC = 'Clinic';
     public const NAME_VISIT = 'Visit';
     public const NAME_VITAL = 'Vital';
-    public const NAME_EMERGENCY_VISIT = 'Emeregency visit';
     public const NAME_EMERGENCY_VISIT = 'Emergency visit';
     public const NAME_PHYSICAL_EXAMINATION_TYPE = 'Physical Examination Type';
     public const NAME_DIAGNOSIS= 'Diagnosis';
