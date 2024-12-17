@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -76,14 +77,14 @@ Route::group(['prefix'=>'paymentTypes'], function(){
 //schemes payment types 
 Route::group(['prefix'=>'brands'], function(){
 
-    Route::post('create', [BranchController::class, 'createBrand']);
-    Route::put('update', [BranchController::class, 'updateBrand']);
-    Route::get('get', [BranchController::class, 'getSingleBrand']);
-    Route::get('', [BranchController::class, 'getAllBrands']);
-    Route::put('approve/{id}', [BranchController::class, 'approveBrand']);
-    Route::put('softDelete/{id}', [BranchController::class, 'softDeleteBrand']);
-    Route::delete('restore/{id}', [BranchController::class, 'restoreSoftDeletedBrand']);
-    Route::delete('permanentlyDelete/{id}', [BranchController::class, 'permanentlyDelete']);
+    Route::post('create', [BrandsController::class, 'createBrand']);
+    Route::put('update', [BrandsController::class, 'updateBrand']);
+    Route::get('get', [BrandsController::class, 'getSingleBrand']);
+    Route::get('', [BrandsController::class, 'getAllBrands']);
+    Route::put('approve/{id}', [BrandsController::class, 'approveBrand']);
+    Route::put('softDelete/{id}', [BrandsController::class, 'softDeleteBrand']);
+    Route::delete('restore/{id}', [BrandsController::class, 'restoreSoftDeletedBrand']);
+    Route::delete('permanentlyDelete/{id}', [BrandsController::class, 'permanentlyDelete']);
 
 
 });
