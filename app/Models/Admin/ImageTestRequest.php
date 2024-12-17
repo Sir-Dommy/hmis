@@ -12,7 +12,7 @@ class ImageTestRequest extends Model
 
     use CustomUserRelations;
 
-    protected $table = "image_test_requests";
+    protected $table = "image_test_request";
 
     protected $fillable = [
         "name",
