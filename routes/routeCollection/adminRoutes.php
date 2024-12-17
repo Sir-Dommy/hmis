@@ -5,10 +5,12 @@ use App\Http\Controllers\Admin\ChronicDiseasesController;
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\ConsultationTypesController;
 use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\SchemesController;
 use App\Http\Controllers\BranchController;
+use App\Models\Admin\Diagnosis;
 use Illuminate\Support\Facades\Route;
 
 //department routes
@@ -107,7 +109,7 @@ Route::group(['prefix'=>'chronicDiseases'], function(){
 
 });
 
-//schemes payment types 
+//consultation types 
 Route::group(['prefix'=>'consultationTypes'], function(){
 
     Route::post('create', [ConsultationTypesController::class, 'createConsultationType']);
@@ -118,6 +120,21 @@ Route::group(['prefix'=>'consultationTypes'], function(){
     Route::put('softDelete/{id}', [ConsultationTypesController::class, 'softDeleteConsultationType']);
     Route::put('restore/{id}', [ConsultationTypesController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [ConsultationTypesController::class, 'permanentlyDelete']);
+
+
+});
+
+//Diagnosis 
+Route::group(['prefix'=>'diagnosis'], function(){
+
+    Route::post('create', [DiagnosisController::class, 'createDiagnosis']);
+    Route::put('update', [DiagnosisController::class, 'updateDiagnosis']);
+    Route::get('get', [DiagnosisController::class, 'getSingleDiagnosis']);
+    Route::get('', [DiagnosisController::class, 'getAllDiagnosis']);
+    Route::put('approve/{id}', [DiagnosisController::class, 'approveDiagnosis']);
+    Route::put('softDelete/{id}', [DiagnosisController::class, 'softDeleteDiagnosis']);
+    Route::put('restore/{id}', [DiagnosisController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [DiagnosisController::class, 'permanentlyDelete']);
 
 
 });
