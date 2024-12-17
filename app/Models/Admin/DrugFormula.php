@@ -49,6 +49,7 @@ class DrugFormula extends Model
             $drug_formulation_details = [
                 'id' => $drug_formulation->id,
                 'name' => $drug_formulation->name,
+                'formula' => $drug_formulation->formula,
                 'description' => $drug_formulation->description,
                 
             ];
