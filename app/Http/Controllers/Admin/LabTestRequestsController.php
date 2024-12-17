@@ -18,7 +18,7 @@ class LabTestRequestsController extends Controller
     //create
     public function createLabTestRequest(Request $request){
         $request->validate([
-            'name' => 'required|string|min:1|max:255|unique:lab_test_requests,name',
+            'name' => 'required|string|min:1|max:255|unique:lab_test_request,name',
             'description'=>'string|min:1|max:255'            
         ]);
 
@@ -40,7 +40,7 @@ class LabTestRequestsController extends Controller
     //update
     public function updateLabTestRequest(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:lab_test_requests,id',
+            'id' => 'required|integer|exists:lab_test_request,id',
             'name' => 'required|string|min:1|max:255',
             'description'=>'string|min:1|max:255'
             
