@@ -58,7 +58,7 @@ class DrugFormulationsController extends Controller
                 'name' => $request->name,
                 'formula' => $request->formula, 
                 'description' => $request->description,
-                'updated' => Carbon::now(),
+                'updated_at' => Carbon::now(),
                 'updated_by' => User::getLoggedInUserId(),
                 'approved_by' => null,
                 'approved_at' => null

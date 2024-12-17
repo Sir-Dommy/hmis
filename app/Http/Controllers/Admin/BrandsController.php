@@ -58,7 +58,7 @@ class BrandsController extends Controller
                 'name' => $request->name,
                 'company' => $request->company, 
                 'description' => $request->description,
-                'updated' => Carbon::now(),
+                'updated_at' => Carbon::now(),
                 'updated_by' => User::getLoggedInUserId(),
                 'approved_by' => null,
                 'approved_at' => null
