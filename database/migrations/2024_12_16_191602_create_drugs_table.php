@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->unsignedBigInteger('in_stock')->nullable();
+            $table->double('price_per_item', 8, 2);
             $table->text('description')->nullable();
             $table->date('expiry_date');
             $table->unsignedBigInteger('created_by');

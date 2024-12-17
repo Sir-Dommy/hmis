@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\ConsultationTypesController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\DiagnosisController;
+use App\Http\Controllers\Admin\DrugFormulationsController;
+use App\Http\Controllers\Admin\DrugsController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\SchemesController;
@@ -135,6 +137,36 @@ Route::group(['prefix'=>'diagnosis'], function(){
     Route::put('softDelete/{id}', [DiagnosisController::class, 'softDeleteDiagnosis']);
     Route::put('restore/{id}', [DiagnosisController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [DiagnosisController::class, 'permanentlyDelete']);
+
+
+});
+
+//drug formulas
+Route::group(['prefix'=>'drugFormulas'], function(){
+
+    Route::post('create', [DrugFormulationsController::class, 'createDrugFormula']);
+    Route::put('update', [DrugFormulationsController::class, 'updateDrugFormula']);
+    Route::get('get', [DrugFormulationsController::class, 'getSingleDrugFormula']);
+    Route::get('', [DrugFormulationsController::class, 'getAllDrugFormulas']);
+    Route::put('approve/{id}', [DrugFormulationsController::class, 'approveDrugFormula']);
+    Route::put('softDelete/{id}', [DrugFormulationsController::class, 'softDeleteDrugFormula']);
+    Route::put('restore/{id}', [DrugFormulationsController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [DrugFormulationsController::class, 'permanentlyDelete']);
+
+
+});
+
+//drugs
+Route::group(['prefix'=>'drugs'], function(){
+
+    Route::post('create', [DrugsController::class, 'createDrug']);
+    Route::put('update', [DrugsController::class, 'updateDrug']);
+    Route::get('get', [DrugsController::class, 'getSingleDrug']);
+    Route::get('', [DrugsController::class, 'getAllDrugs']);
+    Route::put('approve/{id}', [DrugsController::class, 'approveDrug']);
+    Route::put('softDelete/{id}', [DrugsController::class, 'softDeleteDrug']);
+    Route::put('restore/{id}', [DrugsController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [DrugsController::class, 'permanentlyDelete']);
 
 
 });
