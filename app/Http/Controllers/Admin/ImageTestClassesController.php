@@ -18,7 +18,7 @@ class ImageTestClassesController extends Controller
     //create
     public function createImageTestClass(Request $request){
         $request->validate([
-            'name' => 'required|string|min:1|max:255|unique:diagnosis,name',
+            'name' => 'required|string|min:1|max:255|unique:image_test_classes,name',
             'description'=>'string|min:1|max:255'            
         ]);
 
@@ -29,7 +29,7 @@ class ImageTestClassesController extends Controller
             'created_by' => User::getLoggedInUserId()
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created an ImageTest with name: ". $request->name);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created an ImageTest class with name: ". $request->name);
 
         return response()->json(
             ImageTestClass::selectImageTestClass(null, $request->name)
@@ -40,7 +40,7 @@ class ImageTestClassesController extends Controller
     //update
     public function updateImageTestClass(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:diagnosis,id',
+            'id' => 'required|integer|exists:image_test_classes,id',
             'name' => 'required|string|min:1|max:255',
             'description'=>'string|min:1|max:255'
             

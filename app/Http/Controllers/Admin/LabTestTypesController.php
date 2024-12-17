@@ -19,7 +19,7 @@ class LabTestTypesController extends Controller
      //create
         public function createLabTestType(Request $request){
             $request->validate([
-                'name' => 'required|string|min:1|max:255|unique:diagnosis,name',
+                'name' => 'required|string|min:1|max:255|unique:lab_test_types,name',
                 'description'=>'string|min:1|max:255'            
             ]);
     
@@ -41,7 +41,7 @@ class LabTestTypesController extends Controller
         //update
         public function updateLabTestType(Request $request){
             $request->validate([
-                'id' => 'required|integer|exists:diagnosis,id',
+                'id' => 'required|integer|exists:lab_test_types,id',
                 'name' => 'required|string|min:1|max:255',
                 'description'=>'string|min:1|max:255'
                 

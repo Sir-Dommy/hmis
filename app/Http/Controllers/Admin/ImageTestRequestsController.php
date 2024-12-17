@@ -18,7 +18,7 @@ class ImageTestRequestsController extends Controller
     //create
     public function createImageTestRequest(Request $request){
         $request->validate([
-            'name' => 'required|string|min:1|max:255|unique:diagnosis,name',
+            'name' => 'required|string|min:1|max:255|unique:image_test_requests,name',
             'description'=>'string|min:1|max:255'            
         ]);
 
@@ -40,7 +40,7 @@ class ImageTestRequestsController extends Controller
     //update
     public function updateImageTestRequest(Request $request){
         $request->validate([
-            'id' => 'required|integer|exists:diagnosis,id',
+            'id' => 'required|integer|exists:image_test_requests,id',
             'name' => 'required|string|min:1|max:255',
             'description'=>'string|min:1|max:255'
             
