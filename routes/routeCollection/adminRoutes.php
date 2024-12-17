@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BrandsController;
+use App\Http\Controllers\Admin\ChronicDiseasesController;
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -84,6 +85,22 @@ Route::group(['prefix'=>'brands'], function(){
     Route::put('approve/{id}', [BrandsController::class, 'approveBrand']);
     Route::put('softDelete/{id}', [BrandsController::class, 'softDeleteBrand']);
     Route::put('restore/{id}', [BrandsController::class, 'restoreSoftDeletedBrand']);
+    Route::delete('permanentlyDelete/{id}', [BrandsController::class, 'permanentlyDelete']);
+
+
+});
+
+
+//schemes payment types 
+Route::group(['prefix'=>'chronicDiseases'], function(){
+
+    Route::post('create', [ChronicDiseasesController::class, 'createChronicDisease']);
+    Route::put('update', [BrandsController::class, 'updateChronicDisease']);
+    Route::get('get', [BrandsController::class, 'getSingleChronicDisease']);
+    Route::get('', [BrandsController::class, 'getAllChronicDiseases']);
+    Route::put('approve/{id}', [BrandsController::class, 'approveChronicDisease']);
+    Route::put('softDelete/{id}', [BrandsController::class, 'softDeleteChronicDisease']);
+    Route::put('restore/{id}', [BrandsController::class, 'restoreSoftDeletedChronicDisease']);
     Route::delete('permanentlyDelete/{id}', [BrandsController::class, 'permanentlyDelete']);
 
 
