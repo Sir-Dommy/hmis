@@ -89,7 +89,11 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 10080),
+    //uncomment in production
+    //'ttl' => env('JWT_TTL', 1440),
+
+    //comment or remove in production
+    'ttl' => 300000,
 
     /*
     |--------------------------------------------------------------------------
