@@ -50,7 +50,7 @@ class BrandsController extends Controller
 
         $existing = Brand::selectBrands(null, $request->name);
 
-        count($existing) > 0 ?? $existing[0]['id'] != $request->id ?? throw new AlreadyExistsException(APIConstants::NAME_BRAND);
+        count($existing) > 0  && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_BRAND) : null;
 
 
         Brand::where('id', $request->id)
@@ -74,9 +74,7 @@ class BrandsController extends Controller
 
         $brand = Brand::selectBrands($request->id, $request->name);
 
-        if(count($brand) < 1){
-            throw new NotFoundException(APIConstants::NAME_BRAND);
-        }
+        count($brand) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null ;
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched an brand with name: ". $brand[0]['name']);
 
@@ -121,8 +119,7 @@ class BrandsController extends Controller
     //soft delete
     public function softDeleteBrand($id){
             
-        
-        count(Brand::selectBrands($id, null)) < 1 ?? throw new NotFoundException(APIConstants::NAME_BRAND);
+        count(Brand::selectBrands($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
         
         Brand::where('id', $id)
                 ->update([
@@ -141,7 +138,7 @@ class BrandsController extends Controller
     //restore
     public function restoreSoftDeletedBrand($id){ 
         
-        count(Brand::where('id', $id)->get()) < 1 ?? throw new NotFoundException(APIConstants::NAME_BRAND);
+        count(Brand::where('id', $id)->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
         
         Brand::where('id', $id)
                 ->update([
@@ -162,7 +159,7 @@ class BrandsController extends Controller
     //permanently delete
     public function permanentlyDelete($id){
             
-        count(Brand::where('id', $id)->get()) < 1 ?? throw new NotFoundException(APIConstants::NAME_BRAND);
+        count(Brand::where('id', $id)->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_BRAND) : null;
         
         Brand::destroy($id);
 
