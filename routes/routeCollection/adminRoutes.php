@@ -189,7 +189,7 @@ Route::group(['prefix'=>'physicalExaminationTypes'], function(){
 });
 
 //symptoms
-Route::group(['prefix'=>'drugs'], function(){
+Route::group(['prefix'=>'symptoms'], function(){
 
     Route::post('create', [SymptomsController::class, 'createSymptom']);
     Route::put('update', [SymptomsController::class, 'updateSymptom']);
