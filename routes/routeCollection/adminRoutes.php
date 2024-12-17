@@ -102,13 +102,13 @@ Route::group(['prefix'=>'brands'], function(){
 Route::group(['prefix'=>'chronicDiseases'], function(){
 
     Route::post('create', [ChronicDiseasesController::class, 'createChronicDisease']);
-    Route::put('update', [BrandsController::class, 'updateChronicDisease']);
-    Route::get('get', [BrandsController::class, 'getSingleChronicDisease']);
-    Route::get('', [BrandsController::class, 'getAllChronicDiseases']);
-    Route::put('approve/{id}', [BrandsController::class, 'approveChronicDisease']);
-    Route::put('softDelete/{id}', [BrandsController::class, 'softDeleteChronicDisease']);
-    Route::put('restore/{id}', [BrandsController::class, 'restoreSoftDeletedChronicDisease']);
-    Route::delete('permanentlyDelete/{id}', [BrandsController::class, 'permanentlyDelete']);
+    Route::put('update', [ChronicDiseasesController::class, 'updateChronicDisease']);
+    Route::get('get', [ChronicDiseasesController::class, 'getSingleChronicDisease']);
+    Route::get('', [ChronicDiseasesController::class, 'getAllChronicDiseases']);
+    Route::put('approve/{id}', [ChronicDiseasesController::class, 'approveChronicDisease']);
+    Route::put('softDelete/{id}', [ChronicDiseasesController::class, 'softDeleteChronicDisease']);
+    Route::put('restore/{id}', [ChronicDiseasesController::class, 'restoreSoftDeletedChronicDisease']);
+    Route::delete('permanentlyDelete/{id}', [ChronicDiseasesController::class, 'permanentlyDelete']);
 
 
 });
