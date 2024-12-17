@@ -32,14 +32,14 @@ class ImageTestRequest extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
-        ])->whereNull('image_test_requests.deleted_by')
-          ->whereNull('image_test_requests.deleted_at');
+        ])->whereNull('image_test_request.deleted_by')
+          ->whereNull('image_test_request.deleted_at');
 
         if($id != null){
-            $image_test_requests_query->where('image_test_requests.id', $id);
+            $image_test_requests_query->where('image_test_request.id', $id);
         }
         elseif($name != null){
-            $image_test_requests_query->where('image_test_requests.name', $name);
+            $image_test_requests_query->where('image_test_request.name', $name);
         }
 
 
