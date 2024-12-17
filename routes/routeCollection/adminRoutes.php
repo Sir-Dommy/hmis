@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\PhysicalExaminationTypesController;
 use App\Http\Controllers\Admin\SchemesController;
+use App\Http\Controllers\Admin\SymptomsController;
 use App\Http\Controllers\BranchController;
 use App\Models\Admin\Diagnosis;
 use Illuminate\Support\Facades\Route;
@@ -183,6 +184,21 @@ Route::group(['prefix'=>'drugs'], function(){
     Route::put('softDelete/{id}', [PhysicalExaminationTypesController::class, 'softDeletePhysicalExaminationType']);
     Route::put('restore/{id}', [PhysicalExaminationTypesController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [PhysicalExaminationTypesController::class, 'permanentlyDelete']);
+
+
+});
+
+//symptoms
+Route::group(['prefix'=>'drugs'], function(){
+
+    Route::post('create', [SymptomsController::class, 'createSymptom']);
+    Route::put('update', [SymptomsController::class, 'updateSymptom']);
+    Route::get('get', [SymptomsController::class, 'getSingleSymptom']);
+    Route::get('', [SymptomsController::class, 'getAllSymptom']);
+    Route::put('approve/{id}', [SymptomsController::class, 'approveSymptom']);
+    Route::put('softDelete/{id}', [SymptomsController::class, 'softDeleteSymptom']);
+    Route::put('restore/{id}', [SymptomsController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [SymptomsController::class, 'permanentlyDelete']);
 
 
 });
