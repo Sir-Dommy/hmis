@@ -83,7 +83,7 @@ Route::group(['prefix'=>'brands'], function(){
     Route::get('', [BrandsController::class, 'getAllBrands']);
     Route::put('approve/{id}', [BrandsController::class, 'approveBrand']);
     Route::put('softDelete/{id}', [BrandsController::class, 'softDeleteBrand']);
-    Route::delete('restore/{id}', [BrandsController::class, 'restoreSoftDeletedBrand']);
+    Route::put('restore/{id}', [BrandsController::class, 'restoreSoftDeletedBrand']);
     Route::delete('permanentlyDelete/{id}', [BrandsController::class, 'permanentlyDelete']);
 
 
