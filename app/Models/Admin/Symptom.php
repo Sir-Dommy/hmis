@@ -47,7 +47,6 @@ class Symptom extends Model
             $symptom_details = [
                 'id' => $symptom->id,
                 'name' => $symptom->name,
-                'description' => $symptom->description,
                 
             ];
 
