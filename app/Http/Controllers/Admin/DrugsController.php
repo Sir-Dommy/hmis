@@ -23,7 +23,7 @@ class DrugsController extends Controller
             "in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "description" =>'string|min:1|max:255',
-            "expiry_date" =>'require|date',
+            "expiry_date" =>'required|date',
         ]);
 
         $brand = Brand::selectBrands(null, $request->brand);
@@ -55,7 +55,7 @@ class DrugsController extends Controller
             "in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "description" =>'string|min:1|max:255',
-            "expiry_date" =>'require|date',
+            "expiry_date" =>'required|date',
             
         ]);
 
