@@ -126,7 +126,7 @@ class Patient extends Model
             'insurance_details' => $patient->insuranceDetails,   
             'chronic_diseases' => $patient->chronicDiseases,
             'visits' => $patient->visits,
-            'vitals' => $patient->visits ? $patient->visits->vitals : [],
+            'vitals' => count($patient->visits) > 0 ? $patient->visits->vitals : [],
             'created_by' => $patient->createdBy ? $patient->createdBy->email : null,
             'created_at' => $patient->created_at,
             'updated_by' => $patient->updatedBy ? $patient->updatedBy->email : null,
