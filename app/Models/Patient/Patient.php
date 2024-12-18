@@ -87,8 +87,6 @@ class Patient extends Model
 
         else{
             $paginated_patients = $patients_query->paginate(10);
-
-            return $paginated_patients;
         
             $paginated_patients->getCollection()->transform(function ($patient) {
                 return Patient::mapResponse($patient);
@@ -128,7 +126,7 @@ class Patient extends Model
             'insurance_details' => $patient->insuranceDetails,   
             'chronic_diseases' => $patient->chronicDiseases,
             'visits' => $patient->visits,
-            'vitals' => $patient->visits->vitals ? $patient->visits->vitals : [],
+            'vitals' => $patient->visits ? $patient->visits->vitals : [],
             'created_by' => $patient->createdBy ? $patient->createdBy->email : null,
             'created_at' => $patient->created_at,
             'updated_by' => $patient->updatedBy ? $patient->updatedBy->email : null,
