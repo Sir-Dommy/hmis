@@ -70,7 +70,7 @@ class Patient extends Model
             'visits:id,patient_id,claim_number,amount,visit_type,stage,open',
             'visits.clinic:id,name,description',
             'visits.department:id,name',
-            'visits.feeType:id,name',
+            'visits.feeType',
             'visits.scheme:id,name',
             'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
