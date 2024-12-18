@@ -87,6 +87,8 @@ class Patient extends Model
 
         else{
             $paginated_patients = $patients_query->paginate(10);
+
+            return $paginated_patients;
         
             $paginated_patients->getCollection()->transform(function ($patient) {
                 return Patient::mapResponse($patient);
