@@ -68,10 +68,10 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,member_validity', 
             'visits:id,patient_id,claim_number,amount,visit_type,stage,open',
-            'visits.clinic:id,clinic_id,name,description',
-            'visits.department:id,department_id,name',
-            'visits.feeType:id,fee_type,name',
-            'visits.scheme:id,scheme_id,name',
+            'visits.clinic:id,name,description',
+            'visits.department:id,name',
+            'visits.feeType:id,name',
+            'visits.scheme:id,name',
             'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
