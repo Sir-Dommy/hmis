@@ -28,15 +28,8 @@ class Vital extends Model
         'deleted_at'
     ];
 
-
-
-        public function vitals()
-    {
-        return $this->hasMany(Vital::class, 'visits_id');
-    }
-
     //perform selection
-    public static function selectVitals($id, $visits_id){
+    public static function selectVitals($id, $visit_id){
         $vitals_query = Vital::with([
             'createdBy:id',
             'updatedBy:id',
@@ -45,8 +38,8 @@ class Vital extends Model
         if($id != null){
             $vitals_query->where('vitals.id', $id);
         }
-        elseif($visits_id != null){
-            $vitals_query->where('patients.visits_id', $visits_id);
+        elseif($visit_id != null){
+            $vitals_query->where('vitals.visit_id', $visit_id);
         }
        
         else{

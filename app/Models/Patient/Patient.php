@@ -48,6 +48,11 @@ class Patient extends Model
     {
         return $this->hasMany(InsuranceDetail::class, 'patient_id', 'id');
     }
+    
+    public function visits()
+    {
+        return $this->hasMany(Visit::class, 'patient_id', 'id');
+    }
 
     public function chronicDiseases(){
         return $this->belongsToMany(ChronicDisease::class, 'patients_chronic_diseases_join', 'patient_id', 'chronic_disease_id');
@@ -61,7 +66,9 @@ class Patient extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'insuranceDetails:id,patient_id,member_validity'
+            'insuranceDetails:id,patient_id,member_validity', 
+            'visits',
+            'visits.vitals'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
@@ -118,6 +125,8 @@ class Patient extends Model
             'next_of_kin_relationship' => $patient->next_of_kin_relationship,
             'insurance_details' => $patient->insuranceDetails,   
             'chronic_diseases' => $patient->chronicDiseases,
+            'visits' => $patient->visits,
+            'vitals' => $patient->visits->vitals,
             'created_by' => $patient->createdBy ? $patient->createdBy->email : null,
             'created_at' => $patient->created_at,
             'updated_by' => $patient->updatedBy ? $patient->updatedBy->email : null,

@@ -79,6 +79,11 @@ class Visit extends Model
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class, 'visit_id', 'id');
+    }
+
 
     //perform selection
     public static function selectVisits($id){
@@ -91,7 +96,8 @@ class Visit extends Model
             'clinic:id,name',
             'department:id,name',
             'feeType:id,name',
-            'scheme:id,name'
+            'scheme:id,name',
+            'vitals:id,visit_id'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 

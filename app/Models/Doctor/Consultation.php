@@ -27,4 +27,12 @@ class Consultation extends Model
         return $this->belongsToMany(Diagnosis::class, 'consultation_diagnosis_join', 'consultation_id', 'diagnosis_id');
     }
 
+    public function symptoms(){
+        return $this->belongsToMany(Diagnosis::class, 'consultations_symptoms_join', 'consultation_id', 'symptom_id');
+    }
+
+    public function physicalExaminations(){
+        return $this->belongsToMany(Diagnosis::class, 'consultations_physical_exam_join', 'consultation_id', 'physical_examination_id');
+    }
+
 }
