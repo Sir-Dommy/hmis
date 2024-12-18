@@ -68,7 +68,7 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,member_validity', 
             'visits',
-            'visits.vitals'
+            //'visits.vitals'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
@@ -126,7 +126,7 @@ class Patient extends Model
             'insurance_details' => $patient->insuranceDetails,   
             'chronic_diseases' => $patient->chronicDiseases,
             'visits' => $patient->visits,
-            'vitals' => $patient->visits->vitals,
+            //'vitals' => $patient->visits->vitals,
             'created_by' => $patient->createdBy ? $patient->createdBy->email : null,
             'created_at' => $patient->created_at,
             'updated_by' => $patient->updatedBy ? $patient->updatedBy->email : null,
