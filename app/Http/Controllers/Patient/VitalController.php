@@ -95,8 +95,8 @@ class VitalController extends Controller
 
     //getting single vital
     public function getSingleVital(Request $request){
-        echo $request->vital_id;
-        ($request->vital_id == null || $request->visit_id == null) ? throw new InputsValidationException("vital id or visit id is required!") : null;
+        
+        ($request->vital_id == null && $request->visit_id == null) ? throw new InputsValidationException("vital id or visit id is required!") : null;
 
         $vital = Vital::selectVitals($request->vital_id, $request->visit_id);
 
