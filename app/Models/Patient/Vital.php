@@ -13,7 +13,7 @@ class Vital extends Model
     protected $table = "vitals";
 
     protected $fillable = [
-        'visits_id',
+        'visit_id',
         'weight', 
         'blood_pressure',
         'blood_glucose',
