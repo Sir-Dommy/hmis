@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\InputsValidationException;
 use App\Models\Patient\Vital;
 use App\Exceptions\NotFoundException;
@@ -28,6 +29,8 @@ class VitalController extends Controller
             'allergies' => 'string|min:2|max:255',
             'nursing_remarks' => 'string|min:3|max:25'
         ]);
+
+        count(Vital::selectVitals(null, $request->visit_id, null)) > 0 ? throw new AlreadyExistsException("Vital already exists!!! kindly update instead...") : null; 
 
         Vital::create([
             'weight' => $request->weight, 
