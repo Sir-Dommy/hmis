@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Patient;
 use App\Exceptions\InputsValidationException;
 use App\Models\Patient\Vital;
 use App\Exceptions\NotFoundException;
-use App\Models\Admin\Scheme;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
@@ -20,7 +19,7 @@ class VitalController extends Controller
     public function createVital(Request $request){
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
-            'weight' => 'numeric|between:2,255',
+            'weight' => 'required|numeric|between:0,2550',
             'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
             'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
             'height' => 'required|numeric|min:50|max:300',
@@ -97,7 +96,7 @@ class VitalController extends Controller
     //getting single vital
     public function getSingleVital(Request $request){
 
-        $request->id == null || $request->visit_id == null ? throw new InputsValidationException("vital id is required!") : null;
+        $request->id == null || $request->visit_id == null ? throw new InputsValidationException("vital id or visit id is required!") : null;
 
         $vital = Vital::selectVitals($request->id, $request->visit_id);
 
