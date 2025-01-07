@@ -25,7 +25,7 @@ class VitalController extends Controller
             'height' => 'required|numeric|min:50|max:300',
             'blood_type' => 'required|string|min:1',
             'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255|exists:roles,name',
+            'allergies' => 'string|min:2|max:255',
             'nursing_remarks' => 'string|min:3|max:25'
         ]);
 
@@ -61,7 +61,7 @@ class VitalController extends Controller
             'height' => 'required|numeric|min:50|max:300',
             'blood_type' => 'required|string|min:1',
             'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255|exists:roles,name',
+            'allergies' => 'string|min:2|max:255',
             'nursing_remarks' => 'string|min:3|max:25'
         ]);
 
@@ -95,7 +95,7 @@ class VitalController extends Controller
 
     //getting single vital
     public function getSingleVital(Request $request){
-        
+
         ($request->vital_id == null && $request->visit_id == null) ? throw new InputsValidationException("vital id or visit id is required!") : null;
 
         $vital = Vital::selectVitals($request->vital_id, $request->visit_id);
