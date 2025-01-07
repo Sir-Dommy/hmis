@@ -66,7 +66,7 @@ class Vital extends Model
     private static function mapResponse($vital){
         return [
             'id' => $vital->id,
-            'visits_id'=>$vital->visits_id,
+            'visit_id'=>$vital->visit_id,
             'weight'=>$vital->weight, 
             'blood_pressure'=>$vital->blood_pressure,
             'blood_glucose'=>$vital->blood_glucose,
