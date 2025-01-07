@@ -2,6 +2,7 @@
 
 namespace App\Models\Patient;
 
+use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +10,8 @@ class Vital extends Model
 {
 
     use HasFactory;
+
+    use CustomUserRelations;
 
     protected $table = "vitals";
 
