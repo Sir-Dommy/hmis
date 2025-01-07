@@ -97,7 +97,7 @@ class Visit extends Model
             'department:id,name',
             'feeType:id,name',
             'scheme:id,name',
-            'vitals:id,visit_id'
+            'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks,'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 
