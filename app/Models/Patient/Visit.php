@@ -92,12 +92,12 @@ class Visit extends Model
         $visit_query = Visit::with([
             'createdBy:id,email',
             'updatedBy:id,email',
-            // 'patient:id,patient_code',
-            // 'clinic:id,name',
-            // 'department:id,name',
-            // 'feeType:id,name',
-            // 'scheme:id,name',
-            // 'vitals:id,visit_id'
+            'patient:id,patient_code',
+            'clinic:id,name',
+            'department:id,name',
+            'feeType:id,name',
+            'scheme:id,name',
+            'vitals:id,visit_id'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 
@@ -128,7 +128,7 @@ class Visit extends Model
         return [
             'id' => $visit->id,
             'patient_id' => $visit->patient_id,
-            'patient_code' => $visit->patient->patient_code,
+            'patient_code' => $visit->patient ? $visit->patient->patient_code : null,
             'claim_number' => $visit->claim_number,
             'amount' => $visit->amount,
             'department' => $visit->department->name,
