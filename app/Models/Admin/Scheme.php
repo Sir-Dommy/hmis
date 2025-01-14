@@ -90,7 +90,8 @@ class Scheme extends Model
                 'other_details' => $scheme->other_details,
                 'description' => $scheme->description,
                 'schemeTypes' => $scheme->schemeTypes,
-                'paymentTypes' => $scheme->paymentTypes->name,
+                'payment_type_id' => $scheme->paymentTypes->id,
+                'payment_type_name' => $scheme->paymentTypes->name,
                 
                 // 'created_by' => $scheme->createdBy ? $scheme->createdBy->email : null,
                 // 'created_at' => $scheme->created_at,
