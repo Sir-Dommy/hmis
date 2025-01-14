@@ -15,6 +15,7 @@ class Scheme extends Model
     protected $table = "schemes";
 
     protected $fillable = [
+        "payment_type_id",
         "name",
         "account",
         "initiate_url",
@@ -38,10 +39,16 @@ class Scheme extends Model
         "deleted_at",
     ];
 
-    //relationship with schemes
+    //relationship with schemes_types
     public function schemeTypes()
     {
         return $this->hasMany(SchemeTypes::class, 'scheme_id', 'id');
+    }
+
+    //relationship with schemes
+    public function paymentTypes()
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
 
@@ -53,7 +60,8 @@ class Scheme extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'schemeTypes:id,scheme_id,name'
+            'schemeTypes:id,scheme_id,name',
+            'paymentTypes:id,name'
         ])->whereNull('schemes.deleted_by')
           ->whereNull('schemes.deleted_at');
 
@@ -82,6 +90,7 @@ class Scheme extends Model
                 'other_details' => $scheme->other_details,
                 'description' => $scheme->description,
                 'schemeTypes' => $scheme->schemeTypes,
+                'paymentTypes' => $scheme->paymentTypes->name,
                 
                 // 'created_by' => $scheme->createdBy ? $scheme->createdBy->email : null,
                 // 'created_at' => $scheme->created_at,

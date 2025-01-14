@@ -48,6 +48,7 @@ class SchemesController extends Controller
     //create a scheme
     public function createScheme(Request $request){
         $request->validate([
+            'payment_type_id' => 'required|exists:payment_types,id',
             'name' => 'required|string|min:3|max:255|unique:schemes',
             'account' => 'required|string|min:1|max:255|unique:schemes',
             'initiate_url' => 'string|min:3|max:255',
@@ -64,6 +65,7 @@ class SchemesController extends Controller
 
     
         $created = Scheme::create([
+            'payment_type_id' => $request->payment_type_id,
             'name' => $request->name,
             'account' => $request->account,
             'initiate_url' => $request->initiate_url,
@@ -90,11 +92,12 @@ class SchemesController extends Controller
 
         else{
             foreach ($request->scheme_types as $type){
-                SchemeTypes::create([
-                    "name" => $type->name,
-                    "Description" => $type->description,
-                    "scheme_id" => $created->id
-                ]);
+                $this->schemeTypeExits($type->name) ? null :
+                    SchemeTypes::create([
+                        "name" => $type->name,
+                        "Description" => $type->description,
+                        "scheme_id" => $created->id
+                    ]);
             }
         }
 
@@ -109,6 +112,7 @@ class SchemesController extends Controller
     public function updateScheme(Request $request){
         $request->validate([
             'id' => 'required|integer|min:1|exists:schemes,id',
+            'payment_type_id' => 'required|exists:payment_types,id',
             'name' => 'required|string|min:3|max:255',
             'account' => 'required|string|min:1|max:255',
             'initiate_url' => 'string|min:3|max:255',
@@ -139,6 +143,7 @@ class SchemesController extends Controller
     
         Scheme::where('id', $request->id)
             ->update([
+                'payment_type_id' => $request->payment_type_id,
                 'name' => $request->name,
                 'account' => $request->account,
                 'initiate_url' => $request->initiate_url,
@@ -157,11 +162,12 @@ class SchemesController extends Controller
             // add related scheme types
         if($request->scheme_types){
             foreach ($request->scheme_types as $type){
-                SchemeTypes::create([
-                    "name" => $type->name,
-                    "Description" => $type->description,
-                    "scheme_id" => $existing[0]['id']
-                ]);
+                $this->schemeTypeExits($type->name) ? null :
+                    SchemeTypes::create([
+                        "name" => $type->name,
+                        "Description" => $type->description,
+                        "scheme_id" => $existing[0]['id']
+                    ]);
             }
         }
 
@@ -261,10 +267,17 @@ class SchemesController extends Controller
     
         Scheme::destroy($id);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Permenently deleted a Scheme with name: ". $existing[0]['name']);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Permanently deleted a Scheme with name: ". $existing[0]['name']);
 
         return response()->json(
                 []
             ,200);
+    }
+
+    private function schemeTypeExits($name){
+        if(count(SchemeTypes::where('name', $name)->get()) > 0 ){
+            return 1;
+        }
+        return 0;
     }
 }

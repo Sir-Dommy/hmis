@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('schemes', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('payment_type_id');
             $table->string('name')->unique();
             $table->string('account')->unique();
             $table->string('initiate_url')->nullable();
@@ -35,6 +36,11 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('payment_type_id') // Column name
+                  ->references('id') // Target column in the parent table
+                  ->on('payment_types') // Parent table
+                  ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table
