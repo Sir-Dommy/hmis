@@ -18,8 +18,7 @@ class PaymentPath extends Model
     //perform selection
     public static function selectPaymentPaths($id, $name){
 
-        // return $this->aggregateAllRels();
-        $payment_path_query = PaymentPath::where(1, '=', 1);
+        $payment_path_query = PaymentPath::whereNotNull('id');
 
         if($id != null){
             $payment_path_query->where('payment_paths.id', $id);
