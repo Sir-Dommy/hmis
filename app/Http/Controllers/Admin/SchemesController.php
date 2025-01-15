@@ -136,9 +136,9 @@ class SchemesController extends Controller
                         ->whereNull('deleted_by')
                         ->get();
         
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SCHEME);
-        }
+        // if(count($existing) == 0){
+        //     throw new NotFoundException(APIConstants::NAME_SCHEME);
+        // }
 
         if(count($existing) > 1 || $existing[0]['id'] != $request->id){
             throw new AlreadyExistsException(APIConstants::NAME_SCHEME);
