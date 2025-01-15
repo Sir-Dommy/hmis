@@ -29,6 +29,7 @@ class Scheme extends Model
         "password",
         "other_details",
         "description",
+        "payment_path_id",
         "created_by",
         "updated_by",
         "approved_by",

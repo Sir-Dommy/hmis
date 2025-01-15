@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Scheme;
 use App\Models\Admin\SchemeTypes;
+use App\Models\PaymentPath;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
@@ -49,6 +50,7 @@ class SchemesController extends Controller
     public function createScheme(Request $request){
         $request->validate([
             'payment_type_id' => 'required|exists:payment_types,id',
+            'payment_path' => 'required|exists:payment_paths,name',
             'name' => 'required|string|min:3|max:255|unique:schemes',
             'account' => 'required|string|min:1|max:255|unique:schemes',
             'initiate_url' => 'string|min:3|max:255',
@@ -78,6 +80,7 @@ class SchemesController extends Controller
             'username' => $request->username,
             'password' => $request->password,
             'description' => $request->description,
+            'payment_path_id' => $this->getPaymentPathId($request->payment_path),
             'created_by' => User::getLoggedInUserId()
         ]);
 
@@ -113,6 +116,7 @@ class SchemesController extends Controller
         $request->validate([
             'id' => 'required|integer|min:1|exists:schemes,id',
             'payment_type_id' => 'required|exists:payment_types,id',
+            'payment_path' => 'required|exists:payment_paths,name',
             'name' => 'required|string|min:3|max:255',
             'account' => 'required|string|min:1|max:255',
             'initiate_url' => 'string|min:3|max:255',
@@ -156,6 +160,7 @@ class SchemesController extends Controller
                 'username' => $request->username,
                 'password' => $request->password,
                 'description' => $request->description,
+                'payment_path_id' => $this->getPaymentPathId($request->payment_path),
                 'updated_by' => User::getLoggedInUserId()
             ]);
 
@@ -279,5 +284,14 @@ class SchemesController extends Controller
             return 1;
         }
         return 0;
+    }
+
+    private function getPaymentPathId($payment_path_name){
+        $existing = PaymentPath::where('name', $payment_path_name)->get();
+
+        count($existing) < 0 ? throw new NotFoundException(APIConstants::NAME_PAYMENT_PATH) : null;
+
+        return $existing[0]['id'];
+
     }
 }
