@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\PaymentType;
 use App\Models\Branch;
+use App\Models\PaymentPath;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Spatie\Permission\Models\Permission;
@@ -36,6 +37,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultClinics($user[0]['id']);
 
         $this->createDefaultPaymentTypes($user[0]['id']);
+
+        $this->createPaymentPaths();
     }
 
     private function defineRolesAndPermissions()
@@ -144,5 +147,18 @@ class AuthServiceProvider extends ServiceProvider
             "description" => "Any other not yet listed",
             "created_by" => $user_id
         ]);
+    }
+    
+
+    //Ensure you add all payment path during production........
+    private function createPaymentPaths(){
+        PaymentPath::firstOrCreate([
+            "name" => "MPESA"
+        ]);
+
+        PaymentPath::firstOrCreate([
+            "name" => "SLADE"
+        ]);
+
     }
 }
