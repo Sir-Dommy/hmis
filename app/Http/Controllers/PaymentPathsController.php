@@ -22,7 +22,7 @@ class PaymentPathsController extends Controller
         $payment_path = PaymentPath::selectPaymentPaths($request->id, $request->name);
 
         if(count($payment_path) < 1){
-            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE);
+            throw new NotFoundException(APIConstants::NAME_PAYMENT_PATH);
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a payment path with id: ". $payment_path[0]['id']);
