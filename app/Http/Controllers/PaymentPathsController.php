@@ -15,7 +15,7 @@ class PaymentPathsController extends Controller
     //Getting a single payment path details 
     public function getSinglePaymentPath(Request $request){
 
-        if($request->id == null && $request->name){
+        if($request->id == null && $request->name == null){
             throw new InputsValidationException("id or name required!");
         }
 
