@@ -140,7 +140,7 @@ class SchemesController extends Controller
         //     throw new NotFoundException(APIConstants::NAME_SCHEME);
         // }
 
-        if(count($existing) > 1 || $existing[0]['id'] != $request->id){
+        if(count($existing) > 1 ||  (count($existing) > 1 && $existing[0]['id'] != $request->id)){
             throw new AlreadyExistsException(APIConstants::NAME_SCHEME);
         }
 
