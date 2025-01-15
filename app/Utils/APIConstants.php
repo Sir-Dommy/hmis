@@ -61,4 +61,20 @@ class APIConstants
     public const NAME_BRAND = 'Brand';
     public const NAME_DRUG_FORMULATION = 'Drug formulation';
     public const NAME_DRUG = 'Drug';
+
+
+    // Bill and transactions statuses
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_PENDING_CODE = '000';
+    public const STATUS_SUCCESS = 'SUCCESS';
+    public const STATUS_SUCCESS_CODE = '001';
+    public const STATUS_REJECTED = 'REJECTED';
+    public const STATUS_REJECTED_CODE = '003';
+    public const STATUS_CANCELLED = 'CANCELLED';
+    public const STATUS_CANCELLED_CODE = '008';
+    public const STATUS_REVERSED = 'REVERSED';
+    public const STATUS_REVERSED_CODE = '009';
+    public const STATUS_PENDING_REVERSAL = 'PENDING REVERSAL';
+    public const STATUS_PENDING_REVERSAL_CODE = '0010';
+
 }
