@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin;
 
+use App\Models\PaymentPath;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,10 +47,16 @@ class Scheme extends Model
         return $this->hasMany(SchemeTypes::class, 'scheme_id', 'id');
     }
 
-    //relationship with schemes
+    //relationship with Payment types
     public function paymentTypes()
     {
         return $this->belongsTo(PaymentType::class, 'payment_type_id');
+    }
+
+    //relationship with payment Paths
+    public function paymentPath()
+    {
+        return $this->belongsTo(PaymentPath::class, 'payment_path_id');
     }
 
 
@@ -62,7 +69,8 @@ class Scheme extends Model
             'updatedBy:id,email',
             'approvedBy:id,email',
             'schemeTypes:id,scheme_id,name',
-            'paymentTypes:id,name'
+            'paymentTypes:id,name',
+            'paymentPath:id,name'
         ])->whereNull('schemes.deleted_by')
           ->whereNull('schemes.deleted_at');
 
@@ -93,6 +101,7 @@ class Scheme extends Model
                 'schemeTypes' => $scheme->schemeTypes,
                 'payment_type_id' => $scheme->paymentTypes->id,
                 'payment_type_name' => $scheme->paymentTypes->name,
+                'payment_path' => $scheme->paymentPath->name,
                 
                 // 'created_by' => $scheme->createdBy ? $scheme->createdBy->email : null,
                 // 'created_at' => $scheme->created_at,
