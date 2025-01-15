@@ -72,7 +72,7 @@ class PaymentTypeController extends Controller
     //Gettind a single payment type details 
     public function getSinglePaymentType(Request $request){
 
-        if($request->id == null && $request->name){
+        if($request->id == null && $request->name == null){
             throw new InputsValidationException("id or name required!");
         }
 

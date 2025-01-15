@@ -79,6 +79,11 @@ class Visit extends Model
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class, 'visit_id', 'id');
+    }
+
 
     //perform selection
     public static function selectVisits($id){
@@ -91,7 +96,8 @@ class Visit extends Model
             'clinic:id,name',
             'department:id,name',
             'feeType:id,name',
-            'scheme:id,name'
+            'scheme:id,name',
+            'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 
@@ -122,7 +128,7 @@ class Visit extends Model
         return [
             'id' => $visit->id,
             'patient_id' => $visit->patient_id,
-            'patient_code' => $visit->patient->patient_code,
+            'patient_code' => $visit->patient ? $visit->patient->patient_code : null,
             'claim_number' => $visit->claim_number,
             'amount' => $visit->amount,
             'department' => $visit->department->name,
@@ -130,9 +136,9 @@ class Visit extends Model
             'visit_type' => $visit->visit_type,
             'scheme' => $visit->scheme->name,
             'fee_type' => $visit->feeType ? $visit->feeType->name : null,
-            'open' => $visit->stage,
+            'stage' => $visit->stage,
             'open' => $visit->open,
-            'document_path' => $visit->document_path,
+            'vitals' => $visit->vitals,
             'created_by' => $visit->createdBy ? $visit->createdBy->email : null,
             'created_at' => $visit->created_at,
             'updated_by' => $visit->updatedBy ? $visit->updatedBy->email : null,

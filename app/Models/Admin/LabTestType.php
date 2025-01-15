@@ -32,14 +32,14 @@ class LabTestType extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
-        ])->whereNull('lab_test_requests.deleted_by')
-          ->whereNull('lab_test_requests.deleted_at');
+        ])->whereNull('lab_test_types.deleted_by')
+          ->whereNull('lab_test_types.deleted_at');
 
         if($id != null){
-            $lab_test_types_query->where('lab_test_requests.id', $id);
+            $lab_test_types_query->where('lab_test_types.id', $id);
         }
         elseif($name != null){
-            $lab_test_types_query->where('lab_test_requests.name', $name);
+            $lab_test_types_query->where('lab_test_types.name', $name);
         }
 
 

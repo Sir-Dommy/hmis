@@ -12,7 +12,7 @@ class LabTestRequest extends Model
 
     use CustomUserRelations;
 
-    protected $table = "lab_test_requests";
+    protected $table = "lab_test_request";
 
     protected $fillable = [
         "name",
@@ -32,14 +32,14 @@ class LabTestRequest extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
-        ])->whereNull('lab_test_requests.deleted_by')
-          ->whereNull('lab_test_requests.deleted_at');
+        ])->whereNull('lab_test_request.deleted_by')
+          ->whereNull('lab_test_request.deleted_at');
 
         if($id != null){
-            $lab_test_requests_query->where('lab_test_requests.id', $id);
+            $lab_test_requests_query->where('lab_test_request.id', $id);
         }
         elseif($name != null){
-            $lab_test_requests_query->where('lab_test_requests.name', $name);
+            $lab_test_requests_query->where('lab_test_request.name', $name);
         }
 
 

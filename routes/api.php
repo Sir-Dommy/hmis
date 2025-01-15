@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\Patient\EmergencyVisitController;
+use App\Http\Controllers\PaymentPathsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,16 @@ Route::middleware('jwt.auth')->group(function(){
         Route::delete('branches', [BranchController::class, 'destroy']);
         Route::get('getBranchesAndRoles', [BranchController::class, 'getBranchesAndRoles']);
         Route::post('register', [AuthController::class, 'register']);
+
+
+        //payment paths route to view only.... payment paths will not be edited from the frontend to avoid unexpected errors
+        Route::group(['prefix'=>'paymentPaths'], function(){
+
+            Route::get('get', [PaymentPathsController::class, 'getSinglePaymentPath']);
+            Route::get('', [PaymentPathsController::class, 'getAllPaymentPaths']);
+        
+        
+        });
 
 
         require_once __DIR__.'/routeCollection/logRoutes.php';

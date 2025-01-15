@@ -45,7 +45,7 @@ Route::group(['prefix'=>'visits'], function(){
 Route::group(['prefix'=>'vitals'], function(){
     Route::post('create', [VitalController::class, 'createVital']);
     Route::put('update', [VitalController::class, 'updateVital']);
-    Route::get('get/{id}', [VitalController::class, 'getSingleVital']);
+    Route::get('get', [VitalController::class, 'getSingleVital']);
     Route::get('', [VitalController::class, 'getAllVitals']);
     Route::put('softDelete/{id}', [VitalController::class, 'softDeleteVital']);
     Route::delete('permanentlyDelete/{id}', [VitalController::class, 'permanentlyDeleteVital']);

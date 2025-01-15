@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('other_details')->nullable();
             $table->text('description')->nullable();
+            $table->unsignedBigInteger('payment_path_id');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
@@ -67,6 +68,11 @@ return new class extends Migration
                 ->references('id') // Target column in the parent table
                 ->on('users') // Parent table
                 ->onDelete('cascade');
+
+            $table->foreign('payment_path_id') // Column name
+                    ->references('id') // Target column in the parent table
+                    ->on('payment_paths') // Parent table
+                    ->onDelete('cascade');
         });
     }
 

@@ -9,6 +9,12 @@ use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\DrugFormulationsController;
 use App\Http\Controllers\Admin\DrugsController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\ImageTestClassesController;
+use App\Http\Controllers\Admin\ImageTestRequestsController;
+use App\Http\Controllers\Admin\ImageTestTypesController;
+use App\Http\Controllers\Admin\LabTestClassesController;
+use App\Http\Controllers\Admin\LabTestRequestsController;
+use App\Http\Controllers\Admin\LabTestTypesController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\PhysicalExaminationTypesController;
 use App\Http\Controllers\Admin\SchemesController;
@@ -199,6 +205,96 @@ Route::group(['prefix'=>'symptoms'], function(){
     Route::put('softDelete/{id}', [SymptomsController::class, 'softDeleteSymptom']);
     Route::put('restore/{id}', [SymptomsController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [SymptomsController::class, 'permanentlyDelete']);
+
+
+});
+
+//Image Test Classes
+Route::group(['prefix'=>'imageTestClasses'], function(){
+
+    Route::post('create', [ImageTestClassesController::class, 'createImageTestClass']);
+    Route::put('update', [ImageTestClassesController::class, 'updateImageTestClass']);
+    Route::get('get', [ImageTestClassesController::class, 'getSingleImageTestClass']);
+    Route::get('', [ImageTestClassesController::class, 'getAllImageTestClass']);
+    Route::put('approve/{id}', [ImageTestClassesController::class, 'approveImageTestClass']);
+    Route::put('softDelete/{id}', [ImageTestClassesController::class, 'softDeleteImageTestClass']);
+    Route::put('restore/{id}', [ImageTestClassesController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [ImageTestClassesController::class, 'permanentlyDelete']);
+
+
+});
+
+//Image Test Request
+Route::group(['prefix'=>'imageTestRequests'], function(){
+
+    Route::post('create', [ImageTestRequestsController::class, 'createImageTestRequest']);
+    Route::put('update', [ImageTestRequestsController::class, 'updateImageTestRequest']);
+    Route::get('get', [ImageTestRequestsController::class, 'getSingleImageTestRequest']);
+    Route::get('', [ImageTestRequestsController::class, 'getAllImageTestRequest']);
+    Route::put('approve/{id}', [ImageTestRequestsController::class, 'approveImageTestRequest']);
+    Route::put('softDelete/{id}', [ImageTestRequestsController::class, 'softDeleteImageTestRequest']);
+    Route::put('restore/{id}', [ImageTestRequestsController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [ImageTestRequestsController::class, 'permanentlyDelete']);
+
+
+});
+
+//Image Test Types
+Route::group(['prefix'=>'imageTestTypes'], function(){
+
+    Route::post('create', [ImageTestTypesController::class, 'createImageTestType']);
+    Route::put('update', [ImageTestTypesController::class, 'updateImageTestType']);
+    Route::get('get', [ImageTestTypesController::class, 'getSingleImageTestType']);
+    Route::get('', [ImageTestTypesController::class, 'getAllImageTestType']);
+    Route::put('approve/{id}', [ImageTestTypesController::class, 'approveImageTestType']);
+    Route::put('softDelete/{id}', [ImageTestTypesController::class, 'softDeleteImageTestType']);
+    Route::put('restore/{id}', [ImageTestTypesController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [ImageTestTypesController::class, 'permanentlyDelete']);
+
+
+});
+
+//Lab Test Classes
+Route::group(['prefix'=>'labTestClasses'], function(){
+
+    Route::post('create', [LabTestClassesController::class, 'createLabTestClass']);
+    Route::put('update', [LabTestClassesController::class, 'updateLabTestClass']);
+    Route::get('get', [LabTestClassesController::class, 'getSingleLabTestClass']);
+    Route::get('', [LabTestClassesController::class, 'getAllLabTestClass']);
+    Route::put('approve/{id}', [LabTestClassesController::class, 'approveLabTestClass']);
+    Route::put('softDelete/{id}', [LabTestClassesController::class, 'softDeleteLabTestClass']);
+    Route::put('restore/{id}', [LabTestClassesController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [LabTestClassesController::class, 'permanentlyDelete']);
+
+
+});
+
+//Lab Test Requests
+Route::group(['prefix'=>'labTestRequests'], function(){
+
+    Route::post('create', [LabTestRequestsController::class, 'createLabTestRequest']);
+    Route::put('update', [LabTestRequestsController::class, 'updateLabTestRequest']);
+    Route::get('get', [LabTestRequestsController::class, 'getSingleLabTestRequest']);
+    Route::get('', [LabTestRequestsController::class, 'getAllLabTestRequest']);
+    Route::put('approve/{id}', [LabTestRequestsController::class, 'approveLabTestRequest']);
+    Route::put('softDelete/{id}', [LabTestRequestsController::class, 'softDeleteLabTestRequest']);
+    Route::put('restore/{id}', [LabTestRequestsController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [LabTestRequestsController::class, 'permanentlyDelete']);
+
+
+});
+
+//Lab Test Types
+Route::group(['prefix'=>'labTestTypes'], function(){
+
+    Route::post('create', [LabTestTypesController::class, 'createLabTestType']);
+    Route::put('update', [LabTestTypesController::class, 'updateLabTestType']);
+    Route::get('get', [LabTestTypesController::class, 'getSingleLabTestType']);
+    Route::get('', [LabTestTypesController::class, 'getAllLabTestType']);
+    Route::put('approve/{id}', [LabTestTypesController::class, 'approveLabTestType']);
+    Route::put('softDelete/{id}', [LabTestTypesController::class, 'softDeleteLabTestType']);
+    Route::put('restore/{id}', [LabTestTypesController::class, 'restoreSoftDeleted']);
+    Route::delete('permanentlyDelete/{id}', [LabTestTypesController::class, 'permanentlyDelete']);
 
 
 });

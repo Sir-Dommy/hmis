@@ -71,7 +71,7 @@ class ClinicController extends Controller
     //Gettind a single clinic
     public function getSingleClinic(Request $request){
 
-        if($request->id == null && $request->name){
+        if($request->id == null && $request->name == null){
             throw new InputsValidationException("id or name required!");
         }
 

@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Patient;
+
+use App\Exceptions\AlreadyExistsException;
+use App\Exceptions\InputsValidationException;
 use App\Models\Patient\Vital;
 use App\Exceptions\NotFoundException;
-use App\Models\Admin\Scheme;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
@@ -17,16 +19,18 @@ class VitalController extends Controller
     
     public function createVital(Request $request){
         $request->validate([
-            'visits_id' => 'required|exists:visits,id',
-            'weight' => 'numeric|between:2,255',
+            'visit_id' => 'required|exists:visits,id',
+            'weight' => 'required|numeric|between:0,2550',
             'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
             'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
             'height' => 'required|numeric|min:50|max:300',
             'blood_type' => 'required|string|min:1',
             'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255|exists:roles,name',
+            'allergies' => 'string|min:2|max:255',
             'nursing_remarks' => 'string|min:3|max:25'
         ]);
+
+        count(Vital::selectVitals(null, $request->visit_id, null)) > 0 ? throw new AlreadyExistsException("Vital already exists!!! kindly update instead...") : null; 
 
         Vital::create([
             'weight' => $request->weight, 
@@ -37,14 +41,14 @@ class VitalController extends Controller
             'disease'=>$request->disease,
             'allergies' => $request->allergies,
             'nursing_remarks' => $request->nursing_remarks,
-            'visits_id'=> $request->visits_id,
+            'visit_id'=> $request->visit_id,
             'created_by' => Auth::user()->id
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a vital for patient with visit id: ". $request->visits_id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a vital for patient with visit id: ". $request->visit_id);
 
         return response()->json(
-            Vital::selectVitals(null, $request->visits_id, null)
+            Vital::selectVitals(null, $request->visit_id, null)
         ,200);
 
     }
@@ -53,14 +57,14 @@ class VitalController extends Controller
     public function updateVital(Request $request){
         $request->validate([
             'id'=>'required|exists:vitals,id',
-            'visits_id' => 'required|exists:visits,id',
+            'visit_id' => 'required|exists:visits,id',
             'weight' => 'numeric|between:2,255',
             'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
             'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
             'height' => 'required|numeric|min:50|max:300',
             'blood_type' => 'required|string|min:1',
             'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255|exists:roles,name',
+            'allergies' => 'string|min:2|max:255',
             'nursing_remarks' => 'string|min:3|max:25'
         ]);
 
@@ -72,7 +76,6 @@ class VitalController extends Controller
 
         Vital::where('id', $request->id)
                 ->update([
-                     'visits_id' =>$request->visits_id ,
                      'weight' =>$request->weight ,
                      'blood_pressure' =>$request->blood_pressure, 
                      'blood_glucose' => $request->blood_glucose, 
@@ -96,15 +99,11 @@ class VitalController extends Controller
     //getting single vital
     public function getSingleVital(Request $request){
 
-        if($request->id == null){
-            throw new InputsValidationException("vital id is required!");
-        }
+        ($request->vital_id == null && $request->visit_id == null) ? throw new InputsValidationException("vital id or visit id is required!") : null;
 
-        $vital = Vital::selectVitals($request->id, null);
+        $vital = Vital::selectVitals($request->vital_id, $request->visit_id);
 
-        if(count($vital) < 1){
-            throw new NotFoundException(APIConstants::NAME_VITAL);
-        }
+        count($vital) < 1 ? throw new NotFoundException(APIConstants::NAME_VITAL) : null;
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a vital with id: ". $vital[0]['id']);
 

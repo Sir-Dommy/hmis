@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vitals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('visits_id');
+            $table->unsignedBigInteger('visit_id');
             $table->decimal('weight', 5, 2)->nullable();
             $table->string('blood_pressure')->nullable();
             $table->string('blood_glucose')->nullable();
@@ -24,15 +24,29 @@ return new class extends Migration
             $table->text('nursing_remarks')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            
+            $table->unsignedBigInteger('deleted_by')->nullable();            
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('visits_id')
-            ->references('id')
-            ->on('visits')
-            ->onDelete('cascade');
+            $table->foreign('visit_id')
+                    ->references('id')
+                    ->on('visits')
+                    ->onDelete('cascade');
+
+            $table->foreign('created_by') // Column name
+                  ->references('id') // Target column in the parent table
+                  ->on('users') // Parent table
+                  ->onDelete('cascade');
+
+            $table->foreign('updated_by') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('users') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('deleted_by') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('users') // Parent table
+                ->onDelete('cascade');
         });
     }
 

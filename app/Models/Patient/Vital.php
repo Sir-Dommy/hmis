@@ -2,6 +2,7 @@
 
 namespace App\Models\Patient;
 
+use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,10 +11,12 @@ class Vital extends Model
 
     use HasFactory;
 
+    use CustomUserRelations;
+
     protected $table = "vitals";
 
     protected $fillable = [
-        'visits_id',
+        'visit_id',
         'weight', 
         'blood_pressure',
         'blood_glucose',
@@ -28,15 +31,8 @@ class Vital extends Model
         'deleted_at'
     ];
 
-
-
-        public function vitals()
-    {
-        return $this->hasMany(Vital::class, 'visits_id');
-    }
-
     //perform selection
-    public static function selectVitals($id, $visits_id){
+    public static function selectVitals($id, $visit_id){
         $vitals_query = Vital::with([
             'createdBy:id',
             'updatedBy:id',
@@ -45,8 +41,8 @@ class Vital extends Model
         if($id != null){
             $vitals_query->where('vitals.id', $id);
         }
-        elseif($visits_id != null){
-            $vitals_query->where('patients.visits_id', $visits_id);
+        elseif($visit_id != null){
+            $vitals_query->where('vitals.visit_id', $visit_id);
         }
        
         else{
@@ -73,7 +69,7 @@ class Vital extends Model
     private static function mapResponse($vital){
         return [
             'id' => $vital->id,
-            'visits_id'=>$vital->visits_id,
+            'visit_id'=>$vital->visit_id,
             'weight'=>$vital->weight, 
             'blood_pressure'=>$vital->blood_pressure,
             'blood_glucose'=>$vital->blood_glucose,

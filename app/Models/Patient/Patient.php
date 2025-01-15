@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models\Patient;
+
+use App\Models\Admin\ChronicDisease;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -46,15 +48,31 @@ class Patient extends Model
     {
         return $this->hasMany(InsuranceDetail::class, 'patient_id', 'id');
     }
+    
+    public function visits()
+    {
+        return $this->hasMany(Visit::class, 'patient_id', 'id');
+    }
+
+    public function chronicDiseases(){
+        return $this->belongsToMany(ChronicDisease::class, 'patients_chronic_diseases_join', 'patient_id', 'chronic_disease_id');
+    }
 
 
     //perform selection
     public static function selectPatients($id, $email, $patient_code, $id_no){
         $patients_query = Patient::with([
+            'chronicDiseases:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'insuranceDetails:id,patient_id,member_validity'
+            'insuranceDetails:id,patient_id,member_validity', 
+            'visits:id,patient_id,claim_number,amount,visit_type,stage,open',
+            'visits.clinic:id,name,description',
+            'visits.department:id,name',
+            'visits.feeType',
+            'visits.scheme:id,name',
+            'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
@@ -73,7 +91,7 @@ class Patient extends Model
 
         else{
             $paginated_patients = $patients_query->paginate(10);
-        
+            //return $paginated_patients;
             $paginated_patients->getCollection()->transform(function ($patient) {
                 return Patient::mapResponse($patient);
             });
@@ -110,6 +128,8 @@ class Patient extends Model
             'next_of_kin_contact' => $patient->next_of_kin_contact,  
             'next_of_kin_relationship' => $patient->next_of_kin_relationship,
             'insurance_details' => $patient->insuranceDetails,   
+            'chronic_diseases' => $patient->chronicDiseases,
+            'visits' => $patient->visits,
             'created_by' => $patient->createdBy ? $patient->createdBy->email : null,
             'created_at' => $patient->created_at,
             'updated_by' => $patient->updatedBy ? $patient->updatedBy->email : null,
