@@ -91,7 +91,6 @@ class PatientController extends Controller
                 ]);
 
             
-        echo("WE START 6");
             $this->validateIdentification($request->identification_type, $request->id_no);
 
             echo("WE START 7");
@@ -550,7 +549,7 @@ class PatientController extends Controller
     private function validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($payment_methods, $insurer){
         foreach($payment_methods as $payment_method){
             if($payment_method->insurance == true){
-                $insurer == null ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
+                count($insurer) == 0 ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
          
             }
 
