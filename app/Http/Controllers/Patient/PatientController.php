@@ -30,22 +30,22 @@ class PatientController extends Controller
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'string|min:1|max:255',
-            'id_no' => 'string|unique:patients,id_no',
-            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
-            'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'email' => 'string|email|max:255|unique:patients',
+            'identification_type' => 'nullable|string|min:1|max:255',
+            'id_no' => 'nullable|string|unique:patients,id_no',
+            'phonenumber1' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
+            'phonenumber2' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'email' => 'nullable|string|email|max:255|unique:patients',
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
             'next_of_kin_contact' => 'required|string|min:3|max:255',
             'next_of_kin_relationship' => 'required|string|min:3|max:255',
             'payment_methods' => 'required',
-            'insurance_membership' => 'exists:insurance_memberships,name',
-            'insurer' => 'string|exists:schemes,name',
-            'scheme_type' => 'string|min:3|max:255',
-            'insurer_contact' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'principal_member_name' => 'string|min:3|max:255',
+            'insurance_membership' => 'nullable|exists:insurance_memberships,name',
+            'insurer' => 'nullable|string|exists:schemes,name',
+            'scheme_type' => 'nullable|string|min:3|max:255',
+            'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
             'member_validity' => 'string|min:3|max:255',
             'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
@@ -53,8 +53,8 @@ class PatientController extends Controller
             
         ]);
 
-        $request-> phonenumber1 == $request-> phonenumber2 ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
-            
+        $request->phonenumber1 == $request->phonenumber2 && $$request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+             
         $patient_code = $this->generatePatientCode();
 
         try{
@@ -92,6 +92,7 @@ class PatientController extends Controller
                 ]);
 
 
+            $this->validateIdentification($identification_type, $id_no);
 
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
@@ -175,26 +176,26 @@ class PatientController extends Controller
    // updating a patient
     public function updatePatient(Request $request){
         $request->validate([
-            'id' => 'required|exists:patients,id',            
+            'id' => 'required|exists:patients,id',
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'string|min:1|max:255',
-            'id_no' => 'string|unique:patients,id_no',
-            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
-            'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'email' => 'string|email|max:255|unique:patients',
+            'identification_type' => 'nullable|string|min:1|max:255',
+            'id_no' => 'nullable|string|unique:patients,id_no',
+            'phonenumber1' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
+            'phonenumber2' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'email' => 'nullable|string|email|max:255|unique:patients',
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
             'next_of_kin_contact' => 'required|string|min:3|max:255',
             'next_of_kin_relationship' => 'required|string|min:3|max:255',
             'payment_methods' => 'required',
-            'insurance_membership' => 'exists:insurance_memberships,name',
-            'insurer' => 'string|exists:schemes,name',
-            'scheme_type' => 'string|min:3|max:255',
-            'insurer_contact' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'principal_member_name' => 'string|min:3|max:255',
+            'insurance_membership' => 'nullable|exists:insurance_memberships,name',
+            'insurer' => 'nullable|string|exists:schemes,name',
+            'scheme_type' => 'nullable|string|min:3|max:255',
+            'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
             'member_validity' => 'string|min:3|max:255',
             'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
@@ -202,7 +203,7 @@ class PatientController extends Controller
             
         ]);
 
-        $request-> phonenumber1 == $request-> phonenumber2 ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+        $request->phonenumber1 == $request->phonenumber2 && $$request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         $patient_code = $this->generatePatientCode();
 
@@ -249,6 +250,9 @@ class PatientController extends Controller
                     'next_of_kin_relationship' => $request->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
+
+            //validate if identification is being provided properly
+            $this->validateIdentification($identification_type, $id_no);
 
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
@@ -533,5 +537,10 @@ class PatientController extends Controller
             }
 
 
-        }}
+        }
+    }
+
+    private function validateIdentification($identification_type, $id_no){
+        $identification_type != null && $id_no != null ? throw new InputsValidationException("You must provide id number with its related identification type (Both must be provided or omitted simultaneously") : null;
+    }
 }

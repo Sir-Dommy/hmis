@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('identification_type')->nullable();
             $table->string('id_no')->nullable()->unique();
             $table->string('scan_id_photo')->nullable();
-            $table->string('phonenumber1')->unique();
+            $table->string('phonenumber1')->nullable()->unique();
             $table->string('phonenumber2')->nullable();
             $table->string('email')->nullable()->unique();
             $table->string('insurance_membership')->nullable();
