@@ -516,7 +516,8 @@ class PatientController extends Controller
 
         if(count($existing_method) < 1){
             DB::rollBack();
-            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE + " $payment_method");
+            
+            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
 
         }
 
