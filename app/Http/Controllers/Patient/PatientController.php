@@ -108,8 +108,6 @@ class PatientController extends Controller
                         'member_validity' => 'required|string|min:3|max:255',
                     ])->validate();
 
-    
-                    echo("WE START 11");
                     
                     $desiredValue = $insurance_detail['scheme_type'];
                     $scheme = Scheme::with([
@@ -120,7 +118,7 @@ class PatientController extends Controller
                     })
                         ->get();
     
-        echo("WE START 12");
+
                     $scheme_type = SchemeTypes::where('name', $insurance_detail['scheme_type'])->get();
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
@@ -137,7 +135,6 @@ class PatientController extends Controller
                         $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
                     }
     
-                    echo("WE START 12");
                     InsuranceDetail::create([
                         'patient_id' => $patient->id,
                         'insurer_id' => $scheme[0]['id'],
@@ -502,11 +499,11 @@ class PatientController extends Controller
 
     private function validateAndSavePatientPaymentMethod($payment_methods, $patient_id){
         foreach($payment_methods as $payment_method){
-            if($payment_method->cash == true){
+            if($payment_method['cash'] == true){
                 $this->saveToDB("cash", $patient_id);
             }
 
-            else if($payment_method->insurance == true){
+            else if($payment_method['insurance'] == true){
                 $this->saveToDB("insurance", $patient_id);
             }
 
