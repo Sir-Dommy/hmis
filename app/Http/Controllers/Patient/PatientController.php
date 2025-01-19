@@ -26,7 +26,7 @@ class PatientController extends Controller
 
     //saving a new patient
     public function createPatient(Request $request){
-        $request->validate([
+        validator($request->data, [
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
@@ -48,10 +48,18 @@ class PatientController extends Controller
             'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
             'member_validity' => 'string|min:3|max:255',
+            
+        ])->validate();
+
+        
+        $request->validate([            
             'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
             'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-            
         ]);
+
+        //reassign $request variable
+        $request = $request->data;
+
         $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         $patient_code = $this->generatePatientCode();
