@@ -98,9 +98,7 @@ class PatientController extends Controller
 
             if($request->insurance_details){
 
-                echo("WE START 10");
                 foreach($request->insurance_details as $insurance_detail){
-                    print_r($insurance_detail);
                     validator($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
@@ -110,26 +108,17 @@ class PatientController extends Controller
                         'member_validity' => 'required|string|min:3|max:255',
                     ])->validate();
 
-                    // $insurance_detail->validate([
-                    //     'insurer' => 'required|string|exists:schemes,name',
-                    //     'scheme_type' => 'required|string|exists:scheme_types,name',
-                    //     'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-                    //     'principal_member_name' => 'required|string|min:3|max:255',
-                    //     'principal_member_number' => 'required|string|min:3|max:255',
-                    //     'member_validity' => 'required|string|min:3|max:255',
-                        
-                    // ]);
     
                     echo("WE START 11");
 
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
-                    ])->where('schemes.name', $insurance_detail->insurer)
-                        ->where('scheme_types.name', $insurance_detail->scheme_type)
+                    ])->where('schemes.name', $insurance_detail['insurer'])
+                        ->where('scheme_types.name', $insurance_detail['scheme_type'])
                         ->get();
     
         echo("WE START 12");
-                    $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
+                    $scheme_type = SchemeTypes::where('name', $insurance_detail['scheme_type'])->get();
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
     
@@ -150,11 +139,11 @@ class PatientController extends Controller
                         'patient_id' => $patient->id,
                         'insurer_id' => $scheme[0]['id'],
                         'scheme_type_id' => $scheme_type[0]['id'],
-                        'mobile_number' => $insurance_detail->insurer_contact,
+                        'mobile_number' => $insurance_detail['insurer_contact'],
                         'insurance_card_path' => $insurance_card_image_path,
-                        'principal_member_name' => $insurance_detail->principal_member_name,
-                        'principal_member_number' => $insurance_detail->principal_member_number,
-                        'member_validity' => $insurance_detail->member_validity,
+                        'principal_member_name' => $insurance_detail['principal_member_name'],
+                        'principal_member_number' => $insurance_detail['principal_member_number'],
+                        'member_validity' => $insurance_detail['member_validity'],
                         'created_by' => User::getLoggedInUserId()
                     ]);
                 }
@@ -164,7 +153,7 @@ class PatientController extends Controller
                 
             }
 
-
+            echo("WE START 13");
             //validate and save patient payment method
             $this->validateAndSavePatientPaymentMethod($request->payment_methods, $patient->id);
 
