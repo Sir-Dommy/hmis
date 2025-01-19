@@ -116,6 +116,7 @@ class PatientController extends Controller
             if($data->insurance_details){
 
                 foreach($data->insurance_details as $insurance_detail){
+                    $insurance_detail = json_decode($insurance_detail, true);
                     Validator::make($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
