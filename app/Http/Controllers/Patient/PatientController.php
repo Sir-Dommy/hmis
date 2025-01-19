@@ -20,6 +20,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PatientController extends Controller
 {
@@ -33,11 +34,11 @@ class PatientController extends Controller
         ]);
 
         // Decode the JSON data
-        $data = json_decode($request->input('data'));
+        $data = json_decode($request->input('data'), true);
 
         print_r($data);
 
-        validator($data, [
+        Validator::make($data, [
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
