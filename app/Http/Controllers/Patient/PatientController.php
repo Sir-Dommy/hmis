@@ -500,11 +500,11 @@ class PatientController extends Controller
     private function validateAndSavePatientPaymentMethod($payment_methods, $patient_id){
         foreach($payment_methods as $payment_method){
             if($payment_method['cash'] == true){
-                $this->saveToDB("cash", $patient_id);
+                $this->saveToDB("Cash", $patient_id);
             }
 
             else if($payment_method['insurance'] == true){
-                $this->saveToDB("insurance", $patient_id);
+                $this->saveToDB("Insurance", $patient_id);
             }
 
 
