@@ -52,15 +52,11 @@ class PatientController extends Controller
             'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
             
         ]);
-        echo("WE START 1");
         $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
-        echo("WE START 2"); 
         $patient_code = $this->generatePatientCode();
 
-        echo("WE START 3");
         try{
-            echo("WE START 4");
             //handle image ya id
             $id_card_image_path = null;
             if($request->file('id_card_image')){
@@ -73,7 +69,6 @@ class PatientController extends Controller
                 $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
             }
 
-            echo("WE START 5");
             DB::beginTransaction();
             $patient = Patient::create([
                     'patient_code' => $patient_code,
@@ -97,7 +92,7 @@ class PatientController extends Controller
 
             
         echo("WE START 6");
-            $this->validateIdentification($identification_type, $id_no);
+            $this->validateIdentification($request->identification_type, $request->id_no);
 
             echo("WE START 7");
             // if insurance is selected then patient must provide their insurance details
@@ -108,25 +103,25 @@ class PatientController extends Controller
 
         echo("WE START 9");
                 foreach($request->insurance_details as $insurance_detail){
-                    validator($insurance_detail, [
-                        'insurer' => 'required|string|exists:schemes,name',
-                        'scheme_type' => 'required|string|exists:scheme_types,name',
-                        'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-                        'principal_member_name' => 'required|string|min:3|max:255',
-                        'principal_member_number' => 'required|string|min:3|max:255',
-                        'member_validity' => 'required|string|min:3|max:255',
-                    ])->validate();
-
-                    echo("WE START 10");
-                    // $insurance_detail->validate([
+                    // validator($insurance_detail, [
                     //     'insurer' => 'required|string|exists:schemes,name',
                     //     'scheme_type' => 'required|string|exists:scheme_types,name',
                     //     'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                     //     'principal_member_name' => 'required|string|min:3|max:255',
                     //     'principal_member_number' => 'required|string|min:3|max:255',
                     //     'member_validity' => 'required|string|min:3|max:255',
+                    // ])->validate();
+
+                    echo("WE START 10");
+                    $insurance_detail->validate([
+                        'insurer' => 'required|string|exists:schemes,name',
+                        'scheme_type' => 'required|string|exists:scheme_types,name',
+                        'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                        'principal_member_name' => 'required|string|min:3|max:255',
+                        'principal_member_number' => 'required|string|min:3|max:255',
+                        'member_validity' => 'required|string|min:3|max:255',
                         
-                    // ]);
+                    ]);
     
                     echo("WE START 11");
 
@@ -226,7 +221,7 @@ class PatientController extends Controller
             
         ]);
 
-        $request->phonenumber1 == $request->phonenumber2 && $$request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+        $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         $patient_code = $this->generatePatientCode();
 
@@ -275,7 +270,7 @@ class PatientController extends Controller
                 ]);
 
             //validate if identification is being provided properly
-            $this->validateIdentification($identification_type, $id_no);
+            $this->validateIdentification($request->identification_type, $request->id_no);
 
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
