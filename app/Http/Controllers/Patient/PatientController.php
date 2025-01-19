@@ -116,7 +116,7 @@ class PatientController extends Controller
             if($data->insurance_details){
 
                 foreach($data->insurance_details as $insurance_detail){
-                    
+
                     Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
@@ -128,7 +128,7 @@ class PatientController extends Controller
 
                     
             echo("PATIENT NAME4 = ". $data->firstname);
-
+                    echo($insurance_detail->scheme_type);
                     $desiredValue = $insurance_detail['scheme_type'];
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
