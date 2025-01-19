@@ -135,7 +135,7 @@ class PatientController extends Controller
 
                     $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
     
-                    count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
+                    count($scheme) < 1 ? throw new InputsValidationException("Scheme type not related to provided insurer") : null;
     
                     //handle image ya insurance card
                     $insurance_card_image_path = null;
@@ -237,11 +237,11 @@ class PatientController extends Controller
         try{
             $existing = Patient::selectPatients(null, null, null, $data->id_no);
 
-            count($existing) > 0 ?? $existing[0]['id'] != $data->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
+            count($existing) > 0 && $existing[0]['id'] != $data->id ? throw new AlreadyExistsException(APIConstants::NAME_PATIENT) : null;
 
             $existing2 = Patient::selectPatients(null, $data->email, null, null);
 
-            count($existing2) > 0 ?? $existing[0]['id'] != $data->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
+            count($existing2) > 0 && $existing[0]['id'] != $data->id ? throw new AlreadyExistsException(APIConstants::NAME_PATIENT) : null;
 
             //handle image ya id
             $id_card_image_path = null;
@@ -307,7 +307,7 @@ class PatientController extends Controller
     
                     $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
     
-                    count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
+                    count($scheme) < 1 ? throw new InputsValidationException("Scheme type not related to provided insurer") : null;
     
                     //handle image ya insurance card
                     $insurance_card_image_path = null;
