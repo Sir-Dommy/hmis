@@ -129,17 +129,17 @@ class PatientController extends Controller
                     
             echo("PATIENT NAME4 = ". $data->firstname);
                     echo($insurance_detail->scheme_type);
-                    $desiredValue = $insurance_detail['scheme_type'];
+                    $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
-                    ])->where('schemes.name', $insurance_detail['insurer'])
+                    ])->where('schemes.name', $insurance_detail->insurer)
                         ->whereHas('schemeTypes', function ($query) use ($desiredValue) {
                         $query->where('name', $desiredValue); // Condition on scheme_types table
                     })
                         ->get();
     
 
-                    $scheme_type = SchemeTypes::where('name', $insurance_detail['scheme_type'])->get();
+                    $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
     
