@@ -34,7 +34,7 @@ class PatientController extends Controller
         ]);
 
         // Decode the JSON data
-        $data = json_decode($request->input('data'), true);
+        $data = json_decode($request->input('data'));
 
         print_r($data);
 
