@@ -34,9 +34,7 @@ class PatientController extends Controller
         ]);
 
         // Decode the JSON data
-        $data = json_decode($request->input('data'));
-
-        print_r($data);
+        $data = json_decode($request->input('data'), true);
 
         Validator::make($data, [
             'firstname' => 'required|string|min:2|max:100',
@@ -63,9 +61,8 @@ class PatientController extends Controller
             
         ])->validate();
 
-
         //reassign $request variable
-        $request = $data;
+        $request = json_decode($request->input('data'));
 
         $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
