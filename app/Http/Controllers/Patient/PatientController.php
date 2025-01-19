@@ -26,7 +26,18 @@ class PatientController extends Controller
 
     //saving a new patient
     public function createPatient(Request $request){
-        validator($request->data, [
+
+        $request->validate([            
+            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+        ]);
+
+        // Decode the JSON data
+        $data = json_decode($request->input('data'));
+
+        print_r($data);
+
+        validator($data, [
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
@@ -51,14 +62,9 @@ class PatientController extends Controller
             
         ])->validate();
 
-        
-        $request->validate([            
-            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-        ]);
 
         //reassign $request variable
-        $request = $request->data;
+        $request = $data;
 
         $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
@@ -67,7 +73,7 @@ class PatientController extends Controller
         try{
             //handle image ya id
             $id_card_image_path = null;
-            if($request->file('id_card_image')){
+            if($request->file('id_card_image') && $request->identification_type != null){
                 $image = $request->file('id_card_image');
 
                 // Generate a new unique name for the image
