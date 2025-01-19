@@ -361,7 +361,7 @@ class PatientController extends Controller
                 
             }
 
-            $this->validateAndSavePatientPaymentMethod($request->payment_methods, $request->id);
+            $this->validateAndSavePatientPaymentMethod($data->payment_methods, $data->id);
 
             DB::commit();
 
