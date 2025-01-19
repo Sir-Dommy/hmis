@@ -28,7 +28,8 @@ class PatientController extends Controller
     //saving a new patient
     public function createPatient(Request $request){
 
-        $request->validate([            
+        $request->validate([     
+            'data'=>'required|json',       
             'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
             'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
         ]);
