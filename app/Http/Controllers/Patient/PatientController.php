@@ -548,7 +548,8 @@ class PatientController extends Controller
 
     private function validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($payment_methods, $insurer){
         foreach($payment_methods as $payment_method){
-            if($payment_method[0]['insurance'] == true){
+            var_dump($payment_method);
+            if($payment_method['insurance'] == true){
                 count($insurer) == 0 ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
          
             }
