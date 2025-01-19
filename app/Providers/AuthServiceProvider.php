@@ -171,7 +171,7 @@ class AuthServiceProvider extends ServiceProvider
     //Ensure you add all payment path during production........
     private function createInsuranceMemberShips(){
         InsuranceMemberShip::firstOrCreate([
-            "name" => "Principal Member",
+            "name" => "Principal",
             "active" => true
         ]);
 

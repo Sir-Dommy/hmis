@@ -235,11 +235,11 @@ class PatientController extends Controller
         $patient_code = $this->generatePatientCode();
 
         try{
-            $existing = Patient::selectPatients(null, null, null, $data->id_no);
+            $data->id_no != null ? $existing = Patient::selectPatients(null, null, null, $data->id_no) : $existing = [];
 
             count($existing) > 0 && $existing[0]['id'] != $data->id ? throw new AlreadyExistsException(APIConstants::NAME_PATIENT) : null;
 
-            $existing2 = Patient::selectPatients(null, $data->email, null, null);
+            $data->email != null ? $existing2 = Patient::selectPatients(null, $data->email, null, null) : $existing2 = [];
 
             count($existing2) > 0 && $existing[0]['id'] != $data->id ? throw new AlreadyExistsException(APIConstants::NAME_PATIENT) : null;
 
