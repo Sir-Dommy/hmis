@@ -30,8 +30,8 @@ class PatientController extends Controller
 
         $request->validate([     
             'data'=>'required|json',      
-            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+            'id_card_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+            'insurance_card_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
         ]);
 
         // Decode the JSON data
@@ -191,8 +191,16 @@ class PatientController extends Controller
 
    // updating a patient
     public function updatePatient(Request $request){
-        $request->validate([
-            'id' => 'required|exists:patients,id',
+        $request->validate([     
+            'data'=>'required|json',      
+            'id_card_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+            'insurance_card_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+        ]);
+
+        // Decode the JSON data
+        $data = json_decode($request->input('data'), true);
+
+        Validator::make($data, [ 
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
@@ -214,23 +222,24 @@ class PatientController extends Controller
             'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
             'member_validity' => 'string|min:3|max:255',
-            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
             
-        ]);
+        ])->validate();
 
-        $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+        //reassign $request variable
+        $data = json_decode($request->input('data'));
+
+        $data->phonenumber1 == $data->phonenumber2 && $data->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         $patient_code = $this->generatePatientCode();
 
         try{
-            $existing = Patient::selectPatients(null, null, null, $request->id_no);
+            $existing = Patient::selectPatients(null, null, null, $data->id_no);
 
-            count($existing) > 0 ?? $existing[0]['id'] != $request->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
+            count($existing) > 0 ?? $existing[0]['id'] != $data->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
 
-            $existing2 = Patient::selectPatients(null, $request->email, null, null);
+            $existing2 = Patient::selectPatients(null, $data->email, null, null);
 
-            count($existing2) > 0 ?? $existing[0]['id'] != $request->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
+            count($existing2) > 0 ?? $existing[0]['id'] != $data->id ?? throw new AlreadyExistsException(APIConstants::NAME_PATIENT);
 
             //handle image ya id
             $id_card_image_path = null;
@@ -246,36 +255,36 @@ class PatientController extends Controller
             }
 
             DB::beginTransaction();
-            Patient::where('id', $request->id)
+            Patient::where('id', $data->id)
                 ->update([
                     'patient_code' => $patient_code,
-                    'firstname' => $request->firstname, 
-                    'lastname' => $request->lastname,
-                    'phonenumber1'=>$request->phonenumber1,
-                    'phonenumber2'=>$request->phonenumber2, 
-                    'email' => $request->email,
-                    'dob' => $request->dob,
-                    'identification_type' => $request->identification_type,
-                    'id_no' => $request->id_no,
+                    'firstname' => $data->firstname, 
+                    'lastname' => $data->lastname,
+                    'phonenumber1'=>$data->phonenumber1,
+                    'phonenumber2'=>$data->phonenumber2, 
+                    'email' => $data->email,
+                    'dob' => $data->dob,
+                    'identification_type' => $data->identification_type,
+                    'id_no' => $data->id_no,
                     'scan_id_photo' => $id_card_image_path,
-                    'address'=>$request->address,
-                    'residence'=>$request->residence,
-                    'insurance_membership' => $request->insurance_membership,
-                    'next_of_kin_name' => $request->next_of_kin_name,
-                    'next_of_kin_contact' => $request->next_of_kin_contact,
-                    'next_of_kin_relationship' => $request->next_of_kin_relationship,
+                    'address'=>$data->address,
+                    'residence'=>$data->residence,
+                    'insurance_membership' => $data->insurance_membership,
+                    'next_of_kin_name' => $data->next_of_kin_name,
+                    'next_of_kin_contact' => $data->next_of_kin_contact,
+                    'next_of_kin_relationship' => $data->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
 
             //validate if identification is being provided properly
-            $this->validateIdentification($request->identification_type, $request->id_no);
+            $this->validateIdentification($data->identification_type, $data->id_no);
 
             // if insurance is selected then patient must provide their insurance details
-            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
+            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($data->payment_methods, $data->insurance_details);
 
-            if($request->insurance_details){
-                foreach($request->insurance_details as $insurance_detail){
-                    $insurance_detail->validate([
+            if($data->insurance_details){
+                foreach($data->insurance_details as $insurance_detail){
+                    Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -285,10 +294,13 @@ class PatientController extends Controller
                         
                     ]);
     
+                    $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
                     ])->where('schemes.name', $insurance_detail->insurer)
-                        ->where('scheme_types.name', $insurance_detail->scheme_type)
+                        ->whereHas('schemeTypes', function ($query) use ($desiredValue) {
+                        $query->where('name', $desiredValue); // Condition on scheme_types table
+                    })
                         ->get();
     
                     $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
@@ -307,13 +319,13 @@ class PatientController extends Controller
                         $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
                     }
     
-                    $existing_insurance_details = InsuranceDetail::where('patient_id', $request->id)
+                    $existing_insurance_details = InsuranceDetail::where('patient_id', $data->id)
                         ->where('scheme_type', $scheme_type[0]['id'])
                         ->get();
     
                     if(count($existing_insurance_details) < 1){
                         InsuranceDetail::create([
-                                'patient_id' => $request->id,
+                                'patient_id' => $data->id,
                                 'insurer_id' => $scheme[0]['id'],
                                 'scheme_type_id' => $scheme_type[0]['id'],
                                 'mobile_number' => $insurance_detail->insurer_contact,
@@ -326,10 +338,10 @@ class PatientController extends Controller
                     }
     
                     else{
-                        InsuranceDetail::where('patient_id', $request->id)
+                        InsuranceDetail::where('patient_id', $data->id)
                         ->where('scheme_type', $scheme_type[0]['id'])
                         ->update([
-                            'patient_id' => $request->id,
+                            'patient_id' => $data->id,
                             'insurer_id' => $scheme[0]['id'],
                             'scheme_type_id' => $scheme_type[0]['id'],
                             'mobile_number' => $insurance_detail->insurer_contact,
