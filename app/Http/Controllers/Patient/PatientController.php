@@ -518,11 +518,11 @@ class PatientController extends Controller
 
     private function validateAndSavePatientPaymentMethod($payment_methods, $patient_id){
         foreach($payment_methods as $payment_method){
-            if($payment_method['cash'] == true){
+            if($payment_method->cash == true){
                 $this->saveToDB("Cash", $patient_id);
             }
 
-            else if($payment_method['insurance'] == true){
+            else if($payment_method->insurance == true){
                 $this->saveToDB("Insurance", $patient_id);
             }
 
@@ -554,10 +554,8 @@ class PatientController extends Controller
     }
 
     private function validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($payment_methods, $insurer){
-        print_r($payment_methods);
         foreach($payment_methods as $payment_method){
-            echo($payment_method->insurance);
-            if($payment_method['insurance'] == true){
+            if($payment_method->insurance == true){
                 count($insurer) == 0 ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
          
             }
