@@ -81,6 +81,8 @@ class PatientController extends Controller
                 $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
             }
 
+            echo("PATIENT NAME = ". $data->firstname);
+
             DB::beginTransaction();
             $patient = Patient::create([
                     'patient_code' => $patient_code,
@@ -101,12 +103,16 @@ class PatientController extends Controller
                     'next_of_kin_relationship' => $data->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
-
+                
+            echo("PATIENT NAME1 = ". $data->firstname);
             
             $this->validateIdentification($data->identification_type, $data->id_no);
 
+            echo("PATIENT NAME2 = ". $data->firstname);
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($data->payment_methods, $data->insurance_details);
+
+            echo("PATIENT NAME3 = ". $data->firstname);
 
             if($data->insurance_details){
 
@@ -121,6 +127,8 @@ class PatientController extends Controller
                     ])->validate();
 
                     
+            echo("PATIENT NAME4 = ". $data->firstname);
+
                     $desiredValue = $insurance_detail['scheme_type'];
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
@@ -135,6 +143,7 @@ class PatientController extends Controller
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
     
+            echo("PATIENT NAME6 = ". $data->firstname);
                     //handle image ya insurance card
                     $insurance_card_image_path = null;
                     if($request->file('insurance_card_image')){
