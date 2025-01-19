@@ -378,7 +378,7 @@ class PatientController extends Controller
         
 
         return response()->json(
-            Patient::selectPatients($request->id, null, null, null)
+            Patient::selectPatients($data->id, null, null, null)
             ,200);
 
     }
