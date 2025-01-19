@@ -153,7 +153,6 @@ class PatientController extends Controller
                 
             }
 
-            echo("WE START 13");
             //validate and save patient payment method
             $this->validateAndSavePatientPaymentMethod($request->payment_methods, $patient->id);
 
