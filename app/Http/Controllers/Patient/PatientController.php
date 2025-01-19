@@ -52,12 +52,15 @@ class PatientController extends Controller
             'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
             
         ]);
-
+        echo("WE START 1");
         $request->phonenumber1 == $request->phonenumber2 && $$request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
-             
+            
+        echo("WE START 2"); 
         $patient_code = $this->generatePatientCode();
 
+        echo("WE START 3");
         try{
+            echo("WE START 4");
             //handle image ya id
             $id_card_image_path = null;
             if($request->file('id_card_image')){
@@ -70,6 +73,7 @@ class PatientController extends Controller
                 $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
             }
 
+            echo("WE START 5");
             DB::beginTransaction();
             $patient = Patient::create([
                     'patient_code' => $patient_code,
@@ -91,30 +95,48 @@ class PatientController extends Controller
                     'created_by' => User::getLoggedInUserId()
                 ]);
 
-
+            
+        echo("WE START 6");
             $this->validateIdentification($identification_type, $id_no);
 
+            echo("WE START 7");
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
 
+            echo("WE START 8");
             if($request->insurance_details){
+
+        echo("WE START 9");
                 foreach($request->insurance_details as $insurance_detail){
-                    $insurance_detail->validate([
+                    validator($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                         'principal_member_name' => 'required|string|min:3|max:255',
                         'principal_member_number' => 'required|string|min:3|max:255',
                         'member_validity' => 'required|string|min:3|max:255',
+                    ])->validate();
+
+                    echo("WE START 10");
+                    // $insurance_detail->validate([
+                    //     'insurer' => 'required|string|exists:schemes,name',
+                    //     'scheme_type' => 'required|string|exists:scheme_types,name',
+                    //     'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                    //     'principal_member_name' => 'required|string|min:3|max:255',
+                    //     'principal_member_number' => 'required|string|min:3|max:255',
+                    //     'member_validity' => 'required|string|min:3|max:255',
                         
-                    ]);
+                    // ]);
     
+                    echo("WE START 11");
+
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
                     ])->where('schemes.name', $insurance_detail->insurer)
                         ->where('scheme_types.name', $insurance_detail->scheme_type)
                         ->get();
     
+        echo("WE START 12");
                     $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
@@ -131,6 +153,7 @@ class PatientController extends Controller
                         $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
                     }
     
+                    echo("WE START 12");
                     InsuranceDetail::create([
                         'patient_id' => $patient->id,
                         'insurer_id' => $scheme[0]['id'],
