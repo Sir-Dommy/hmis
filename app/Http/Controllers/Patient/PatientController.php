@@ -81,8 +81,6 @@ class PatientController extends Controller
                 $id_card_image_path = $image->move(public_path('images/patient/ids'), $newName);
             }
 
-            echo("PATIENT NAME = ". $data->firstname);
-
             DB::beginTransaction();
             $patient = Patient::create([
                     'patient_code' => $patient_code,
@@ -106,12 +104,9 @@ class PatientController extends Controller
                 
             
             $this->validateIdentification($data->identification_type, $data->id_no);
-
-            echo("PATIENT NAME2 = ". $data->firstname);
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($data->payment_methods, $data->insurance_details);
 
-            echo("PATIENT NAME3 = ". $data->firstname);
 
             if($data->insurance_details){
 
@@ -126,9 +121,6 @@ class PatientController extends Controller
                         'member_validity' => 'required|string|min:3|max:255',
                     ]);
 
-                    
-            echo("PATIENT NAME4 = ". $data->firstname);
-                    echo($insurance_detail->scheme_type);
                     $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
@@ -143,7 +135,6 @@ class PatientController extends Controller
     
                     count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
     
-            echo("PATIENT NAME6 = ". $data->firstname);
                     //handle image ya insurance card
                     $insurance_card_image_path = null;
                     if($request->file('insurance_card_image')){
@@ -160,11 +151,11 @@ class PatientController extends Controller
                         'patient_id' => $patient->id,
                         'insurer_id' => $scheme[0]['id'],
                         'scheme_type_id' => $scheme_type[0]['id'],
-                        'mobile_number' => $insurance_detail['insurer_contact'],
+                        'mobile_number' => $insurance_detail->insurer_contact,
                         'insurance_card_path' => $insurance_card_image_path,
-                        'principal_member_name' => $insurance_detail['principal_member_name'],
-                        'principal_member_number' => $insurance_detail['principal_member_number'],
-                        'member_validity' => $insurance_detail['member_validity'],
+                        'principal_member_name' => $insurance_detail->principal_member_name,
+                        'principal_member_number' => $insurance_detail->principal_member_number,
+                        'member_validity' => $insurance_detail->member_validity,
                         'created_by' => User::getLoggedInUserId()
                     ]);
                 }
