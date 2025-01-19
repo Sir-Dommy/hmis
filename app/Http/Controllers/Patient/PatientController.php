@@ -29,15 +29,7 @@ class PatientController extends Controller
     public function createPatient(Request $request){
 
         $request->validate([     
-            'data'=>'required|json',       
-            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
-        ]);
-
-        // Decode the JSON data
-        $data = json_decode($request->input('data'), true);
-
-        Validator::make($data, [
+            // 'data'=>'required|json',  
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
@@ -58,7 +50,15 @@ class PatientController extends Controller
             'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
-            'member_validity' => 'string|min:3|max:255',
+            'member_validity' => 'string|min:3|max:255',     
+            'id_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+            'insurance_card_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
+        ]);
+
+        // Decode the JSON data
+        $data = json_decode($request->input('data'), true);
+
+        Validator::make($data, [
             
         ])->validate();
 
