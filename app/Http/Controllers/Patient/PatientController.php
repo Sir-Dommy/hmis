@@ -34,9 +34,6 @@ class PatientController extends Controller
             'insurance_card_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
         ]);
 
-        echo($request->data);
-        return;
-        
 
         // Decode the JSON data
         $data = json_decode($request->input('data'), true);
