@@ -321,7 +321,7 @@ class PatientController extends Controller
                     }
     
                     $existing_insurance_details = InsuranceDetail::where('patient_id', $data->id)
-                        ->where('scheme_type', $scheme_type[0]['id'])
+                        ->where('scheme_type_id', $scheme_type[0]['id'])
                         ->get();
     
                     if(count($existing_insurance_details) < 1){
