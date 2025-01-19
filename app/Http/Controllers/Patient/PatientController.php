@@ -116,7 +116,7 @@ class PatientController extends Controller
             if($data->insurance_details){
 
                 foreach($data->insurance_details as $insurance_detail){
-                    validator($insurance_detail, [
+                    Validator::make($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
