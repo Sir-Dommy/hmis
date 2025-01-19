@@ -11,9 +11,11 @@ use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
+use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
 use App\Models\Admin\SchemeTypes;
 use App\Models\Patient\InsuranceDetail;
+use App\Models\Patient\PatientPaymentTypesJoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -28,16 +30,18 @@ class PatientController extends Controller
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'required|string|min:1|max:255',
-            'id_no' => 'required|string|unique:patients,id_no',
+            'identification_type' => 'string|min:1|max:255',
+            'id_no' => 'string|unique:patients,id_no',
             'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'email' => 'required|string|email|max:255|unique:patients',
+            'email' => 'string|email|max:255|unique:patients',
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
             'next_of_kin_contact' => 'required|string|min:3|max:255',
             'next_of_kin_relationship' => 'required|string|min:3|max:255',
+            'payment_methods' => 'required',
+            'insurance_membership' => 'exists:insurance_memberships,name',
             'insurer' => 'string|exists:schemes,name',
             'scheme_type' => 'string|min:3|max:255',
             'insurer_contact' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -80,58 +84,73 @@ class PatientController extends Controller
                     'scan_id_photo' => $id_card_image_path,
                     'address'=>$request->address,
                     'residence'=>$request->residence,
+                    'insurance_membership' => $request->insurance_membership,
                     'next_of_kin_name' => $request->next_of_kin_name,
                     'next_of_kin_contact' => $request->next_of_kin_contact,
                     'next_of_kin_relationship' => $request->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
 
-            if($request->insurer){
 
-                $request->validate([
-                    'insurer' => 'required|string|exists:schemes,name',
-                    'scheme_type' => 'required|string|exists:scheme_types,name',
-                    'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-                    'principal_member_name' => 'required|string|min:3|max:255',
-                    'principal_member_number' => 'required|string|min:3|max:255',
-                    'member_validity' => 'required|string|min:3|max:255',
-                    
-                ]);
 
-                $scheme = Scheme::with([
-                    'schemeTypes:id,scheme_id,name'
-                ])->where('schemes.name', $request->insurer)
-                    ->where('scheme_types.name', $request->scheme_type)
-                    ->get();
+            // if insurance is selected then patient must provide their insurance details
+            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
 
-                $scheme_type = SchemeTypes::where('name', $request->scheme_type)->get();
-
-                count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
-
-                //handle image ya insurance card
-                $insurance_card_image_path = null;
-                if($request->file('insurance_card_image')){
-                    $image = $request->file('insurance_card_image');
-
-                    // Generate a new unique name for the image
-                    $newName = uniqid() . '.' . $image->getClientOriginalExtension();
-            
-                    // Store the image in the public folder
-                    $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
+            if($request->insurance_details){
+                foreach($request->insurance_details as $insurance_detail){
+                    $insurance_detail->validate([
+                        'insurer' => 'required|string|exists:schemes,name',
+                        'scheme_type' => 'required|string|exists:scheme_types,name',
+                        'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                        'principal_member_name' => 'required|string|min:3|max:255',
+                        'principal_member_number' => 'required|string|min:3|max:255',
+                        'member_validity' => 'required|string|min:3|max:255',
+                        
+                    ]);
+    
+                    $scheme = Scheme::with([
+                        'schemeTypes:id,scheme_id,name'
+                    ])->where('schemes.name', $insurance_detail->insurer)
+                        ->where('scheme_types.name', $insurance_detail->scheme_type)
+                        ->get();
+    
+                    $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
+    
+                    count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
+    
+                    //handle image ya insurance card
+                    $insurance_card_image_path = null;
+                    if($request->file('insurance_card_image')){
+                        $image = $request->file('insurance_card_image');
+    
+                        // Generate a new unique name for the image
+                        $newName = uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                        // Store the image in the public folder
+                        $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
+                    }
+    
+                    InsuranceDetail::create([
+                        'patient_id' => $patient->id,
+                        'insurer_id' => $scheme[0]['id'],
+                        'scheme_type_id' => $scheme_type[0]['id'],
+                        'mobile_number' => $insurance_detail->insurer_contact,
+                        'insurance_card_path' => $insurance_card_image_path,
+                        'principal_member_name' => $insurance_detail->principal_member_name,
+                        'principal_member_number' => $insurance_detail->principal_member_number,
+                        'member_validity' => $insurance_detail->member_validity,
+                        'created_by' => User::getLoggedInUserId()
+                    ]);
                 }
 
-                InsuranceDetail::create([
-                    'patient_id' => $patient->id,
-                    'insurer_id' => $scheme[0]['id'],
-                    'scheme_type_id' => $scheme_type[0]['id'],
-                    'mobile_number' => $request->insurer_contact,
-                    'insurance_card_path' => $insurance_card_image_path,
-                    'principal_member_name' => $request->principal_member_name,
-                    'principal_member_number' => $request->principal_member_number,
-                    'member_validity' => $request->member_validity,
-                    'created_by' => User::getLoggedInUserId()
-                ]);
+                
+
+                
             }
+
+
+            //validate and save patient payment method
+            $this->validateAndSavePatientPaymentMethod($request->payment_methods, $patient->id);
 
             DB::commit();
 
@@ -156,20 +175,22 @@ class PatientController extends Controller
    // updating a patient
     public function updatePatient(Request $request){
         $request->validate([
-            'id' => 'required|exists:patients,id',
+            'id' => 'required|exists:patients,id',            
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
-            'identification_type' => 'required|string|min:1|max:255',
-            'id_no' => 'required|string|min:3|max:255',
-            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'identification_type' => 'string|min:1|max:255',
+            'id_no' => 'string|unique:patients,id_no',
+            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-            'email' => 'required|string|email|max:255|',
+            'email' => 'string|email|max:255|unique:patients',
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
             'next_of_kin_contact' => 'required|string|min:3|max:255',
             'next_of_kin_relationship' => 'required|string|min:3|max:255',
+            'payment_methods' => 'required',
+            'insurance_membership' => 'exists:insurance_memberships,name',
             'insurer' => 'string|exists:schemes,name',
             'scheme_type' => 'string|min:3|max:255',
             'insurer_contact' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -222,82 +243,92 @@ class PatientController extends Controller
                     'scan_id_photo' => $id_card_image_path,
                     'address'=>$request->address,
                     'residence'=>$request->residence,
+                    'insurance_membership' => $request->insurance_membership,
                     'next_of_kin_name' => $request->next_of_kin_name,
                     'next_of_kin_contact' => $request->next_of_kin_contact,
                     'next_of_kin_relationship' => $request->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
 
-            if($request->insurer){
+            // if insurance is selected then patient must provide their insurance details
+            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
 
-                $request->validate([
-                    'insurer' => 'required|string|exists:schemes,name',
-                    'scheme_type' => 'required|string|exists:scheme_types,name',
-                    'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-                    'principal_member_name' => 'required|string|min:3|max:255',
-                    'principal_member_number' => 'required|string|min:3|max:255',
-                    'member_validity' => 'required|string|min:3|max:255',
-                    
-                ]);
-
-                $scheme = Scheme::with([
-                    'schemeTypes:id,scheme_id,name'
-                ])->where('schemes.name', $request->insurer)
-                    ->where('scheme_types.name', $request->scheme_type)
-                    ->get();
-
-                $scheme_type = SchemeTypes::where('name', $request->scheme_type)->get();
-
-                count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
-
-                //handle image ya insurance card
-                $insurance_card_image_path = null;
-                if($request->file('insurance_card_image')){
-                    $image = $request->file('insurance_card_image');
-
-                    // Generate a new unique name for the image
-                    $newName = uniqid() . '.' . $image->getClientOriginalExtension();
-            
-                    // Store the image in the public folder
-                    $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
-                }
-
-                $insurance_details = InsuranceDetail::where('patient_id', $request->id)
-                    ->where('scheme_type', $scheme_type[0]['id'])
-                    ->get();
-
-                if(count($insurance_details) < 1){
-                    InsuranceDetail::create([
+            if($request->insurance_details){
+                foreach($request->insurance_details as $insurance_detail){
+                    $insurance_detail->validate([
+                        'insurer' => 'required|string|exists:schemes,name',
+                        'scheme_type' => 'required|string|exists:scheme_types,name',
+                        'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                        'principal_member_name' => 'required|string|min:3|max:255',
+                        'principal_member_number' => 'required|string|min:3|max:255',
+                        'member_validity' => 'required|string|min:3|max:255',
+                        
+                    ]);
+    
+                    $scheme = Scheme::with([
+                        'schemeTypes:id,scheme_id,name'
+                    ])->where('schemes.name', $insurance_detail->insurer)
+                        ->where('scheme_types.name', $insurance_detail->scheme_type)
+                        ->get();
+    
+                    $scheme_type = SchemeTypes::where('name', $insurance_detail->scheme_type)->get();
+    
+                    count($scheme) < 1 ?? throw new InputsValidationException("Scheme type not related to provided insurer");
+    
+                    //handle image ya insurance card
+                    $insurance_card_image_path = null;
+                    if($request->file('insurance_card_image')){
+                        $image = $request->file('insurance_card_image');
+    
+                        // Generate a new unique name for the image
+                        $newName = uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                        // Store the image in the public folder
+                        $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
+                    }
+    
+                    $existing_insurance_details = InsuranceDetail::where('patient_id', $request->id)
+                        ->where('scheme_type', $scheme_type[0]['id'])
+                        ->get();
+    
+                    if(count($existing_insurance_details) < 1){
+                        InsuranceDetail::create([
+                                'patient_id' => $request->id,
+                                'insurer_id' => $scheme[0]['id'],
+                                'scheme_type_id' => $scheme_type[0]['id'],
+                                'mobile_number' => $insurance_detail->insurer_contact,
+                                'insurance_card_path' => $insurance_card_image_path,
+                                'principal_member_name' => $insurance_detail->principal_member_name,
+                                'principal_member_number' => $insurance_detail->principal_member_number,
+                                'member_validity' => $insurance_detail->member_validity,
+                                'updated_by' => User::getLoggedInUserId()
+                            ]);
+                    }
+    
+                    else{
+                        InsuranceDetail::where('patient_id', $request->id)
+                        ->where('scheme_type', $scheme_type[0]['id'])
+                        ->update([
                             'patient_id' => $request->id,
                             'insurer_id' => $scheme[0]['id'],
                             'scheme_type_id' => $scheme_type[0]['id'],
-                            'mobile_number' => $request->insurer_contact,
+                            'mobile_number' => $insurance_detail->insurer_contact,
                             'insurance_card_path' => $insurance_card_image_path,
-                            'principal_member_name' => $request->principal_member_name,
-                            'principal_member_number' => $request->principal_member_number,
-                            'member_validity' => $request->member_validity,
+                            'principal_member_name' => $insurance_detail->principal_member_name,
+                            'principal_member_number' => $insurance_detail->principal_member_number,
+                            'member_validity' => $insurance_detail->member_validity,
                             'updated_by' => User::getLoggedInUserId()
                         ]);
-                }
-
-                else{
-                    InsuranceDetail::where('patient_id', $request->id)
-                    ->where('scheme_type', $scheme_type[0]['id'])
-                    ->update([
-                        'patient_id' => $request->id,
-                        'insurer_id' => $scheme[0]['id'],
-                        'scheme_type_id' => $scheme_type[0]['id'],
-                        'mobile_number' => $request->insurer_contact,
-                        'insurance_card_path' => $insurance_card_image_path,
-                        'principal_member_name' => $request->principal_member_name,
-                        'principal_member_number' => $request->principal_member_number,
-                        'member_validity' => $request->member_validity,
-                        'updated_by' => User::getLoggedInUserId()
-                    ]);
+                    }
                 }
 
                 
+
+
+                
             }
+
+            $this->validateAndSavePatientPaymentMethod($request->payment_methods, $request->id);
 
             DB::commit();
 
@@ -457,4 +488,50 @@ class PatientController extends Controller
 
         return $patient_code;
     }
+
+    private function validateAndSavePatientPaymentMethod($payment_methods, $patient_id){
+        foreach($payment_methods as $payment_method){
+            if($payment_method->cash == true){
+                $this->saveToDB("cash", $patient_id);
+            }
+
+            else if($payment_method->insurance == true){
+                $this->saveToDB("insurance", $patient_id);
+            }
+
+
+        }
+    }
+
+    private function saveToDB($payment_method, $patient_id){
+        $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+
+        if(count($existing_method) < 1){
+            DB::rollBack();
+            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE);
+
+        }
+
+
+        $already_saved = PatientPaymentTypesJoin::where('patient_id', $patient_id)
+                            ->where('payment_type_id', $existing_method[0]['id'])
+                            ->get();
+
+        if(count($already_saved)  < 1){
+            PatientPaymentTypesJoin::create([
+                'patient_id' => $patient_id,
+                'payment_type_id' => $existing_method[0]['id']
+            ]);
+        }
+    }
+
+    private function validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($payment_methods, $insurer){
+        foreach($payment_methods as $payment_method){
+            if($payment_method->insurance == true){
+                $insurer == null ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
+         
+            }
+
+
+        }}
 }

@@ -3,6 +3,7 @@
 namespace App\Models\Patient;
 
 use App\Models\Admin\ChronicDisease;
+use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -27,6 +28,7 @@ class Patient extends Model
         'email',
         'address',
         'residence',
+        'insurance_membership',
         'next_of_kin_name',
         'next_of_kin_contact',
         'next_of_kin_relationship',
@@ -58,11 +60,16 @@ class Patient extends Model
         return $this->belongsToMany(ChronicDisease::class, 'patients_chronic_diseases_join', 'patient_id', 'chronic_disease_id');
     }
 
+    public function PaymentMethods(){
+        return $this->belongsToMany(PaymentType::class, 'patients_payment_methods_join', 'patient_id', 'payment_type_id');
+    }
+
 
     //perform selection
     public static function selectPatients($id, $email, $patient_code, $id_no){
         $patients_query = Patient::with([
             'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',

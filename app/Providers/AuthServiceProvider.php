@@ -5,6 +5,7 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 
 use App\Models\Admin\Clinic;
+use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
@@ -39,6 +40,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultPaymentTypes($user[0]['id']);
 
         $this->createPaymentPaths();
+
+        $this->createInsuranceMemberShips();
     }
 
     private function defineRolesAndPermissions()
@@ -158,6 +161,23 @@ class AuthServiceProvider extends ServiceProvider
 
         PaymentPath::firstOrCreate([
             "name" => "SLADE"
+        ]);
+
+    }
+
+
+    
+
+    //Ensure you add all payment path during production........
+    private function createInsuranceMemberShips(){
+        InsuranceMemberShip::firstOrCreate([
+            "name" => "Principal Member",
+            "active" => true
+        ]);
+
+        InsuranceMemberShip::firstOrCreate([            
+            "name" => "Dependent",
+            "active" => true
         ]);
 
     }
