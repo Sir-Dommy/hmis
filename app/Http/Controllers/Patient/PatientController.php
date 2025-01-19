@@ -93,34 +93,32 @@ class PatientController extends Controller
             
             $this->validateIdentification($request->identification_type, $request->id_no);
 
-            echo("WE START 7");
             // if insurance is selected then patient must provide their insurance details
             $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
 
-            echo("WE START 8");
             if($request->insurance_details){
 
-        echo("WE START 9");
+                echo("WE START 10");
                 foreach($request->insurance_details as $insurance_detail){
-                    // validator($insurance_detail, [
-                    //     'insurer' => 'required|string|exists:schemes,name',
-                    //     'scheme_type' => 'required|string|exists:scheme_types,name',
-                    //     'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
-                    //     'principal_member_name' => 'required|string|min:3|max:255',
-                    //     'principal_member_number' => 'required|string|min:3|max:255',
-                    //     'member_validity' => 'required|string|min:3|max:255',
-                    // ])->validate();
-
-                    echo("WE START 10");
-                    $insurance_detail->validate([
+                    print_r($insurance_detail);
+                    validator($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                         'principal_member_name' => 'required|string|min:3|max:255',
                         'principal_member_number' => 'required|string|min:3|max:255',
                         'member_validity' => 'required|string|min:3|max:255',
+                    ])->validate();
+
+                    // $insurance_detail->validate([
+                    //     'insurer' => 'required|string|exists:schemes,name',
+                    //     'scheme_type' => 'required|string|exists:scheme_types,name',
+                    //     'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                    //     'principal_member_name' => 'required|string|min:3|max:255',
+                    //     'principal_member_number' => 'required|string|min:3|max:255',
+                    //     'member_validity' => 'required|string|min:3|max:255',
                         
-                    ]);
+                    // ]);
     
                     echo("WE START 11");
 
