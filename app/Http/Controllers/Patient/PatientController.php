@@ -104,7 +104,6 @@ class PatientController extends Controller
                     'created_by' => User::getLoggedInUserId()
                 ]);
                 
-            echo("PATIENT NAME1 = ". $data->firstname);
             
             $this->validateIdentification($data->identification_type, $data->id_no);
 
@@ -555,7 +554,9 @@ class PatientController extends Controller
     }
 
     private function validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($payment_methods, $insurer){
+        print_r($payment_methods);
         foreach($payment_methods as $payment_method){
+            echo($payment_method->insurance);
             if($payment_method['insurance'] == true){
                 count($insurer) == 0 ? throw new InputsValidationException("INSURANCE DETAILS MUST BE PROVIDED INSURANCE AS YOUR PAYMENT METHOD!!!!") : null;
          
