@@ -201,6 +201,7 @@ class PatientController extends Controller
         $data = json_decode($request->input('data'), true);
 
         Validator::make($data, [ 
+            'id' => 'required|exists:patients,id',
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|before:today',
