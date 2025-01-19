@@ -62,9 +62,9 @@ class PatientController extends Controller
         ])->validate();
 
         //reassign $request variable
-        $request = json_decode($request->input('data'));
+        $data = json_decode($request->input('data'));
 
-        $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+        $data->phonenumber1 == $data->phonenumber2 && $data->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         $patient_code = $this->generatePatientCode();
 
@@ -84,33 +84,33 @@ class PatientController extends Controller
             DB::beginTransaction();
             $patient = Patient::create([
                     'patient_code' => $patient_code,
-                    'firstname' => $request->firstname, 
-                    'lastname' => $request->lastname,
-                    'phonenumber1'=>$request->phonenumber1,
-                    'phonenumber2'=>$request->phonenumber2, 
-                    'email' => $request->email,
-                    'dob' => $request->dob,
-                    'identification_type' => $request->identification_type,
-                    'id_no' => $request->id_no,
+                    'firstname' => $data->firstname, 
+                    'lastname' => $data->lastname,
+                    'phonenumber1'=>$data->phonenumber1,
+                    'phonenumber2'=>$data->phonenumber2, 
+                    'email' => $data->email,
+                    'dob' => $data->dob,
+                    'identification_type' => $data->identification_type,
+                    'id_no' => $data->id_no,
                     'scan_id_photo' => $id_card_image_path,
-                    'address'=>$request->address,
-                    'residence'=>$request->residence,
-                    'insurance_membership' => $request->insurance_membership,
-                    'next_of_kin_name' => $request->next_of_kin_name,
-                    'next_of_kin_contact' => $request->next_of_kin_contact,
-                    'next_of_kin_relationship' => $request->next_of_kin_relationship,
+                    'address'=>$data->address,
+                    'residence'=>$data->residence,
+                    'insurance_membership' => $data->insurance_membership,
+                    'next_of_kin_name' => $data->next_of_kin_name,
+                    'next_of_kin_contact' => $data->next_of_kin_contact,
+                    'next_of_kin_relationship' => $data->next_of_kin_relationship,
                     'created_by' => User::getLoggedInUserId()
                 ]);
 
             
-            $this->validateIdentification($request->identification_type, $request->id_no);
+            $this->validateIdentification($data->identification_type, $data->id_no);
 
             // if insurance is selected then patient must provide their insurance details
-            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($request->payment_methods, $request->insurance_details);
+            $this->validateInsuranceDetailsProvisionIfInsuranceMembershipIsSet($data->payment_methods, $data->insurance_details);
 
-            if($request->insurance_details){
+            if($data->insurance_details){
 
-                foreach($request->insurance_details as $insurance_detail){
+                foreach($data->insurance_details as $insurance_detail){
                     validator($insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
@@ -166,7 +166,7 @@ class PatientController extends Controller
             }
 
             //validate and save patient payment method
-            $this->validateAndSavePatientPaymentMethod($request->payment_methods, $patient->id);
+            $this->validateAndSavePatientPaymentMethod($data->payment_methods, $patient->id);
 
             DB::commit();
 
