@@ -53,7 +53,7 @@ class PatientController extends Controller
             
         ]);
         echo("WE START 1");
-        $request->phonenumber1 == $request->phonenumber2 && $$request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
+        $request->phonenumber1 == $request->phonenumber2 && $request->phonenumber1 != null  ? throw new InputsValidationException("Provided phone numbers should be different!") : null ;
             
         echo("WE START 2"); 
         $patient_code = $this->generatePatientCode();
