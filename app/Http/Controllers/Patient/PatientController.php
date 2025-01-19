@@ -572,6 +572,6 @@ class PatientController extends Controller
     }
 
     private function validateIdentification($identification_type, $id_no){
-        $identification_type != null && $id_no != null ? throw new InputsValidationException("You must provide id number with its related identification type (Both must be provided or omitted simultaneously") : null;
+        ($identification_type == null && $id_no != null) || ($identification_type != null && $id_no == null) ? throw new InputsValidationException("You must provide id number with its related identification type (Both must be provided or omitted simultaneously") : null;
     }
 }
