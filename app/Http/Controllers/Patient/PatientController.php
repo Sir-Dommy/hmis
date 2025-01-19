@@ -30,7 +30,7 @@ class PatientController extends Controller
             'dob' => 'required|date|before:today',
             'identification_type' => 'required|string|min:1|max:255',
             'id_no' => 'required|string|unique:patients,id_no',
-            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+            'phonenumber1' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
             'phonenumber2' => 'string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'email' => 'required|string|email|max:255|unique:patients',
             'address' => 'required|string|min:3|max:255',
