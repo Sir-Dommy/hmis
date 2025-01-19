@@ -110,11 +110,14 @@ class PatientController extends Controller
 
     
                     echo("WE START 11");
-
+                    
+                    $desiredValue = $insurance_detail['scheme_type'];
                     $scheme = Scheme::with([
                         'schemeTypes:id,scheme_id,name'
                     ])->where('schemes.name', $insurance_detail['insurer'])
-                        ->where('scheme_types.name', $insurance_detail['scheme_type'])
+                        ->whereHas('schemeTypes', function ($query) use ($desiredValue) {
+                        $query->where('name', $desiredValue); // Condition on scheme_types table
+                    })
                         ->get();
     
         echo("WE START 12");
