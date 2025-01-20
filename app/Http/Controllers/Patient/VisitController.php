@@ -237,13 +237,11 @@ class VisitController extends Controller
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
         foreach($payment_types as $payment_type){
 
-            var_dump($payment_type);
-
-            if($payment_type->cash == true){
+            if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
             }
     
-            else if($payment_type->insurance == true){
+            else if($payment_type['insurance'] == true){
                 $payment_method = "Insurance";
                 
                 !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
