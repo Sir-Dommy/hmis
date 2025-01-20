@@ -58,7 +58,7 @@ class PatientController extends Controller
             'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
-            'member_validity' => 'string|min:3|max:255',
+            'member_validity' => 'nullable|date',
             
         ])->validate();
 
