@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('visit_id');
             $table->dateTime('initiated_at');
             $table->double('bill_amount', 8, 2);
-            $table->double('discount', 8, 2);
+            $table->double('discount', 8, 2)->default(0.00);
             $table->string('status');
             $table->string('reason');
             $table->boolean('is_reversed');

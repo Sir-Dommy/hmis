@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
+use App\Models\Admin\VisitType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
 use App\Models\User;
@@ -42,10 +43,12 @@ class AuthServiceProvider extends ServiceProvider
         $this->createPaymentPaths();
 
         $this->createInsuranceMemberShips();
+
+        $this->createVisitTypes($user[0]['id']);
+
     }
 
-    private function defineRolesAndPermissions()
-    {
+    private function defineRolesAndPermissions(){
         // Define roles
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'doctor']);
@@ -165,9 +168,6 @@ class AuthServiceProvider extends ServiceProvider
 
     }
 
-
-    
-
     //Ensure you add all payment path during production........
     private function createInsuranceMemberShips(){
         InsuranceMemberShip::firstOrCreate([
@@ -178,6 +178,26 @@ class AuthServiceProvider extends ServiceProvider
         InsuranceMemberShip::firstOrCreate([            
             "name" => "Dependent",
             "active" => true
+        ]);
+
+    }
+
+    private function createVisitTypes($user_id){
+        VisitType::firstOrCreate([
+            "name" => "In Patient",
+            "created_by" => $user_id
+        ]);
+
+
+        VisitType::firstOrCreate([
+            "name" => "Out Patient",
+            "created_by" => $user_id
+        ]);
+
+
+        VisitType::firstOrCreate([
+            "name" => "Follow up",
+            "created_by" => $user_id
         ]);
 
     }

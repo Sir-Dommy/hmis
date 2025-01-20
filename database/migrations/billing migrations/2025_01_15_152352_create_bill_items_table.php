@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('bill_id');
             $table->double('amount', 8, 2);
-            $table->double('discount', 8, 2);
+            $table->double('discount', 8, 2)->default(0.00);
             $table->string('description')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();

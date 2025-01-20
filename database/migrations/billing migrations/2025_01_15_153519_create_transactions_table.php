@@ -20,11 +20,11 @@ return new class extends Migration
             $table->unsignedBigInteger('scheme_id')->nullable(); 
             $table->dateTime('initiation_time');
             $table->double('amount', 8, 2);
-            $table->double('fee', 8, 2);
-            $table->dateTime('receipt_date');  
+            $table->double('fee', 8, 2)->default(0.00);
+            $table->dateTime('receipt_date')->nullable();  
             $table->string('status');
             $table->boolean('is_reversed');    
-            $table->dateTime('reverse_date');     
+            $table->dateTime('reverse_date')->nullable();     
             $table->string('reason')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();

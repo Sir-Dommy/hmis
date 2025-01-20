@@ -25,13 +25,13 @@ class VisitController extends Controller
             'department' => 'required|string|exists:departments,name',
             'clinic'=>'required|string|exists:clinics,name',
             'visit_type'=>'required|string|min:1|max:255',
-            'scheme' => 'required|string|exists:schemes,name',
+            'scheme' => 'nullable|string|exists:schemes,name',
             'fee_type'=>'required|string|exists:payment_types,name',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Allowed formats and max size 2MB
         
         ]);
 
-        //store image first 
+        //store image first
         // Get the uploaded file
         $path = null;
         if($request->file('image')){
