@@ -383,6 +383,17 @@ class PatientController extends Controller
 
     }
 
+    public function deepPatientSearch($value){
+
+        $patients = Patient::deepSearchPatients($value);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Deep searched a patient with value: ". $value);
+
+        return response()->json(
+            $patients
+        ,200);
+    }
+
     //Getting a single patients details 
     public function getSinglePatient(Request $request){
 

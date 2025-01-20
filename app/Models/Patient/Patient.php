@@ -117,6 +117,43 @@ class Patient extends Model
 
     }
 
+    //perform selection
+    public static function deepSearchPatients($value){
+        $patients_query = Patient::with([
+            'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email',
+            'insuranceDetails:id,patient_id,member_validity', 
+            'visits:id,patient_id,claim_number,amount,visit_type,stage,open',
+            'visits.clinic:id,name,description',
+            'visits.department:id,name',
+            'visits.feeType',
+            'visits.scheme:id,name',
+            'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->whereNull('patients.deleted_by')
+            ->orWhere('patients.id', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.email', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.firstname', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.lastname', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%')
+            ->orWhere('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%');
+
+        
+        $paginated_patients = $patients_query->paginate(10);
+        //return $paginated_patients;
+        $paginated_patients->getCollection()->transform(function ($patient) {
+            return Patient::mapResponse($patient);
+        });
+
+        return $paginated_patients;
+
+
+
+    }
+
     private static function mapResponse($patient){
         return [
             'id' => $patient->id,
