@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('insurance_card_path')->nullable();
             $table->string('principal_member_name')->nullable();
             $table->string('principal_member_number')->nullable();
-            $table->string('member_validity');
+            $table->string('member_validity')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
