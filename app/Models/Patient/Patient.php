@@ -76,11 +76,11 @@ class Patient extends Model
             'insuranceDetails:id,patient_id,member_validity', 
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
-            'visits.visitClinics.clinic:id,visit_id,name',
-            'visits.visitDepartments.department:id,visit_id,name',
-            'visits.visitPaymentTypes.paymentType:id,visit_id,name',
-            'visits.visitInsuranceDetails.scheme:id,visit_id,name,claim_number,available_balance',
-            'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name,claim_number,available_balance',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
