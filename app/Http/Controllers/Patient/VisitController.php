@@ -50,11 +50,11 @@ class VisitController extends Controller
         try{
             $visit = Visit::create([
                 'patient_id' => $request->patient_id, 
-                'visit_type' => $request->visit_type[0]['id'],
+                'visit_type_id' => $visit_type[0]['id'],
                 'stage'=> 0,
                 'created_by' => User::getLoggedInUserId()
             ]);
-
+            //echo ("TUKO NA VISIT ID " . )
             //save visit department
             VisitDepartment::create([
                 'visit_id' => $visit->id,
