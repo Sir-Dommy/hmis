@@ -148,17 +148,24 @@ class PatientController extends Controller
                         $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
                     }
     
-                    InsuranceDetail::create([
-                        'patient_id' => $patient->id,
-                        'insurer_id' => $scheme[0]['id'],
-                        'scheme_type_id' => $scheme_type[0]['id'],
-                        'mobile_number' => $insurance_detail->insurer_contact,
-                        'insurance_card_path' => $insurance_card_image_path,
-                        'principal_member_name' => $insurance_detail->principal_member_name,
-                        'principal_member_number' => $insurance_detail->principal_member_number,
-                        'member_validity' => $insurance_detail->member_validity,
-                        'created_by' => User::getLoggedInUserId()
-                    ]);
+                    $existing_insurance_details = InsuranceDetail::where('patient_id', $patient->id)
+                                                                    ->where('insurer_id', $scheme[0]['id'])
+                                                                    ->where('scheme_type_id', $scheme_type[0]['id'])
+                                                                    ->get();
+                    if(count($existing_insurance_details) < 1){
+                        InsuranceDetail::create([
+                            'patient_id' => $patient->id,
+                            'insurer_id' => $scheme[0]['id'],
+                            'scheme_type_id' => $scheme_type[0]['id'],
+                            'mobile_number' => $insurance_detail->insurer_contact,
+                            'insurance_card_path' => $insurance_card_image_path,
+                            'principal_member_name' => $insurance_detail->principal_member_name,
+                            'principal_member_number' => $insurance_detail->principal_member_number,
+                            'member_validity' => $insurance_detail->member_validity,
+                            'created_by' => User::getLoggedInUserId()
+                        ]);
+                    }
+                    
                 }
 
                 
