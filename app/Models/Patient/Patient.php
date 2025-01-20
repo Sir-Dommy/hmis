@@ -138,10 +138,12 @@ class Patient extends Model
             ->orWhere('patients.firstname', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.lastname', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
-            ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%')
-            ->orWhereHas('insuranceDetails', function ($query) use ($value) {
-                $query->where('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%'); 
-            });
+            ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%');
+
+
+            // ->orWhereHas('insuranceDetails', function ($query) use ($value) {
+            //     $query->where('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%'); 
+            // })
 
         
         $paginated_patients = $patients_query->paginate(10);
