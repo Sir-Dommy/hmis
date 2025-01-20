@@ -140,7 +140,7 @@ class Visit extends Model
             'patient_id' => $visit->patient_id,
             'patient_code' => $visit->patient ? $visit->patient->patient_code : null,
             'departments' => $visit->VisitDepartment,
-            'clinics' => $visit->VisitClinic,
+            'clinics' => $visit->visitClinics,
             'visit_type' => $visit->visitType ? $visit->visitType->name : null,
             'schemes' => $visit->visitInsuranceDetails,
             'payment_types' => $visit->visitPaymentTypes,
