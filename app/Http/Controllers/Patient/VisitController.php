@@ -84,7 +84,7 @@ class VisitController extends Controller
                     'claim_number' => $scheme['claim_number'],
                     'available_balance' => $scheme['claim_number'],
                     'scheme_id' => $existing_scheme[0]['id'],
-                    'available_balance' => $request->signature,
+                    'signature' => $request->signature,
                 ]);
             }
 
