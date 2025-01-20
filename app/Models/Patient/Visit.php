@@ -103,7 +103,7 @@ class Visit extends Model
             'visitClinics.clinic:id,name',
             'visitDepartments.department:id,name',
             'visitPaymentTypes.paymentType:id,name',
-            'visitInsuranceDetails.scheme:id,scheme.name,claim_number,available_balance',
+            'visitInsuranceDetails.scheme:id,name,claim_number,available_balance',
             'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
@@ -139,7 +139,7 @@ class Visit extends Model
             'departments' => $visit->VisitDepartments->department,
             'clinics' => $visit->visitClinics->clinic,
             'visit_type' => $visit->visitType ? $visit->visitType->name : null,
-            'schemes' => $visit->visitInsuranceDetails,
+            'schemes' => $visit->visitInsuranceDetails->scheme ? $visit->visitInsuranceDetails->scheme : [],
             'payment_types' => $visit->visitPaymentTypes->paymentType,
             'stage' => $visit->stage,
             'open' => $visit->open,
