@@ -107,6 +107,7 @@ class Patient extends Model
         }
 
 
+        echo $patients_query->toSql();
 
         return $patients_query->get()->map(function ($patient) {
             $patient_details = Patient::mapResponse($patient);
