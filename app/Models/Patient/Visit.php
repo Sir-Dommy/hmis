@@ -100,9 +100,13 @@ class Visit extends Model
             'updatedBy:id,email',
             'patient:id,patient_code',
             'visitType:id,name',
+            'visitClinics:id,visit_id',
             'visitClinics.clinic:id,visit_id,name',
+            'visitDepartments:id,visit_id',
             'visitDepartments.department:id,visit_id,name',
+            'visitPaymentTypes:id,visit_id',
             'visitPaymentTypes.paymentType:id,visit_id,name',
+            'visitInsuranceDetails:id,visit_id',
             'visitInsuranceDetails.scheme:id,visit_id,name,claim_number,available_balance',
             'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
