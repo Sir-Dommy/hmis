@@ -6,7 +6,6 @@ use App\Exceptions\AlreadyExistsException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Patient\Patient;
-use Illuminate\Support\Facades\Auth;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use App\Exceptions\InputsValidationException;
@@ -120,7 +119,7 @@ class PatientController extends Controller
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                         'principal_member_name' => 'required|string|min:3|max:255',
                         'principal_member_number' => 'required|string|min:3|max:255',
-                        'member_validity' => 'required|string|min:3|max:255',
+                        'member_validity' => 'nullable|date',
                     ]);
 
                     $desiredValue = $insurance_detail->scheme_type;
@@ -223,7 +222,7 @@ class PatientController extends Controller
             'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'principal_member_name' => 'nullable|string|min:3|max:255',
             'principal_member_number' => 'string|min:3|max:255',
-            'member_validity' => 'string|min:3|max:255',
+            'member_validity' => 'nullable|date',
             
         ])->validate();
 
@@ -292,7 +291,7 @@ class PatientController extends Controller
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                         'principal_member_name' => 'required|string|min:3|max:255',
                         'principal_member_number' => 'required|string|min:3|max:255',
-                        'member_validity' => 'required|string|min:3|max:255',
+                        'member_validity' => 'nullable|date',
                         
                     ]);
     
