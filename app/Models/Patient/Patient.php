@@ -119,6 +119,8 @@ class Patient extends Model
 
     //perform selection
     public static function deepSearchPatients($value){
+
+        echo("OUR VALUE IS ". $value);
         $patients_query = Patient::with([
             'chronicDiseases:id,name',
             'PaymentMethods:id,name',
