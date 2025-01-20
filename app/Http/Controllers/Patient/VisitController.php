@@ -236,7 +236,11 @@ class VisitController extends Controller
     }
 
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
+        var_dump($payment_types);
         foreach($payment_types as $payment_type){
+
+            var_dump($payment_type);
+
             if($payment_type->cash == true){
                 $payment_method = "Cash";
             }
