@@ -146,7 +146,8 @@ class Patient extends Model
             //     $query->where('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%'); 
             // })
 
-        
+        echo $patients_query->toSql();
+
         $paginated_patients = $patients_query->paginate(10);
         //return $paginated_patients;
         $paginated_patients->getCollection()->transform(function ($patient) {
