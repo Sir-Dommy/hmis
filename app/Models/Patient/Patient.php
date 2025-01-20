@@ -140,7 +140,7 @@ class Patient extends Model
             ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%')
             ->orWhereHas('insuranceDetails', function ($query) use ($value) {
-                $query->where('principal_member_number', 'LIKE', '%'.$value.'%'); 
+                $query->where('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%'); 
             });
 
         
