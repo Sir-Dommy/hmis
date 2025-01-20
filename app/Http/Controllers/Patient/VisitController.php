@@ -22,7 +22,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Expr\Cast\Object_;
 
 class VisitController extends Controller
 {
@@ -78,12 +77,12 @@ class VisitController extends Controller
                     'insurer' => 'required|string|exists:schemes,name',
                 ]);
 
-                $existing_scheme = Scheme::where('name', $scheme->insurer)->get("id");
+                $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
 
                 VisitInsuranceDetail::create([
                     'visit_id' => $visit->id,
-                    'claim_number' => $scheme->claim_number,
-                    'available_balance' => $scheme->claim_number,
+                    'claim_number' => $scheme['claim_number'],
+                    'available_balance' => $scheme['claim_number'],
                     'scheme_id' => $existing_scheme[0]['id']
                 ]);
             }
