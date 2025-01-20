@@ -235,30 +235,33 @@ class VisitController extends Controller
         ,200);
     }
 
-    private function validateAndSaveVisitPaymentType($payment_type, $visit_id, $schemes){
-        if($payment_type->cash == true){
-            $payment_method = "Cash";
+    private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
+        foreach($payment_types as $payment_type){
+            if($payment_type->cash == true){
+                $payment_method = "Cash";
+            }
+    
+            else if($payment_type->insurance == true){
+                $payment_method = "Insurance";
+                
+                !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
+            }
+    
+            $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+    
+            if(count($existing_method) < 1){
+                DB::rollBack();
+                
+                throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
+    
+            }
+    
+            VisitPaymentType::create([
+                'visit_id' => $visit_id,
+                'payment_type_id' => $existing_method[0]['id']
+            ]);
         }
-
-        else if($payment_type->insurance == true){
-            $payment_method = "Insurance";
-            
-            !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
-        }
-
-        $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
-
-        if(count($existing_method) < 1){
-            DB::rollBack();
-            
-            throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
-
-        }
-
-        VisitPaymentType::create([
-            'visit_id' => $visit_id,
-            'payment_type_id' => $existing_method[0]['id']
-        ]);
+        
     }
 
 }
