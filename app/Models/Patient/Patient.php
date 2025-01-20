@@ -142,6 +142,9 @@ class Patient extends Model
             ->orWhere('patients.firstname', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.lastname', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.phonenumber1', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.phonenumber2', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.next_of_kin_contact', 'LIKE', '%'.$value.'%')
             ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%');
         });
 
