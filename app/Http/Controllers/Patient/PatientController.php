@@ -49,7 +49,7 @@ class PatientController extends Controller
             'address' => 'required|string|min:3|max:255',
             'residence' => 'required|string|min:3|max:255',
             'next_of_kin_name' => 'required|string|min:3|max:255',
-            'next_of_kin_contact' => 'required|string|min:3|max:255',
+            'next_of_kin_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
             'next_of_kin_relationship' => 'required|string|min:3|max:255',
             'payment_methods' => 'required',
             'insurance_membership' => 'nullable|exists:insurance_memberships,name',
