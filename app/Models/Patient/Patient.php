@@ -134,7 +134,7 @@ class Patient extends Model
             'visits.scheme:id,name',
             'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by')
-            ->orWhere('patients.id', 'LIKE', '%'.$value.'%');
+            ->orWhere('patients.id', 'LIKE', '%' . $value . '%');
 
 
             // ->orWhere('patients.email', 'LIKE', '%'.$value.'%')
