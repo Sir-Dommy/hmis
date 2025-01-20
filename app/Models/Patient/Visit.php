@@ -6,6 +6,11 @@ use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\VisitType;
+use App\Models\Patient\Visits\VisitClinic;
+use App\Models\Patient\Visits\VisitDepartment;
+use App\Models\Patient\Visits\VisitInsuranceDetail;
+use App\Models\Patient\Visits\VisitPaymentType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,51 +23,52 @@ class Visit extends Model
 
     protected $fillable = [
         "patient_id",
-        "claim_number",
-        "amount",
-        "department_id",
-        "clinic_id",
-        "visit_type",
-        "scheme_id",
-        "fee_type",
+        "visit_type_id",
         "stage",
         "open",
-        "document_path",
         "created_by",
         "updated_by",
         "deleted_by",
         "deleted_at"
     ];
 
-    //relationship with clinic
-    public function clinic()
-    {
-        return $this->belongsTo(Clinic::class, 'clinic_id');
-    }
+    
 
     //relationship with patient
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
+
+
+    public function visitClinics()
+    {
+        return $this->hasMany(VisitClinic::class, 'visit_id', 'id');
+    }
+
+    public function visitDepartments()
+    {
+        return $this->hasMany(VisitDepartment::class, 'visit_id', 'id');
+    }
+
+
+    public function visitInsuranceDetails()
+    {
+        return $this->hasMany(VisitInsuranceDetail::class, 'visit_id', 'id');
+    }
+
+
+    public function visitPaymentTypes()
+    {
+        return $this->hasMany(VisitPaymentType::class, 'visit_id', 'id');
+    }
+
     //relationship with department
-    public function department()
+    public function visitType()
     {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(VisitType::class, 'visit_type_id');
     }
 
-
-    //relationship with department
-    public function feeType()
-    {
-        return $this->belongsTo(PaymentType::class, 'fee_type');
-    }
-
-    //relationship with payment Type
-    public function scheme()
-    {
-        return $this->belongsTo(Scheme::class, 'scheme_id');
-    }
 
     public function createdBy()
     {

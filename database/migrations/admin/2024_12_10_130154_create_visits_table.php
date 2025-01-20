@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('visits', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('visit_type_id');
             $table->string('stage');
             $table->boolean('open')->default(true);
             $table->unsignedBigInteger('created_by');
@@ -21,6 +22,11 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('visit_type_id')
+                    ->references('id')
+                    ->on('visit_types')
+                    ->onDelete('cascade');
 
             $table->foreign('patient_id')
                     ->references('id')

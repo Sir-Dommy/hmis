@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('visit_id');
             $table->unsignedBigInteger('payment_type_id');
-            $table->dateTime('time_in')->nullable();
-            $table->dateTime('time_out')->nullable();
             $table->timestamps();
 
             $table->foreign('visit_id')
