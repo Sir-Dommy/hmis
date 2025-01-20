@@ -84,7 +84,7 @@ class VisitController extends Controller
                 VisitInsuranceDetail::create([
                     'visit_id' => $visit->id,
                     'claim_number' => $scheme['claim_number'],
-                    'available_balance' => $scheme['claim_number'],
+                    'available_balance' => $scheme['available_balance'],
                     'scheme_id' => $existing_scheme[0]['id'],
                     'signature' => $request->signature,
                 ]);
