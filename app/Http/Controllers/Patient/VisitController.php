@@ -78,6 +78,8 @@ class VisitController extends Controller
                 ]);
 
                 $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
+                
+                count($existing_scheme) < 1 ? throw new InputsValidationException("Provide a valid insurer!!!!!!!!") : null;
 
                 VisitInsuranceDetail::create([
                     'visit_id' => $visit->id,
