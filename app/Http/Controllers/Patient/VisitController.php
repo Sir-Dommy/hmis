@@ -68,7 +68,7 @@ class VisitController extends Controller
             ]);
 
     
-            $this->validateAndSaveVisitPaymentType($$request->payment_types, $visit->id, $request->schemes);
+            $this->validateAndSaveVisitPaymentType($request->payment_types, $visit->id, $request->schemes);
     
             foreach($request->schemes as $scheme){
                 Validator::make((array) $scheme, [
