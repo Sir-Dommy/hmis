@@ -79,7 +79,7 @@ class Patient extends Model
             'visits.visitClinics.clinic:id,name',
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name,claim_number,available_balance',
+            'visits.visitInsuranceDetails.scheme:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
@@ -132,7 +132,7 @@ class Patient extends Model
             'visits.visitClinics.clinic:id,name',
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name,claim_number,available_balance',
+            'visits.visitInsuranceDetails.scheme:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by')
             ->where(function ($query) use ($value) {
