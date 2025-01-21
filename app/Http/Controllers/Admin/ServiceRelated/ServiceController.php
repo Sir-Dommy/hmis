@@ -77,7 +77,7 @@ class ServiceController extends Controller
              ->update([
                 'name' => $request->name,
                 'description' => $request->description,
-                'updated_at' => User::getLoggedInUserId()
+                'updated_by' => User::getLoggedInUserId()
         ]);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Updated a Service with name: ". $request->name);
