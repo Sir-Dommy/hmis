@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
+use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\VisitType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
@@ -45,6 +46,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->createInsuranceMemberShips();
 
         $this->createVisitTypes($user[0]['id']);
+
+        $this->createDefaultServices($user[0]['id']);
 
     }
 
@@ -197,6 +200,15 @@ class AuthServiceProvider extends ServiceProvider
 
         VisitType::firstOrCreate([
             "name" => "Follow up",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultServices($user_id){
+        Service::firstOrCreate([
+            "name" => "Test",
+            "description" => "This is a test service",
             "created_by" => $user_id
         ]);
 
