@@ -28,4 +28,39 @@ class Service extends Model
     ];
 
 
+    //perform selection
+    public static function selectServices($id, $name){
+
+        $services_query = Service::with([
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email'
+        ])->whereNull('services.deleted_by')
+          ->whereNull('services.deleted_at');
+
+        if($id != null){
+            $services_query->where('services.id', $id);
+        }
+        elseif($name != null){
+            $services_query->where('services.name', $name);
+        }
+
+        // return $schemes_query->get();
+
+        return $services_query->get()->map(function ($service) {
+            $service_details = [
+                'id' => $service->id,
+                'name' => $service->name,
+            ];
+
+            $related_user =  CustomUserRelations::relatedUsersDetails($service);
+
+            return array_merge($service_details, $related_user);
+
+
+        });
+
+    }
+
+
 }

@@ -61,6 +61,19 @@ class APIConstants
     public const NAME_BRAND = 'Brand';
     public const NAME_DRUG_FORMULATION = 'Drug formulation';
     public const NAME_DRUG = 'Drug';
+    public const NAME_SERVICE = 'Service';
+    public const NAME_BILL = 'Bill';
+    public const NAME_BILL_ITEM = 'Bill item';
+    public const NAME_BILL_CHANGE_REQUEST = 'Bill change request';
+    public const NAME_BILL_ITEM_CHANGE_REQUEST = 'Bill item Change request';
+    public const NAME_TRANSACTION = 'Transaction';
+    public const NAME_TRANSACTION_CHANGE_REQUEST = 'Transaction change request';
+    public const NAME_BUILDING = 'Building';
+    public const NAME_WING = 'Wing';
+    public const NAME_WARD = 'Ward';
+    public const NAME_OFFICE = 'Office';
+    public const NAME_SERVICE_PRICE = 'Service price';
+    public const NAME_BRANCH = 'Branch';
 
 
     // Bill and transactions statuses

@@ -2,10 +2,6 @@
 
 namespace App\Models\Patient;
 
-use App\Models\Admin\Clinic;
-use App\Models\Admin\Department;
-use App\Models\Admin\PaymentType;
-use App\Models\Admin\Scheme;
 use App\Models\Admin\VisitType;
 use App\Models\Patient\Visits\VisitClinic;
 use App\Models\Patient\Visits\VisitDepartment;
