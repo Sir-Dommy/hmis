@@ -17,9 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('consultation_category_id')->nullable();
             $table->unsignedBigInteger('clinic_id')->nullable();
-            $table->unsignedBigInteger('payment_type_id');
+            $table->unsignedBigInteger('payment_type_id')->nullable();
             $table->unsignedBigInteger('scheme_id')->nullable();
             $table->unsignedBigInteger('scheme_type_id')->nullable();
+            $table->unsignedBigInteger('consultation_type_id')->nullable();
             $table->unsignedBigInteger('visit_type_id')->nullable();
             $table->unsignedBigInteger('doctor_id')->nullable();
             $table->time('price_applies_from')->nullable();
@@ -78,6 +79,11 @@ return new class extends Migration
             $table->foreign('scheme_type_id') // Column name
                 ->references('id') // Target column in the parent table
                 ->on('scheme_types') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('consultation_type_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('consultation_types') // Parent table
                 ->onDelete('cascade');
 
             $table->foreign('visit_type_id') // Column name
