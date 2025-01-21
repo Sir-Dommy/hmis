@@ -33,6 +33,7 @@ return new class extends Migration
             $table->unsignedBigInteger('building_id')->nullable();
             $table->unsignedBigInteger('wing_id')->nullable();
             $table->unsignedBigInteger('ward_id')->nullable();
+            $table->unsignedBigInteger('office_id')->nullable();
             $table->double('price', 8, 4);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -107,6 +108,31 @@ return new class extends Migration
             $table->foreign('brand_id') // Column name
                 ->references('id') // Target column in the parent table
                 ->on('brands') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('branch_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('branches') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('building_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('buildings') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('wing_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('wings') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('ward_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('wards') // Parent table
+                ->onDelete('cascade');
+
+            $table->foreign('office_id') // Column name
+                ->references('id') // Target column in the parent table
+                ->on('offices') // Parent table
                 ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
