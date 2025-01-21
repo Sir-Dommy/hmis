@@ -168,7 +168,7 @@ class ServiceController extends Controller
     public function restoreSoftDeleteService($id){
         
 
-        $existing = Service::where('id', $id)->get();
+        $existing = Service::where('id', $id)->whereNotNull('deleted_by')->get();
         
         if(count($existing) == 0){
             throw new NotFoundException(APIConstants::NAME_SERVICE);
