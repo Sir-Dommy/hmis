@@ -87,7 +87,7 @@ return new class extends Migration
 
             $table->foreign('doctor_id') // Column name
                 ->references('id') // Target column in the parent table
-                ->on('doctors') // Parent table
+                ->on('employees') // Parent table
                 ->onDelete('cascade');
 
             $table->foreign('lab_test_type_id') // Column name
