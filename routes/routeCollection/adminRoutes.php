@@ -309,8 +309,9 @@ Route::group(['prefix'=>'services'], function(){
     Route::get('get', [ServiceController::class, 'getSingleService']);
     Route::get('', [ServiceController::class, 'getAllServices']);
     Route::put('approve/{id}', [ServiceController::class, 'approveService']);
-    Route::put('softDelete/{id}', [ServiceController::class, 'disableService']);
-    Route::put('restore/{id}', [ServiceController::class, 'softDeleteService']);
+    Route::put('disable/{id}', [ServiceController::class, 'disableService']);
+    Route::put('restore/{id}', [ServiceController::class, 'restoreSoftDeleteService']);
+    Route::put('softDelete/{id}', [ServiceController::class, 'softDeleteService']);
     Route::delete('permanentlyDelete/{id}', [ServiceController::class, 'permanentDeleteService']);
 
 

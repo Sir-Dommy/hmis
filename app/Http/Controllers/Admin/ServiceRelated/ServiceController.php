@@ -164,6 +164,30 @@ class ServiceController extends Controller
             ,200);
     }
 
+    // restore soft-Deleted a service
+    public function restoreSoftDeleteService($id){
+        
+
+        $existing = Service::where('id', $id)->get();
+        
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE);
+        }
+
+    
+        Service::where('id', $id)
+            ->update([
+                'deleted_by' => null,
+                'deleted_at' => null
+            ]);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restored Soft deleted a service with id: ". $id);
+
+        return response()->json(
+                Service::selectServices($id, null)
+            ,200);
+    }
+
     //permanently Delete a service
     public function permanentDeleteService($id){
         
