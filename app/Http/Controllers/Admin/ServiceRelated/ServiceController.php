@@ -68,9 +68,9 @@ class ServiceController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        $existing = Service::where('name', $request->id)->get();
+        $existing = Service::where('name', $request->name)->get();
 
-        $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_SERVICE) : null ;
+        count($existing) > 0 && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_SERVICE) : null ;
 
     
         Service::where('id', $request->id)
