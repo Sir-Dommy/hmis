@@ -177,7 +177,7 @@ class Bill extends Model
     }
 
     public static function verifyServiceChargeRequest($bill_item){
-        Validator::make((array) $bill_item, [
+        Validator::make($bill_item, [
             'service' => 'required|exists:services,name',
             'department' => 'nullable|exists:departments,name',
             'consultation_category' => 'nullable|exists:consultation_categories,name',
