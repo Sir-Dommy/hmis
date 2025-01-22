@@ -427,6 +427,7 @@ class ServicePriceController extends Controller
         //  $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array
 
         foreach($existing_price as $exis){
+            $exis = json_decode($exis, true);
             var_dump($exis[0]['id']);
             return $exis;
         }
