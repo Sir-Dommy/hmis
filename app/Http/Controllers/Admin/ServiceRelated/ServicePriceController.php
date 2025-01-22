@@ -426,7 +426,8 @@ class ServicePriceController extends Controller
 
         //  $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array
 
-         return $existing_price;
+        $existing_price['data'] ? $res =  "WE HAVE DATA " : $res = "HATUNA DATA";
+         return $res;
 
          // Check if 'data' exists and is not empty
          if (isset($existing_price['data']) && !empty($existing_price['data'])) {
