@@ -127,7 +127,7 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-        return $existing;
+        return $existing->data ." AND COUNT IS ".count($existing->data);
 
         //save update details
         $this->saveServicePrice($request, $request->id);
