@@ -53,6 +53,11 @@ class Bill extends Model
         return $this->hasMany(BillItem::class, 'bill_id', 'id');
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'bill_id', 'id');
+    }
+
     //perform selection
     public static function selectBills($id, $bill_reference){
         $bills_query = Bill::with([
@@ -60,7 +65,8 @@ class Bill extends Model
             'visit.visitType:id,name',
             'visit.visitClinics.clinic:id,name',
             'reversedBy:id,email',
-            'billItems:id,amount,discount,description'
+            'billItems:id,amount,discount,description',
+            'transactions:id,transaction_reference,third_party_reference,patient_account_no,hospital_account_no,scheme_name,initiation_time,amount,status,reverse_date'
         ])->whereNull('bills.deleted_by');
 
         if($id != null){
@@ -107,6 +113,7 @@ class Bill extends Model
             'expiry_time' => $bill->expiry_time,
             'visit' => $bill->visit,
             'bill_items' => $bill->billItems,
+            'bill_items' => $bill->transactions,
             'created_by' => $bill->createdBy ? $bill->createdBy->email : null,
             'created_at' => $bill->created_at,
             'updated_by' => $bill->updatedBy ? $bill->updatedBy->email : null,
