@@ -425,10 +425,10 @@ class ServicePriceController extends Controller
          );
 
 
+         return $existing;
 
          $response = json_decode($existing, true); // Decode the JSON response into an associative array
 
-         return $response;
          // Check if 'data' exists and is not empty
          if (isset($response['data']) && !empty($response['data'])) {
              $existing_id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
