@@ -108,6 +108,8 @@ class Bill extends Model
 
     public static function createBillAndBillItems($request, $visit_id){
 
+        Bill::billingRequestValidation($request);
+
         try{
             DB::beginTransaction();
 
@@ -247,5 +249,36 @@ class Bill extends Model
             'approved_at' => $bill->approved_at,    
 
         ];
+    }
+
+    public static function billingRequestValidation($request){
+        // Define the validation rules
+        $rules = [
+            'bill_items' => 'required|array',
+            'bill_items.*.service' => 'nullable|exists:services,name',
+            'bill_items.*.department' => 'nullable|exists:departments,name',
+            'bill_items.*.consultation_category' => 'nullable|exists:consultation_categories,name',
+            'bill_items.*.clinic' => 'nullable|exists:clinics,name',
+            'bill_items.*.payment_type' => 'nullable|exists:payment_types,name',
+            'bill_items.*.scheme' => 'nullable|exists:schemes,name',
+            'bill_items.*.scheme_type' => 'nullable|exists:scheme_types,name',
+            'bill_items.*.consultation_type' => 'nullable|exists:consultation_types,name',
+            'bill_items.*.visit_type' => 'nullable|exists:visit_types,name',
+            'bill_items.*.doctor' => 'nullable|string',
+            'bill_items.*.lab_test_type' => 'nullable|exists:lab_test_types,name',
+            'bill_items.*.image_test_type' => 'nullable|exists:image_test_types,name',
+            'bill_items.*.drug' => 'nullable|exists:drugs,name',
+            'bill_items.*.brand' => 'nullable|exists:brands,name',
+            'bill_items.*.branch' => 'nullable|exists:branches,name',
+            'bill_items.*.building' => 'nullable|exists:buildings,name',
+            'bill_items.*.wing' => 'nullable|exists:wings,name',
+            'bill_items.*.ward' => 'nullable|exists:wards,name',
+            'bill_items.*.office' => 'nullable|exists:offices,name',
+            'bill_items.*.discount' => 'nullable|numeric',
+            'bill_items.*.current_time' => 'nullable|date_format:H:i',
+        ];
+
+        Validator::make($request->all(), $rules);
+
     }
 }
