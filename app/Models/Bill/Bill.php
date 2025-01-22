@@ -157,16 +157,16 @@ class Bill extends Model
                 $final_bill_discount += $discount;
     
             }
-    
+
+            //commit transaction if no errors encountered
+            DB::commit();
+
+
             Bill::where('id', $created_bill->id)
                 ->update([
                     'bill_amount' => $final_bill_amount,
                     'discount' => $final_bill_discount
                 ]);
-
-
-            //commit transaction if no errors encountered
-            DB::commit();
         }
 
         catch(Exception $e){
