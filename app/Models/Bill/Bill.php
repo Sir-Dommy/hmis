@@ -143,7 +143,7 @@ class Bill extends Model
     
                 count($service_price_and_details) < 1 ? throw new NotFoundException("No Price set for this service with given parameter...Contact admin for assistance!!!!!!") : null;
     
-                $bill_item->discount ? $discount = $bill_item->discount : $discount = 0.0;
+                $bill_item['discount'] ? $discount = $bill_item['discount'] : $discount = 0.0;
     
                 BillItem::createBillItem(
                     $created_bill->id
