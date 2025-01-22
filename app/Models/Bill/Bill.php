@@ -2,6 +2,7 @@
 
 namespace App\Models\Bill;
 
+use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\ServiceRelated\ServicePrice;
@@ -278,7 +279,13 @@ class Bill extends Model
             'bill_items.*.current_time' => 'nullable|date_format:H:i',
         ];
 
-        Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
+
+
+        // Check if the validation fails
+        if ($validator->fails()) {
+            throw new InputsValidationException($validator->errors());
+        }
 
     }
 }
