@@ -416,23 +416,7 @@ class ServicePriceController extends Controller
         }
 
 
-        // Find the record
-        $servicePrice = ServicePrice::find($request->id);
-
-        if (!$servicePrice) {
-            return response()->json(['error' => 'Service price not found'], 404);
-        }
-
-
-    
-        // $created = ServicePrice::create([
-        //     'service_id' => $service_id,
-        //     'price' => $request->price,
-        //     'price_applies_from' => $request->price_applies_from,
-        //     'price_applies_to' => $request->price_applies_to,
-        //     'duration' => $request->duration,
-        //     'created_by' => User::getLoggedInUserId()
-        // ]);
+        //extra validation
 
         // check if service price exists
         $existing = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
@@ -457,6 +441,26 @@ class ServicePriceController extends Controller
                 throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
              }
          }
+
+
+        // Find the record
+        $servicePrice = ServicePrice::find($id);
+
+        if (!$servicePrice) {
+            return response()->json(['error' => 'Service price not found'], 404);
+        }
+
+
+    
+        // $created = ServicePrice::create([
+        //     'service_id' => $service_id,
+        //     'price' => $request->price,
+        //     'price_applies_from' => $request->price_applies_from,
+        //     'price_applies_to' => $request->price_applies_to,
+        //     'duration' => $request->duration,
+        //     'created_by' => User::getLoggedInUserId()
+        // ]);
+
 
 
          //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
