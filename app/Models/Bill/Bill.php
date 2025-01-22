@@ -130,7 +130,7 @@ class Bill extends Model
                 //verify request first
                 Bill::verifyServiceChargeRequest($bill_item);
     
-                $existing_service = Service::selectServices(null, $bill_item->service);
+                $existing_service = Service::selectServices(null, $bill_item['service']);
     
                 $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
     
