@@ -95,7 +95,7 @@ class ServicePriceController extends Controller
             ]);
 
             //save other details of service price
-            $this->saveServicePrice($request, $created->id);
+            return $this->saveServicePrice($request, $created->id);
 
             DB::commit();
 
@@ -428,7 +428,6 @@ class ServicePriceController extends Controller
 
          $response = json_decode($existing, true); // Decode the JSON response into an associative array
 
-         return "Senor!!";
          return $response;
          // Check if 'data' exists and is not empty
          if (isset($response['data']) && !empty($response['data'])) {
