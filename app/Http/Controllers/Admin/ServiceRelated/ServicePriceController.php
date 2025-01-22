@@ -424,9 +424,9 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-         //$response_1 = json_decode($existing_price, true); // Decode the JSON response into an associative array
+         $existing_price = json_decode($existing_price, true); // Decode the JSON response into an associative array
 
-         return $existing_price->data;
+         return $existing_price;
 
          // Check if 'data' exists and is not empty
          if (isset($existing_price['data']) && !empty($existing_price['data'])) {
