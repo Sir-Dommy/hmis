@@ -115,6 +115,7 @@ class Bill extends Model
                 'bill_reference_number'=>Bill::generateUniqueBillReferenceNumber(),
                 'visit_id' => $visit_id,
                 'initiated_at' => Carbon::now(),
+                'bill_amount' => 0.0,
                 'discount' => 0.0,
                 'status' => APIConstants::STATUS_PENDING,
                 'is_reversed' => 0,
