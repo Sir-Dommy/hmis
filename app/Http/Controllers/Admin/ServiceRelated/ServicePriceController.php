@@ -448,13 +448,14 @@ class ServicePriceController extends Controller
          if (isset($response['data']) && !empty($response['data'])) {
              $existing_id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
 
+             if($request->id == null){
+                throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
+             }
+
              if($existing_id != $request->id){
                 throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
              }
          }
-         else{
-            
-         } 
 
 
          //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
