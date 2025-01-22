@@ -93,6 +93,29 @@ class ServicePriceController extends Controller
                 'duration' => $request->duration,
                 'created_by' => User::getLoggedInUserId()
             ]);
+
+            // check if service price exists
+            $existing = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+                $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+                $request->wing, $request->ward, $request->office
+            );
+
+
+
+            $response = json_decode($existing, true); // Decode the JSON response into an associative array
+
+            // Check if 'data' exists and is not empty
+            if (isset($response['data']) && !empty($response['data'])) {
+                $existing_id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
+
+                if($request->id == null){
+                    throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
+                }
+
+                if($existing_id != $request->id){
+                    throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
+                }
+            }
     
             //save other details of service price
             $this->saveServicePrice($request, $created->id);
