@@ -3,6 +3,7 @@
 namespace App\Models\Bill;
 
 use App\Models\Admin\Scheme;
+use App\Models\User;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,8 @@ class Transaction extends Model
 
     protected $fillable = [
         'bill_id',
+        'transaction_reference',
+        'third_party_reference',
         'patient_account_no',
         'hospital_account_no',
         'scheme_name',
@@ -28,6 +31,7 @@ class Transaction extends Model
         'status',
         'is_reversed',
         'reverse_date',
+        'reversed_by',
         'reason',
         'created_by',
         'updated_by',
@@ -43,8 +47,79 @@ class Transaction extends Model
     {
         return $this->belongsTo(BillItem::class, 'bill_id');
     }
+
+    public function reversedBy()
+    {
+        return $this->belongsTo(User::class, 'reversed_by');
+    }
+
     public function scheme()
     {
         return $this->belongsTo(Scheme::class, 'scheme_id');
+    }
+
+    //perform selection
+    public static function selectTransactions($id, $transaction_reference){
+        $transactions_query = Bill::with([
+            'bill:id,bill_reference',
+            'reversedBy:id,email'
+        ])->whereNull('bills.deleted_by');
+
+        if($id != null){
+            $transactions_query->where('transactions.id', $id);
+        }
+        elseif($transaction_reference != null){
+            $transactions_query->where('transactions.transaction_reference', $transaction_reference);
+        }
+
+
+        else{
+            $paginated_transactions = $transactions_query->paginate(10);
+
+            
+            $paginated_transactions->getCollection()->transform(function ($transaction) {
+                return Transaction::mapResponse($transaction);
+            });
+    
+            return $paginated_transactions;
+        }
+
+
+        return $transactions_query->get()->map(function ($transaction) {
+            $transaction_details = Transaction::mapResponse($transaction);
+
+            return $transaction_details;
+        });
+
+
+    }
+
+    private static function mapResponse($transaction){
+        return [
+            'id' => $transaction->id,
+            'transaction_reference'=>$transaction->transaction_reference,
+            'third_party_reference'=>$transaction->third_party_reference,
+            'bill_id'=>$transaction->bill->id,
+            'bill_reference_number'=>$transaction->bill->bill_reference_number,
+            'patient_account_no' => $transaction->patient_account_no,
+            'hospital_account_no' => $transaction->hospital_account_no,
+            'scheme_name' => $transaction->scheme_name,
+            'initiation_time' => $transaction->initiation_time,
+            'amount' => $transaction->amount,
+            'fee' => $transaction->fee,
+            'receipt_date' => $transaction->receipt_date,
+            'status' => $transaction->status,
+            'is_reversed' => $transaction->is_reversed,
+            'reverse_date' => $transaction->reverse_date,
+            'reason' => $transaction->reason,
+            'reversed_by' => $transaction->reversedBy ? $transaction->reversedBy->email : null,
+            'created_by' => $transaction->createdBy ? $transaction->createdBy->email : null,
+            'created_at' => $transaction->created_at,
+            'updated_by' => $transaction->updatedBy ? $transaction->updatedBy->email : null,
+            'updated_at' => $transaction->updated_at,
+            'approved_by' => $transaction->approvedBy ? $transaction->approvedBy->email : null,
+            'approved_at' => $transaction->approved_at,    
+
+        ];
     }
 }
