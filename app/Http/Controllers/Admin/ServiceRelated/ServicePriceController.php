@@ -439,7 +439,9 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-         $existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
+        echo $existing;
+
+         //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
 
         // Update each column independently
         $servicePrice->service_id = $service_id;
