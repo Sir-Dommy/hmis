@@ -56,6 +56,8 @@ class ServicePriceController extends Controller
         null, null, null
         );
 
+        echo $all;
+
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched Service Price with id: ".$all[0]['id']);
 
         return response()->json(
