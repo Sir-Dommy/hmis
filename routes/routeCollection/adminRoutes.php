@@ -324,7 +324,7 @@ Route::group(['prefix'=>'servicePrices'], function(){
 
     Route::post('create', [ServicePriceController::class, 'createServicePrice']);
     Route::put('update', [ServicePriceController::class, 'updateServicePrice']);
-    Route::get('get', [ServicePriceController::class, 'getSingleServicePrice']);
+    Route::get('get/{id}', [ServicePriceController::class, 'getSingleServicePrice']);
     Route::get('', [ServicePriceController::class, 'getAllServicePrices']);
     Route::put('approve/{id}', [ServicePriceController::class, 'approveServicePrice']);
     Route::put('disable/{id}', [ServicePriceController::class, 'disableServicePrice']);
