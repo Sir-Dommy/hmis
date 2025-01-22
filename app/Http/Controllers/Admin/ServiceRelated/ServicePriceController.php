@@ -419,21 +419,22 @@ class ServicePriceController extends Controller
         //extra validation
 
         // check if service price exists
-        $existing = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+        $existing_price = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
             $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
             $request->wing, $request->ward, $request->office
          );
 
 
 
-         $response = json_decode($existing, true); // Decode the JSON response into an associative array
+         $response = json_decode($existing_price, true); // Decode the JSON response into an associative array
 
-         return $existing;
-
+         echo "TUMIFIKA HAPA!!!";
          // Check if 'data' exists and is not empty
          if (isset($response['data']) && !empty($response['data'])) {
              $existing_id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
 
+
+             echo "TUMIFIKA HAPA!!! NBA ID NI ".$existing_id;
              if($request->id == null){
                 throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
              }
