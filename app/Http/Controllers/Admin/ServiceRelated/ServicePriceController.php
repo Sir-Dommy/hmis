@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\ServiceRelated;
 
+use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Brand;
@@ -120,22 +121,6 @@ class ServicePriceController extends Controller
         $request->validate([
             'id' => 'required|exists:service_prices,id',
         ]);
-
-        // check if service price exists
-        $existing = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
-            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
-            $request->wing, $request->ward, $request->office
-         );
-
-         $response = json_decode($existing, true); // Decode the JSON response into an associative array
-
-         // Check if 'data' exists and is not empty
-         if (isset($response['data']) && !empty($response['data'])) {
-             $id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
-             return $id;
-         } else {
-             return null; // Return null if 'data' is not available or empty
-         }
 
         //save update details
         $this->saveServicePrice($request, $request->id);
@@ -454,6 +439,22 @@ class ServicePriceController extends Controller
             $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
             $request->wing, $request->ward, $request->office
          );
+
+
+
+         $response = json_decode($existing, true); // Decode the JSON response into an associative array
+
+         // Check if 'data' exists and is not empty
+         if (isset($response['data']) && !empty($response['data'])) {
+             $existing_id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
+
+             if($existing_id != $request->id){
+                throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
+             }
+         }
+         else{
+            
+         } 
 
 
          //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
