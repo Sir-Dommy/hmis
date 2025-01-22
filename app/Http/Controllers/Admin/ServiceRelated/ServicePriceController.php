@@ -428,7 +428,7 @@ class ServicePriceController extends Controller
 
         foreach($existing_price as $exis){
             $exis = json_decode($exis, true);
-            var_dump($exis[0]['id']);
+            var_dump($exis['id']);
             return $exis;
         }
 
