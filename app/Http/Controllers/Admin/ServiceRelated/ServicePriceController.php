@@ -234,10 +234,9 @@ class ServicePriceController extends Controller
     public function restoreSoftDeleteServicePrice($id){
         
 
-        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null
-        );  
+        $existing = ServicePrice::where('id', $id)
+                ->whereNotNull('deleted_by')
+                ->get();
         
         if(count($existing) == 0){
             throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
