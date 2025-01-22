@@ -162,7 +162,7 @@ class ServicePriceController extends Controller
     }
 
     //disable a service price
-    public function disableService($id){
+    public function disableServicePrice($id){
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
@@ -194,7 +194,7 @@ class ServicePriceController extends Controller
     }
 
     //soft Delete a service price
-    public function softDeleteService($id){
+    public function softDeleteServicePrice($id){
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
@@ -224,7 +224,7 @@ class ServicePriceController extends Controller
     }
 
     // restore soft-Deleted a service price
-    public function restoreSoftDeleteService($id){
+    public function restoreSoftDeleteServicePrice($id){
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
@@ -254,7 +254,7 @@ class ServicePriceController extends Controller
     }
 
     //permanently Delete a service price
-    public function permanentDeleteService($id){
+    public function permanentDeleteServicePrice($id){
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
