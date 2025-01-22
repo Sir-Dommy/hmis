@@ -32,6 +32,10 @@ class VisitController extends Controller
             'department' => 'required|string|exists:departments,name',
             'clinic'=>'required|string|exists:clinics,name',
             'visit_type'=>'required|string|exists:visit_types,name',
+            'doctor'=>'nullable',
+            'consultation_type'=>'nullable',
+            'consultation_category'=>'nullable',
+            'service'=>'required|string|exists:services,name',
             'schemes' => 'nullable',
             'payment_types'=>'required',
         
@@ -42,8 +46,6 @@ class VisitController extends Controller
         $clinic = Clinic::where('name', $request->clinic)->get("id");
         $visit_type = VisitType::selectVisitTypes(null, $request->visit_type);
 
-        // return response()->file($path);
-        // echo $department[0]['id'];
 
         DB::beginTransaction();
 

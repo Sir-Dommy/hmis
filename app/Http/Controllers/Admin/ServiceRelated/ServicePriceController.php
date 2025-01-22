@@ -39,7 +39,7 @@ class ServicePriceController extends Controller
     public function getAllServicePrices(){        
 
         $all = ServicePrice::selectServicePrice(null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
         null, null, null
         );
 
@@ -53,7 +53,7 @@ class ServicePriceController extends Controller
     public function getSingleServicePrice($id){   
         
         $all = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null,  null, null, null, null, null, null,
         null, null, null
         );
 
@@ -111,7 +111,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
                 ServicePrice::selectServicePrice($created->id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null,  null, null, null, null, null, null, null, null,
                 null, null, null)
             ,200);
     }
@@ -130,7 +130,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
             ServicePrice::selectServicePrice($request->id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null)
             ,200);
 
@@ -141,7 +141,7 @@ class ServicePriceController extends Controller
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null,  null, null, null, null, null, null,
             null, null, null
         );
         
@@ -162,7 +162,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null
             )
             ,200);
@@ -173,7 +173,7 @@ class ServicePriceController extends Controller
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null,  null, null, null, null, null, null, null, null,
             null, null, null
         );
         
@@ -194,7 +194,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null
             )
             ,200);
@@ -205,7 +205,7 @@ class ServicePriceController extends Controller
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null
         );
         
@@ -224,7 +224,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null
             )
             ,200);
@@ -253,7 +253,7 @@ class ServicePriceController extends Controller
 
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null
             ) 
             ,200);
@@ -264,7 +264,7 @@ class ServicePriceController extends Controller
         
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null,  null, null, null, null, null, null, null,
             null, null, null
         );
             
@@ -419,7 +419,7 @@ class ServicePriceController extends Controller
 
         // check if service price exists
         $existing_price = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
-            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
             $request->wing, $request->ward, $request->office
          );
 

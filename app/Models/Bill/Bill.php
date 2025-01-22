@@ -2,9 +2,12 @@
 
 namespace App\Models\Bill;
 
+use App\Models\Admin\ServiceRelated\Service;
+use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Patient\Visit;
 use App\Models\User;
 use App\Utils\CustomUserRelations;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -96,6 +99,48 @@ class Bill extends Model
         });
 
 
+    }
+
+    public static function createBill($request){
+
+        //verify request first
+        Bill::verifyServiceChargeRequest($request);
+
+        $existing_service = Service::selectServices(null, $request->service);
+
+        $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
+
+        $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+            $request->consultation_type, $request->visit_type, $request->doctor, $current_time, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+            $request->wing, $request->ward, $request->office
+        );
+
+    }
+
+    public static function verifyServiceChargeRequest($request){
+        $request->validate([
+            'service' => 'required|exists:services,name',
+            'department' => 'nullable|exists:departments,name',
+            'consultation_category' => 'nullable|exists:consultation_categories,name',
+            'clinic' => 'nullable|exists:clinics,name',
+            'payment_type' => 'nullable|exists:payment_types,name',
+            'scheme' => 'nullable|exists:schemes,name',
+            'scheme_type' => 'nullable|exists:scheme_types,name',
+            'consultation_type' => 'nullable|exists:consultation_types,name',
+            'visit_type' => 'nullable|exists:visit_types,name',
+            'doctor' => 'nullable|string', // Assuming doctor is an employee
+            'lab_test_type' => 'nullable|exists:lab_test_types,name',
+            'image_test_type' => 'nullable|exists:image_test_types,name',
+            'drug' => 'nullable|exists:drugs,name',
+            'brand' => 'nullable|exists:brands,name',
+            'branch' => 'nullable|exists:branches,name',
+            'building' => 'nullable|exists:buildings,name',
+            'wing' => 'nullable|exists:wings,name',
+            'ward' => 'nullable|exists:wards,name',
+            'office' => 'nullable|exists:offices,name',
+            'price' => 'required|numeric', // Price should be numeric
+            'current_time' => 'nullable|date_format:H:i', // Valid time in 24-hour format
+        ]);
     }
 
     private static function mapResponse($bill){

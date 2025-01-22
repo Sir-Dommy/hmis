@@ -43,12 +43,14 @@ class ServiceController extends Controller
     public function createService(Request $request){
         $request->validate([
             'name' => 'required|string|unique:services,name',
-            'description' => 'nullable|string|max:1000',
+            'service_price_affected_by_time' => 'boolean', //boolean'
+            'description' => 'nullable|string|max:255',
         ]);
 
     
         $created = Service::create([
             'name' => $request->name,
+            'service_price_affected_by_time' => $request->service_price_affected_by_time,
             'description' => $request->description,
             'created_by' => User::getLoggedInUserId()
         ]);
@@ -65,7 +67,8 @@ class ServiceController extends Controller
         $request->validate([
             'id' => 'required|exists:services,id',
             'name' => 'required|string',
-            'description' => 'nullable|string|max:1000',
+            'service_price_affected_by_time' => 'boolean',
+            'description' => 'nullable|string|max:255',
         ]);
 
         $existing = Service::where('name', $request->name)->get();
@@ -76,6 +79,7 @@ class ServiceController extends Controller
         Service::where('id', $request->id)
              ->update([
                 'name' => $request->name,
+                'service_price_affected_by_time' => $request->service_price_affected_by_time,
                 'description' => $request->description,
                 'updated_by' => User::getLoggedInUserId()
         ]);

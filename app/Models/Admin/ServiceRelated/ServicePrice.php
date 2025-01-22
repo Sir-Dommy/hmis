@@ -159,7 +159,7 @@ class ServicePrice extends Model
 
     //perform selection
     public static function selectServicePrice($id, $service, $department, $consultation_category, $clinic, $payment_type, $scheme, $scheme_type,
-        $consultation_type, $visit_type, $doctor, $current_time, $duration, $lab_test_type, $image_test_type, $drug_id, $brand, $branch, $building,
+        $consultation_type, $visit_type, $doctor, $price_applies_from, $price_applies_to, $duration, $lab_test_type, $image_test_type, $drug_id, $brand, $branch, $building,
         $wing, $ward, $office
         ){
 
@@ -306,11 +306,16 @@ class ServicePrice extends Model
                 });
             }
 
-            // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
-            if ($current_time) {
-                $service_prices_query->where(function ($query) use ($current_time) {
-                    $query->where('price_applies_from', '<=', $current_time)
-                        ->where('price_applies_to', '>=', $current_time);
+            // Filter by 'price_applies_to')
+            if ($price_applies_from) {
+                $service_prices_query->where(function ($query) use ($price_applies_from) {
+                    $query->where('price_applies_from', '=', $price_applies_from);
+                });
+            }
+            // Filter 'price_applies_to')
+            if ($price_applies_to) {
+                $service_prices_query->where(function ($query) use ($price_applies_to) {
+                    $query->where('price_applies_to', '=', $price_applies_to);
                 });
             }
 
@@ -496,6 +501,14 @@ class ServicePrice extends Model
                 $service_prices_query->where(function ($query) use ($current_time) {
                     $query->where('price_applies_from', '<=', $current_time)
                         ->where('price_applies_to', '>=', $current_time);
+                });
+            }
+
+
+            // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
+            if ($duration) {
+                $service_prices_query->where(function ($query) use ($duration) {
+                    $query->where('duration', '<=', $duration);
                 });
             }
 
