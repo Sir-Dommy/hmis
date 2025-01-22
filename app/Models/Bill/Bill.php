@@ -109,8 +109,6 @@ class Bill extends Model
 
     public static function createBillAndBillItems($request, $visit_id){
 
-        Bill::billingRequestValidation($request);
-
         try{
             DB::beginTransaction();
 
@@ -130,6 +128,7 @@ class Bill extends Model
             $final_bill_discount = 0.0;
     
             foreach($request->bill_items as $bill_item){
+
                 //verify request first
                 Bill::verifyServiceChargeRequest($bill_item);
     
@@ -137,9 +136,9 @@ class Bill extends Model
     
                 $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
     
-                $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $bill_item->service, $bill_item->department, $bill_item->consultation_category, $bill_item->clinic, $bill_item->payment_type, $bill_item->scheme, $bill_item->scheme_type,
-                    $bill_item->consultation_type, $bill_item->visit_type, $bill_item->doctor, $current_time, $bill_item->duration, $bill_item->lab_test_type, $bill_item->image_test_type, $bill_item->drug_id, $bill_item->brand, $bill_item->branch, $bill_item->building,
-                    $bill_item->wing, $bill_item->ward, $bill_item->office
+                $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $bill_item['service'], $bill_item['department'], $bill_item['consultation_category'], $bill_item['clinic'], $bill_item['payment_type'], $bill_item['scheme'], $bill_item['scheme_type'],
+                    $bill_item['consultation_type'], $bill_item['visit_type'], $bill_item['doctor'], $current_time, $bill_item['duration'], $bill_item['lab_test_type'], $bill_item['image_test_type'], $bill_item['drug_id'], $bill_item['brand'], $bill_item['branch'], $bill_item['building'],
+                    $bill_item['wing'], $bill_item['ward'], $bill_item['office']
                 );
     
                 count($service_price_and_details) < 1 ? throw new NotFoundException("No Price set for this service with given parameter...Contact admin for assistance!!!!!!") : null;
@@ -252,42 +251,5 @@ class Bill extends Model
         ];
     }
 
-    public static function billingRequestValidation($request){
-        // Define the validation rules
-        $rules = [
-            'bill_items' => 'required|array',
-            'bill_items.*.service' => 'nullable|exists:services,name',
-            'bill_items.*.department' => 'nullable|exists:departments,name',
-            'bill_items.*.consultation_category' => 'nullable|exists:consultation_categories,name',
-            'bill_items.*.clinic' => 'nullable|exists:clinics,name',
-            'bill_items.*.payment_type' => 'nullable|exists:payment_types,name',
-            'bill_items.*.scheme' => 'nullable|exists:schemes,name',
-            'bill_items.*.scheme_type' => 'nullable|exists:scheme_types,name',
-            'bill_items.*.consultation_type' => 'nullable|exists:consultation_types,name',
-            'bill_items.*.visit_type' => 'nullable|exists:visit_types,name',
-            'bill_items.*.doctor' => 'nullable|string',
-            'bill_items.*.lab_test_type' => 'nullable|exists:lab_test_types,name',
-            'bill_items.*.image_test_type' => 'nullable|exists:image_test_types,name',
-            'bill_items.*.drug' => 'nullable|exists:drugs,name',
-            'bill_items.*.brand' => 'nullable|exists:brands,name',
-            'bill_items.*.branch' => 'nullable|exists:branches,name',
-            'bill_items.*.building' => 'nullable|exists:buildings,name',
-            'bill_items.*.wing' => 'nullable|exists:wings,name',
-            'bill_items.*.ward' => 'nullable|exists:wards,name',
-            'bill_items.*.office' => 'nullable|exists:offices,name',
-            'bill_items.*.discount' => 'nullable|numeric',
-            'bill_items.*.current_time' => 'nullable|date_format:H:i',
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-
-
-        // Check if the validation fails
-        if ($validator->fails()) {
-            throw new InputsValidationException($validator->errors());
-        }
-
-        throw new InputsValidationException($validator->fails() . " Senor");
-
-    }
+    
 }
