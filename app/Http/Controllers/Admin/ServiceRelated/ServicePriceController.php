@@ -424,7 +424,7 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-         $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array
+        //  $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array
 
          return $existing_price;
 
