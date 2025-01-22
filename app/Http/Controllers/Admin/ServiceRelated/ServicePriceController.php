@@ -95,7 +95,7 @@ class ServicePriceController extends Controller
             ]);
 
             //save other details of service price
-            return $this->saveServicePrice($request, $created->id);
+            $this->saveServicePrice($request, $created->id);
 
             DB::commit();
 
