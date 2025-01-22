@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bill_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('bill_id');
+            $table->unsignedBigInteger('service_item_id')->nullable();
             $table->double('amount', 8, 2);
             $table->double('discount', 8, 2)->default(0.00);
             $table->string('description')->nullable();
@@ -31,6 +32,11 @@ return new class extends Migration
                   ->references('id') // Target column in the parent table
                   ->on('bills') // Parent table
                   ->onDelete('cascade');
+
+            $table->foreign('service_item_id') // Column name
+                    ->references('id') // Target column in the parent table
+                    ->on('service_prices') // Parent table
+                    ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table

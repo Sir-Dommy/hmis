@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('bill_id');
+            $table->string('transaction_reference')->unique(); 
+            $table->string('third_party_reference')->nullable(); 
             $table->string('patient_account_no')->nullable(); 
             $table->string('hospital_account_no')->nullable(); 
             $table->string('scheme_name')->nullable(); 
@@ -24,7 +26,8 @@ return new class extends Migration
             $table->dateTime('receipt_date')->nullable();  
             $table->string('status');
             $table->boolean('is_reversed');    
-            $table->dateTime('reverse_date')->nullable();     
+            $table->dateTime('reverse_date')->nullable();  
+            $table->unsignedBigInteger('reversed_by')->nullable();   
             $table->string('reason')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -40,6 +43,11 @@ return new class extends Migration
                   ->references('id') // Target column in the parent table
                   ->on('bills') // Parent table
                   ->onDelete('cascade');
+
+            $table->foreign('reversed_by') // Column name
+                    ->references('id') // Target column in the parent table
+                    ->on('users') // Parent table
+                    ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table

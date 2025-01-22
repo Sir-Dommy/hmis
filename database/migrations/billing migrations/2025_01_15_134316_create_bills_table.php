@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('reason');
             $table->boolean('is_reversed');
             $table->dateTime('reversed_at')->nullable();
+            $table->unsignedBigInteger('reversed_by')->nullable();
             $table->dateTime('expiry_time')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -37,6 +38,11 @@ return new class extends Migration
                   ->references('id') // Target column in the parent table
                   ->on('visits') // Parent table
                   ->onDelete('cascade');
+
+            $table->foreign('reversed_by') // Column name
+                    ->references('id') // Target column in the parent table
+                    ->on('users') // Parent table
+                    ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table
