@@ -73,7 +73,7 @@ class Bill extends Model
             $bills_query->where('bills.id', $id);
         }
         elseif($bill_reference != null){
-            $bills_query->where('bills.email', $bill_reference);
+            $bills_query->where('bills.bill_reference_number', $bill_reference);
         }
 
 
