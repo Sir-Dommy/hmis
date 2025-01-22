@@ -97,7 +97,7 @@ class BillItem extends Model
     }
 
     public static function createBillItem($bill_id, $service_item_id, $amount, $discount, $description){
-        Bill::create([
+        BillItem::create([
             'bill_id' => $bill_id,
             'service_item_id' => $service_item_id,
             'amount' => $amount,
