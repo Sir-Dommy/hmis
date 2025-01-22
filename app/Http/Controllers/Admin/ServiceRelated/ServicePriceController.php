@@ -123,7 +123,7 @@ class ServicePriceController extends Controller
         ]);
 
         //save update details
-        $this->saveServicePrice($request, $request->id);
+        return $this->saveServicePrice($request, $request->id);
 
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Service price with name: ". $request->id);
