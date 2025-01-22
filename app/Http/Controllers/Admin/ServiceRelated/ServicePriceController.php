@@ -446,7 +446,7 @@ class ServicePriceController extends Controller
         $servicePrice = ServicePrice::find($id);
 
         if (!$servicePrice) {
-            return response()->json(['error' => 'Service price not found'], 404);
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
         }
 
 
