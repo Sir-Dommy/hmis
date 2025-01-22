@@ -52,6 +52,7 @@ class Service extends Model
             $service_details = [
                 'id' => $service->id,
                 'name' => $service->name,
+                'service_price_affected_by_time' => $service->service_price_affected_by_time,
             ];
 
             $related_user =  CustomUserRelations::relatedUsersDetails($service);
