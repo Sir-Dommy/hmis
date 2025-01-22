@@ -66,6 +66,9 @@ class ServicePriceController extends Controller
     
     //create a service price
     public function createServicePrice(Request $request){
+        $request->validate([
+            'service' => 'required|exists:services,name'
+        ]);
         
 
         // Initialize variables for each entity
