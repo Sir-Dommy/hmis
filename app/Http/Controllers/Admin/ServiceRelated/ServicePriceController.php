@@ -127,7 +127,15 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-        return $existing;
+         $response = json_decode($existing, true); // Decode the JSON response into an associative array
+
+         // Check if 'data' exists and is not empty
+         if (isset($response['data']) && !empty($response['data'])) {
+             $id = $response['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
+             return $id;
+         } else {
+             return null; // Return null if 'data' is not available or empty
+         }
 
         //save update details
         $this->saveServicePrice($request, $request->id);
