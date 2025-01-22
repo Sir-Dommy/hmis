@@ -287,5 +287,7 @@ class Bill extends Model
             throw new InputsValidationException($validator->errors());
         }
 
+        throw new InputsValidationException($validator->fails() . " Senor");
+
     }
 }
