@@ -42,8 +42,6 @@ class VisitController extends Controller
             'bill_items'=>'required',
         
         ]);
-
-        $request->validated();
         
 
         $department = Department::where('name', $request->department)->get("id");
