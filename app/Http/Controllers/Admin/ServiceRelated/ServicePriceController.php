@@ -56,7 +56,7 @@ class ServicePriceController extends Controller
         null, null, null
         );
 
-        count($all) < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        count($all) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched Service Price with id: ".$all[0]['id']);
 
