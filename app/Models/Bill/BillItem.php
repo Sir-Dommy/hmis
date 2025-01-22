@@ -3,6 +3,7 @@
 namespace App\Models\Bill;
 
 use App\Models\Admin\ServiceRelated\ServicePrice;
+use App\Models\User;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -93,6 +94,17 @@ class BillItem extends Model
             'approved_at' => $bill_item->approved_at,    
 
         ];
+    }
+
+    public static function createBillItem($bill_id, $service_item_id, $amount, $discount, $description){
+        Bill::create([
+            'bill_id' => $bill_id,
+            'service_item_id' => $service_item_id,
+            'amount' => $amount,
+            'discount' => $discount,
+            'description' => $description,
+            'created_by' => User::getLoggedInUserId()
+        ]);
     }
 
 

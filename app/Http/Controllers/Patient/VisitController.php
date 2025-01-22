@@ -10,6 +10,7 @@ use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
 use App\Models\Admin\VisitType;
+use App\Models\Bill\Bill;
 use App\Models\Patient\Visit;
 use App\Models\Patient\Visits\VisitClinic;
 use App\Models\Patient\Visits\VisitDepartment;
@@ -38,6 +39,7 @@ class VisitController extends Controller
             'service'=>'required|string|exists:services,name',
             'schemes' => 'nullable',
             'payment_types'=>'required',
+            'bill_items'=>'required',
         
         ]);
         
@@ -91,6 +93,9 @@ class VisitController extends Controller
                     'signature' => $request->signature,
                 ]);
             }
+
+            //now create bill and its related bill items
+            Bill::createBillAndBillItems($request, $visit->id);
 
             //Commit transaction
             DB::commit();

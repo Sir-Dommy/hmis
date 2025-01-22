@@ -2,14 +2,19 @@
 
 namespace App\Models\Bill;
 
+use App\Exceptions\NotFoundException;
 use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Patient\Visit;
 use App\Models\User;
+use App\Utils\APIConstants;
 use App\Utils\CustomUserRelations;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class Bill extends Model
 {
@@ -101,24 +106,77 @@ class Bill extends Model
 
     }
 
-    public static function createBill($request){
+    public static function createBillAndBillItems($request, $visit_id){
 
-        //verify request first
-        Bill::verifyServiceChargeRequest($request);
+        try{
+            DB::beginTransaction();
 
-        $existing_service = Service::selectServices(null, $request->service);
+            $created_bill = Bill::create([
+                'bill_reference_number'=>Bill::generateUniqueBillReferenceNumber(),
+                'visit_id' => $visit_id,
+                'initiated_at' => Carbon::now(),
+                'discount' => 0.0,
+                'status' => APIConstants::STATUS_PENDING,
+                'is_reversed' => 0,
+                'reason' => $request->reason,
+                'created_by' => User::getLoggedInUserId()
+            ]);
+    
+            $final_bill_amount = 0.0;
+            $final_bill_discount = 0.0;
+    
+            foreach($request->bill_items as $bill_item){
+                //verify request first
+                Bill::verifyServiceChargeRequest($bill_item);
+    
+                $existing_service = Service::selectServices(null, $bill_item->service);
+    
+                $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
+    
+                $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $bill_item->service, $bill_item->department, $bill_item->consultation_category, $bill_item->clinic, $bill_item->payment_type, $bill_item->scheme, $bill_item->scheme_type,
+                    $bill_item->consultation_type, $bill_item->visit_type, $bill_item->doctor, $current_time, $bill_item->duration, $bill_item->lab_test_type, $bill_item->image_test_type, $bill_item->drug_id, $bill_item->brand, $bill_item->branch, $bill_item->building,
+                    $bill_item->wing, $bill_item->ward, $bill_item->office
+                );
+    
+                count($service_price_and_details) < 1 ? throw new NotFoundException("No Price set for this service with given parameter...Contact admin for assistance!!!!!!") : null;
+    
+                $bill_item->discount ? $discount = $bill_item->discount : $discount = 0.0;
+    
+                BillItem::createBillItem(
+                    $created_bill->id
+                    , $service_price_and_details[0]['id']
+                    , $service_price_and_details[0]['price']
+                    , $discount
+                    , $$bill_item->description ? $bill_item->description : null
+                );
+    
+                $final_bill_amount += $service_price_and_details[0]['price'];
+                $final_bill_discount += $discount;
+    
+            }
+    
+            Bill::where('id', $created_bill->id)
+                ->update([
+                    'bill_amount' => $final_bill_amount,
+                    'discount' => $final_bill_discount
+                ]);
 
-        $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
 
-        $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
-            $request->consultation_type, $request->visit_type, $request->doctor, $current_time, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
-            $request->wing, $request->ward, $request->office
-        );
+            //commit transaction if no errors encountered
+            DB::commit();
+        }
+
+        catch(Exception $e){
+            DB::rollBack();
+             throw new Exception($e);
+        }
+        
+
 
     }
 
-    public static function verifyServiceChargeRequest($request){
-        $request->validate([
+    public static function verifyServiceChargeRequest($bill_item){
+        Validator::make((array) $bill_item, [
             'service' => 'required|exists:services,name',
             'department' => 'nullable|exists:departments,name',
             'consultation_category' => 'nullable|exists:consultation_categories,name',
@@ -139,8 +197,30 @@ class Bill extends Model
             'ward' => 'nullable|exists:wards,name',
             'office' => 'nullable|exists:offices,name',
             'price' => 'required|numeric', // Price should be numeric
+            'discount' => 'nullable|numeric', // discount should be numeric
             'current_time' => 'nullable|date_format:H:i', // Valid time in 24-hour format
+        
         ]);
+
+
+    }
+
+     //function to generate unique bill_reference_number
+     private static function generateUniqueBillReferenceNumber(){
+
+        // Generate a random six-digit number
+        $randomNumber = str_pad(mt_rand(1, 999999999999), 12, '0', STR_PAD_LEFT);
+
+        // Add the B prefix
+        $bill_reference_number = 'B' . $randomNumber;
+
+        // Check if the code already exists in the database
+        while (Bill::where('bill_reference_number', $bill_reference_number)->exists()) {
+            $bill_reference_number = str_pad(mt_rand(1, 999999999999), 12, '0', STR_PAD_LEFT);
+            $bill_reference_number = 'B' . $randomNumber;
+        }
+
+        return $bill_reference_number;
     }
 
     private static function mapResponse($bill){
