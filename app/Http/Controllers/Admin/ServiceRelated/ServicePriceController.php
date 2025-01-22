@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\ServiceRelated;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Clinic;
@@ -23,14 +24,18 @@ use App\Models\Admin\ServiceRelated\Ward;
 use App\Models\Admin\ServiceRelated\Wing;
 use App\Models\Admin\VisitType;
 use App\Models\Branch;
+use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServicePriceController extends Controller
 {
-    //get all services
-    public function getAllServices(){        
+    //get all service prices
+    public function getAllServicePrices(){        
 
         $all = ServicePrice::selectServicePrice(null, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null,
@@ -43,8 +48,8 @@ class ServicePriceController extends Controller
                 $all ,200);
     }
 
-    //get a single service
-    public function getSingleService($id){   
+    //get a single service price
+    public function getSingleServicePrice($id){   
         
         $all = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null,
@@ -57,10 +62,224 @@ class ServicePriceController extends Controller
                 $all ,200);
     }
     
-    //create a service
-    public function createService(Request $request){
+    //create a service price
+    public function createServicePrice(Request $request){
+        
+
+        // Initialize variables for each entity
+        $service_id = null;
+
+        // Perform individual queries and assign the ids or null
+        if ($request->has('service')) {
+            $service = Service::where('name', $request->service)->first();
+            $service_id = $service ? $service->id : null;
+        }
+    
+        DB::beginTransaction();
+
+        try{
+            $created = ServicePrice::create([
+                'service_id' => $service_id,
+                'price' => $request->price,
+                'price_applies_from' => $request->price_applies_from,
+                'price_applies_to' => $request->price_applies_to,
+                'duration' => $request->duration,
+                'created_by' => User::getLoggedInUserId()
+            ]);
+    
+            //save other details of service price
+            $this->saveServicePrice($request, $created->id);
+
+            DB::commit();
+
+        }
+
+        catch(Exception $e){
+            DB::rollBack();
+            throw new Exception($e);
+
+        }
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Service price with id: ". $created->id);
+
+        return response()->json(
+                ServicePrice::selectServicePrice($created->id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null)
+            ,200);
+    }
+
+    //update a service price
+    public function updateServicePrice(Request $request){
         $request->validate([
-            'service' => 'nullable|exists:services,name',
+            'id' => 'required|exists:service_prices,id',
+        ]);
+
+        //save update details
+        $this->saveServicePrice($request, $request->id);
+
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Service price with name: ". $request->id);
+
+        return response()->json(
+            ServicePrice::selectServicePrice($request->id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null)
+            ,200);
+
+    }
+
+    //approve a service price
+    public function approveServicePrice($id){
+        
+
+        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null
+        );
+        
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        }
+
+    
+        ServicePrice::where('id', $id)
+            ->update([
+                'approved_by' => User::getLoggedInUserId(),
+                'approved_at' => Carbon::now(),
+                'disabled_by' => null,
+                'disabled_at' => null
+            ]);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved a Service price with id: ". $id);
+
+        return response()->json(
+            ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null
+            )
+            ,200);
+    }
+
+    //disable a service price
+    public function disableService($id){
+        
+
+        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null
+        );
+        
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        }
+
+    
+        ServicePrice::where('id', $id)
+            ->update([
+                'approved_by' => null,
+                'approved_at' => null,
+                'disabled_by' => User::getLoggedInUserId(),
+                'disabled_at' => Carbon::now()
+            ]);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_DISABLE, "Disabled a Service price with id: ". $id);
+
+        return response()->json(
+            ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null
+            )
+            ,200);
+    }
+
+    //soft Delete a service price
+    public function softDeleteService($id){
+        
+
+        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null
+        );
+        
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        }
+
+    
+        ServicePrice::where('id', $id)
+            ->update([
+                'deleted_by' => User::getLoggedInUserId(),
+                'deleted_at' => Carbon::now()
+            ]);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Soft deleted a service price with id: ". $id);
+
+        return response()->json(
+            ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null
+            )
+            ,200);
+    }
+
+    // restore soft-Deleted a service price
+    public function restoreSoftDeleteService($id){
+        
+
+        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null
+        );  
+        
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        }
+
+    
+        ServicePrice::where('id', $id)
+            ->update([
+                'deleted_by' => null,
+                'deleted_at' => null
+            ]);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restored Soft deleted a service price with id: ". $id);
+
+        return response()->json(
+            ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null
+            ) 
+            ,200);
+    }
+
+    //permanently Delete a service price
+    public function permanentDeleteService($id){
+        
+
+        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null
+        );
+            
+        if(count($existing) == 0){
+            throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
+        }
+
+    
+        ServicePrice::destroy($id);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Permanently deleted a Service price with id: ". $existing[0]['id']);
+
+        return response()->json(
+                []
+            ,200);
+    }
+
+    //validate all details and save details
+    private function saveServicePrice($request, $id){
+        $request->validate([
+            'service' => 'required|exists:services,name',
             'department' => 'nullable|exists:departments,name',
             'consultation_category' => 'nullable|exists:consultation_categories,name',
             'clinic' => 'nullable|exists:clinics,name',
@@ -79,11 +298,12 @@ class ServicePriceController extends Controller
             'wing' => 'nullable|exists:wings,name',
             'ward' => 'nullable|exists:wards,name',
             'office' => 'nullable|exists:offices,name',
-            'price' => 'nullable|numeric', // Price should be numeric
+            'price' => 'required|numeric', // Price should be numeric
             'price_applies_from' => 'nullable|date_format:H:i', // Valid time in 24-hour format
             'price_applies_to' => 'nullable|date_format:H:i', // Valid time in 24-hour format
             'duration' => 'nullable|numeric|regex:/^\d+(\.\d{1,4})?$/'
         ]);
+
 
         // Initialize variables for each entity
         $service_id = $department_id = $consultation_category_id = $clinic_id = null;
@@ -189,166 +409,59 @@ class ServicePriceController extends Controller
         }
 
 
-    
-        $created = Service::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'created_by' => User::getLoggedInUserId()
-        ]);
+        // Find the record
+        $servicePrice = ServicePrice::find($request->id);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Service with name: ". $request->name);
-
-        return response()->json(
-                Service::selectServices(null, $request->name)
-            ,200);
-    }
-
-    //update a service
-    public function updateService(Request $request){
-        $request->validate([
-            'id' => 'required|exists:services,id',
-            'name' => 'required|string',
-            'description' => 'nullable|string|max:1000',
-        ]);
-
-        $existing = Service::where('name', $request->name)->get();
-
-        count($existing) > 0 && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_SERVICE) : null ;
-
-    
-        Service::where('id', $request->id)
-             ->update([
-                'name' => $request->name,
-                'description' => $request->description,
-                'updated_by' => User::getLoggedInUserId()
-        ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Updated a Service with name: ". $request->name);
-
-        return response()->json(
-                Service::selectServices(null, $request->name)
-            ,200);
-
-    }
-
-    //approve a service
-    public function approveService($id){
-        
-
-        $existing = Service::selectServices($id, null);
-        
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SERVICE);
+        if (!$servicePrice) {
+            return response()->json(['error' => 'Service price not found'], 404);
         }
 
-    
-        Service::where('id', $id)
-            ->update([
-                'approved_by' => User::getLoggedInUserId(),
-                'approved_at' => Carbon::now(),
-                'disabled_by' => null,
-                'disabled_at' => null
-            ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved a Service with id: ". $id);
-
-        return response()->json(
-                Service::selectServices($id, null)
-            ,200);
-    }
-
-    //disable a service
-    public function disableService($id){
-        
-
-        $existing = Service::selectServices($id, null);
-        
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SERVICE);
-        }
 
     
-        Service::where('id', $id)
-            ->update([
-                'approved_by' => null,
-                'approved_at' => null,
-                'disabled_by' => User::getLoggedInUserId(),
-                'disabled_at' => Carbon::now()
-            ]);
+        // $created = ServicePrice::create([
+        //     'service_id' => $service_id,
+        //     'price' => $request->price,
+        //     'price_applies_from' => $request->price_applies_from,
+        //     'price_applies_to' => $request->price_applies_to,
+        //     'duration' => $request->duration,
+        //     'created_by' => User::getLoggedInUserId()
+        // ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_DISABLE, "Disabled a Service with id: ". $id);
+        // check if service price exists
+        $existing = ServicePrice::selectServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+            $request->wing, $request->ward, $request->office
+         );
 
-        return response()->json(
-                Service::selectServices($id, null)
-            ,200);
-    }
+         $existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
 
-    //soft Delete a service
-    public function softDeleteService($id){
-        
+        // Update each column independently
+        $servicePrice->service_id = $service_id;
+        $servicePrice->department_id = $department_id;
+        $servicePrice->consultation_category_id = $consultation_category_id;
+        $servicePrice->clinic_id = $clinic_id;
+        $servicePrice->payment_type_id = $payment_type_id;
+        $servicePrice->scheme_id = $scheme_id;
+        $servicePrice->scheme_type_id = $scheme_type_id;
+        $servicePrice->consultation_type_id = $consultation_type_id;
+        $servicePrice->visit_type_id = $visit_type_id;
+        $servicePrice->doctor_id = $doctor_id;
+        $servicePrice->price_applies_from = $request->price_applies_from;
+        $servicePrice->price_applies_to = $request->price_applies_to;
+        $servicePrice->duration = $request->duration;
+        $servicePrice->lab_test_type_id = $lab_test_type_id;
+        $servicePrice->image_test_type_id = $image_test_type_id;
+        $servicePrice->drug_id = $drug_id;
+        $servicePrice->brand_id = $brand_id;
+        $servicePrice->branch_id = $branch_id;
+        $servicePrice->building_id = $building_id;
+        $servicePrice->wing_id = $wing_id;
+        $servicePrice->ward_id = $ward_id;
+        $servicePrice->office_id = $office_id;
+        $servicePrice->price = $request->price;
 
-        $existing = Service::selectServices($id, null);
-        
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SERVICE);
-        }
-
-    
-        Service::where('id', $id)
-            ->update([
-                'deleted_by' => User::getLoggedInUserId(),
-                'deleted_at' => Carbon::now()
-            ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Soft deleted a service with id: ". $id);
-
-        return response()->json(
-                Service::selectServices($id, null)
-            ,200);
-    }
-
-    // restore soft-Deleted a service
-    public function restoreSoftDeleteService($id){
-        
-
-        $existing = Service::where('id', $id)->whereNotNull('deleted_by')->get();
-        
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SERVICE);
-        }
-
-    
-        Service::where('id', $id)
-            ->update([
-                'deleted_by' => null,
-                'deleted_at' => null
-            ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restored Soft deleted a service with id: ". $id);
-
-        return response()->json(
-                Service::selectServices($id, null)
-            ,200);
-    }
-
-    //permanently Delete a service
-    public function permanentDeleteService($id){
-        
-
-        $existing = Service::where('id', $id)->get();
-        
-        if(count($existing) == 0){
-            throw new NotFoundException(APIConstants::NAME_SERVICE);
-        }
-
-    
-        Service::destroy($id);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Permanently deleted a Service with name: ". $existing[0]['name']);
-
-        return response()->json(
-                []
-            ,200);
+        // Save the updated model
+        $servicePrice->save();
     }
 
 }
