@@ -121,6 +121,14 @@ class ServicePriceController extends Controller
             'id' => 'required|exists:service_prices,id',
         ]);
 
+        // check if service price exists
+        $existing = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+            $request->wing, $request->ward, $request->office
+         );
+
+        return $existing;
+
         //save update details
         $this->saveServicePrice($request, $request->id);
 
@@ -439,7 +447,6 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
-        echo $existing;
 
          //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
 
