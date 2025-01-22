@@ -196,7 +196,6 @@ class Bill extends Model
             'wing' => 'nullable|exists:wings,name',
             'ward' => 'nullable|exists:wards,name',
             'office' => 'nullable|exists:offices,name',
-            'price' => 'required|numeric', // Price should be numeric
             'discount' => 'nullable|numeric', // discount should be numeric
             'current_time' => 'nullable|date_format:H:i', // Valid time in 24-hour format
         
