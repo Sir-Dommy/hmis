@@ -95,7 +95,7 @@ class ServicePriceController extends Controller
             ]);
 
             //save other details of service price
-            return $this->saveServicePrice($request, $created->id);
+            $this->saveServicePrice($request, $created->id);
 
             DB::commit();
 
@@ -123,7 +123,7 @@ class ServicePriceController extends Controller
         ]);
 
         //save update details
-        return $this->saveServicePrice($request, $request->id);
+        $this->saveServicePrice($request, $request->id);
 
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Service price with name: ". $request->id);
@@ -426,25 +426,14 @@ class ServicePriceController extends Controller
 
         //  $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array
 
-        foreach($existing_price as $exis){
-            var_dump($exis['id']);
-            return $exis;
+        foreach($existing_price as $exists){
+
+            $exists['id'] != $id  ? throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE) : null;
+
+            
         }
 
-         // Check if 'data' exists and is not empty
-         if (isset($existing_price['data']) && !empty($existing_price['data'])) {
-             $existing_id = $existing_price['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
-
-
-             echo "TUMIFIKA HAPA!!! NBA ID NI ".$existing_id;
-             if($request->id == null){
-                throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
-             }
-
-             if($existing_id != $request->id){
-                throw new AlreadyExistsException(APIConstants::NAME_SERVICE_PRICE);
-             }
-         }
+         
 
 
         // Find the record
@@ -453,18 +442,6 @@ class ServicePriceController extends Controller
         if (!$servicePrice) {
             throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
         }
-
-
-    
-        // $created = ServicePrice::create([
-        //     'service_id' => $service_id,
-        //     'price' => $request->price,
-        //     'price_applies_from' => $request->price_applies_from,
-        //     'price_applies_to' => $request->price_applies_to,
-        //     'duration' => $request->duration,
-        //     'created_by' => User::getLoggedInUserId()
-        // ]);
-
 
 
          //$existing->total() < 1 ?? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) ;
