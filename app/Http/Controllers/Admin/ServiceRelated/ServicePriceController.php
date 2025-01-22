@@ -424,14 +424,11 @@ class ServicePriceController extends Controller
             $request->wing, $request->ward, $request->office
          );
 
+         //$response_1 = json_decode($existing_price, true); // Decode the JSON response into an associative array
 
-
-         $response_1 = json_decode($existing_price, true); // Decode the JSON response into an associative array
-
-         return $existing_price;
          // Check if 'data' exists and is not empty
-         if (isset($response_1['data']) && !empty($response_1['data'])) {
-             $existing_id = $response_1['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
+         if (isset($existing_price['data']) && !empty($existing_price['data'])) {
+             $existing_id = $existing_price['data'][0]['id'] ?? null; // Extract the 'id' from the first object in 'data'
 
 
              echo "TUMIFIKA HAPA!!! NBA ID NI ".$existing_id;
