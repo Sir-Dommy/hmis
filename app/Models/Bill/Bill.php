@@ -131,13 +131,13 @@ class Bill extends Model
 
                 //verify request first
                 Bill::verifyServiceChargeRequest($bill_item);
-                
+
                 $existing_service = Service::selectServices(null, $bill_item['service']);
     
                 $existing_service[0]['service_price_affected_by_time'] ? $current_time = Carbon::now()->format('H:i') : $current_time = null;
     
                 $service_price_and_details = ServicePrice::selectFirstExactServicePrice(null, $bill_item['service'], $bill_item['department'], $bill_item['consultation_category'], $bill_item['clinic'], $bill_item['payment_type'], $bill_item['scheme'], $bill_item['scheme_type'],
-                    $bill_item['consultation_type'], $bill_item['visit_type'], $bill_item['doctor'], $current_time, $bill_item['duration'], $bill_item['lab_test_type'], $bill_item['image_test_type'], $bill_item['drug_id'], $bill_item['brand'], $bill_item['branch'], $bill_item['building'],
+                    $bill_item['consultation_type'], $bill_item['visit_type'], $bill_item['doctor'], $current_time, $bill_item['duration'], $bill_item['lab_test_type'], $bill_item['image_test_type'], $bill_item['drug'], $bill_item['brand'], $bill_item['branch'], $bill_item['building'],
                     $bill_item['wing'], $bill_item['ward'], $bill_item['office']
                 );
     
