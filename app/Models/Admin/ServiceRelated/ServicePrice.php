@@ -247,8 +247,8 @@ class ServicePrice extends Model
             if ($doctor) {
                 $service_prices_query->whereHas('doctor', function ($query) use ($doctor) {
                     $query->where('employee_name', 'like', "%$doctor%")
-                            ->where('employee_code', 'like', "%$doctor%")
-                            ->where('ipnumber', 'like', "%$doctor%");
+                            ->orWhere('employee_code', 'like', "%$doctor%")
+                            ->orWhere('ipnumber', 'like', "%$doctor%");
                 });
             }
 
@@ -341,6 +341,178 @@ class ServicePrice extends Model
         });
 
     }
+
+
+    //first exact match service price selection
+    public static function selectFirstExactServicePrice($id, $service, $department, $consultation_category, $clinic, $payment_type, $scheme, $scheme_type,
+        $consultation_type, $visit_type, $doctor, $current_time, $duration, $lab_test_type, $image_test_type, $drug_id, $brand, $branch, $building,
+        $wing, $ward, $office
+        ){
+
+        $service_prices_query = ServicePrice::with([
+            'service:id,name',
+            'department:id,name',
+            'consultationCategory:id,name',
+            'clinic:id,name',
+            'paymentType:id,name',
+            'scheme:id,name',
+            'schemeType:id,name',
+            'consultationType:id,name',
+            'visitType:id,name',
+            'doctor:id,name',
+            'labTestType:id,name',
+            'imageTestType:id,name',
+            'drug:id,name',
+            'brand:id,name',
+            'branch:id,name',
+            'building:id,name',
+            'wing:id,name',
+            'ward:id,name',
+            'office:id,name',
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email'
+        ])->whereNull('service_prices.deleted_by')
+        ->whereNull('service_prices.deleted_at');
+
+        // Filter by matching the provided arguments using LIKE for text fields
+            if ($service) {
+                $service_prices_query->whereHas('service', function ($query) use ($service) {
+                    $query->where('name', $service);
+                });
+            }
+
+            if ($department) {
+                $service_prices_query->whereHas('department', function ($query) use ($department) {
+                    $query->where('name', $department);
+                });
+            }
+
+            if ($consultation_category) {
+                $service_prices_query->whereHas('consultationCategory', function ($query) use ($consultation_category) {
+                    $query->where('name', $consultation_category);
+                });
+            }
+
+            if ($clinic) {
+                $service_prices_query->whereHas('clinic', function ($query) use ($clinic) {
+                    $query->where('name', $clinic);
+                });
+            }
+
+            if ($payment_type) {
+                $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
+                    $query->where('name', $payment_type);
+                });
+            }
+
+            if ($scheme) {
+                $service_prices_query->whereHas('scheme', function ($query) use ($scheme) {
+                    $query->where('name', $scheme);
+                });
+            }
+
+            if ($scheme_type) {
+                $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type) {
+                    $query->where('name', $scheme_type);
+                });
+            }
+
+            if ($consultation_type) {
+                $service_prices_query->whereHas('consultationType', function ($query) use ($consultation_type) {
+                    $query->where('name', $consultation_type);
+                });
+            }
+
+            if ($visit_type) {
+                $service_prices_query->whereHas('visitType', function ($query) use ($visit_type) {
+                    $query->where('name', $visit_type);
+                });
+            }
+
+            if ($doctor) {
+                $service_prices_query->whereHas('doctor', function ($query) use ($doctor) {
+                    $query->where('employee_code', $doctor)
+                            ->orWhere('ipnumber', $doctor);
+                });
+            }
+
+            if ($lab_test_type) {
+                $service_prices_query->whereHas('labTestType', function ($query) use ($lab_test_type) {
+                    $query->where('name', $lab_test_type);
+                });
+            }
+
+            if ($image_test_type) {
+                $service_prices_query->whereHas('imageTestType', function ($query) use ($image_test_type) {
+                    $query->where('name', $image_test_type);
+                });
+            }
+
+            if ($drug_id) {
+                $service_prices_query->whereHas('drug', function ($query) use ($drug_id) {
+                    $query->where('name', $drug_id);
+                });
+            }
+
+            if ($brand) {
+                $service_prices_query->whereHas('brand', function ($query) use ($brand) {
+                    $query->where('name', $brand);
+                });
+            }
+
+            if ($branch) {
+                $service_prices_query->whereHas('branch', function ($query) use ($branch) {
+                    $query->where('name', $branch);
+                });
+            }
+
+            if ($building) {
+                $service_prices_query->whereHas('building', function ($query) use ($building) {
+                    $query->where('name', $building);
+                });
+            }
+
+            if ($wing) {
+                $service_prices_query->whereHas('wing', function ($query) use ($wing) {
+                    $query->where('name', $wing);
+                });
+            }
+
+            if ($ward) {
+                $service_prices_query->whereHas('ward', function ($query) use ($ward) {
+                    $query->where('name', $ward);
+                });
+            }
+
+            if ($office) {
+                $service_prices_query->whereHas('office', function ($query) use ($office) {
+                    $query->where('name', $office);
+                });
+            }
+
+            // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
+            if ($current_time) {
+                $service_prices_query->where(function ($query) use ($current_time) {
+                    $query->where('price_applies_from', '<=', $current_time)
+                        ->where('price_applies_to', '>=', $current_time);
+                });
+            }
+
+
+        if($id != null){
+            $service_prices_query->where('service_prices.id', $id);
+        }
+
+        
+        return $service_prices_query->get()->map(function ($service_price) {
+            $service_price_details = ServicePrice::mapResponse($service_price);
+
+            return $service_price_details;
+        });
+
+    }
+
 
     private static function mapResponse($service_price){
         return [
