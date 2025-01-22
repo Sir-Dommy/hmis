@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Patient;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ValidateBillItemsRequest;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
@@ -27,7 +28,11 @@ use Illuminate\Support\Facades\Validator;
 class VisitController extends Controller
 {
     //saving a new emergency visit
-    public function createVisit(Request $request){
+    public function createVisit(ValidateBillItemsRequest $request){
+
+
+        $request->validated();
+        
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'department' => 'required|string|exists:departments,name',
