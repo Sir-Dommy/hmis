@@ -150,7 +150,7 @@ class Bill extends Model
                     , $service_price_and_details[0]['id']
                     , $service_price_and_details[0]['price']
                     , $discount
-                    , $$bill_item->description ? $bill_item->description : null
+                    , $$bill_item['description'] ? $bill_item['description'] : null
                 );
     
                 $final_bill_amount += $service_price_and_details[0]['price'];
