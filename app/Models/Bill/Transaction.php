@@ -49,7 +49,7 @@ class Transaction extends Model
 
     public function bill()
     {
-        return $this->belongsTo(BillItem::class, 'bill_id');
+        return $this->belongsTo(Bill::class, 'bill_id');
     }
 
     public function reversedBy()
