@@ -103,9 +103,9 @@ class Transaction extends Model
         $scheme_name == null ? $scheme_id = Scheme::selectSchemes(null, $scheme_name)[0]['id'] : $scheme_id = null;
         //$existing_scheme = Scheme::selectSchemes(null, $scheme_name);
 
-        $initiation_time == null ?? $initiation_time = Carbon::now();
+        $initiation_time == null ? $initiation_time = Carbon::now() : $initiation_time;
 
-        $fee == null ?? $fee = 0.0;
+        $fee == null ? $fee = 0.0 : $fee;
 
         try{
             DB::beginTransaction();
