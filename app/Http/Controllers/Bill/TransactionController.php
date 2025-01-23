@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Bill;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bill\Transaction;
+use App\Models\UserActivityLog;
+use App\Utils\APIConstants;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -17,7 +19,14 @@ class TransactionController extends Controller
             'initiation_time' => 'nullable|date|before_or_equal:today'
         ]);
 
-        Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, null, "SUCCESS", $request->reason);
+        $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, null, "SUCCESS", $request->reason);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
+        
+        return response()->json(
+            $create_transaction
+        ,200);
+
     }
 
     
