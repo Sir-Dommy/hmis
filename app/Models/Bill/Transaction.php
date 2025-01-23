@@ -67,7 +67,7 @@ class Transaction extends Model
         $transactions_query = Transaction::with([
             'bill:id,bill_reference',
             'reversedBy:id,email'
-        ])->whereNull('bills.deleted_by');
+        ])->whereNull('transactions.deleted_by');
 
         if($id != null){
             $transactions_query->where('transactions.id', $id);
