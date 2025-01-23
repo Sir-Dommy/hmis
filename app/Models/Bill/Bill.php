@@ -240,7 +240,7 @@ class Bill extends Model
             'expiry_time' => $bill->expiry_time,
             'visit' => $bill->visit,
             'bill_items' => $bill->billItems,
-            'bill_items' => $bill->transactions,
+            'transactions' => $bill->transactions,
             'created_by' => $bill->createdBy ? $bill->createdBy->email : null,
             'created_at' => $bill->created_at,
             'updated_by' => $bill->updatedBy ? $bill->updatedBy->email : null,
