@@ -123,7 +123,8 @@ class Transaction extends Model
                 'fee' => $fee,
                 'receipt_date' => $receipt_date,
                 'status' => $status,
-                'reason' => $reason
+                'reason' => $reason,
+                'created_by' => User::getLoggedInUserId()
             ]);
 
             DB::commit();
