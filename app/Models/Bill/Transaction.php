@@ -132,7 +132,7 @@ class Transaction extends Model
         catch(Exception $e){
             DB::rollBack();
 
-            throw new TransactionException("COULD NOT SAVE TRANSACTION!!!!!!!11");
+            throw new TransactionException("COULD NOT SAVE TRANSACTION!!!!!!!11". $e->getMessage());
         }
         
 
