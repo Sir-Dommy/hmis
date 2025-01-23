@@ -2,11 +2,15 @@
 
 namespace App\Models\Bill;
 
+use App\Exceptions\TransactionException;
 use App\Models\Admin\Scheme;
 use App\Models\User;
 use App\Utils\CustomUserRelations;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Transaction extends Model
 {
@@ -93,6 +97,66 @@ class Transaction extends Model
 
 
     }
+
+    public static function createTransaction($bill_id, $third_party_reference, $patient_account_no, $hospital_account_no, $scheme_name, $initiation_time, $amount, $fee, $receipt_date, $status, $reason){
+        
+        $scheme_name == null ? $scheme_id = Scheme::selectSchemes(null, $scheme_name)[0]['id'] : $scheme_id = null;
+        //$existing_scheme = Scheme::selectSchemes(null, $scheme_name);
+
+        $initiation_time == null ?? $initiation_time = Carbon::now();
+
+        $fee == null ?? $fee = 0.0;
+
+        try{
+            DB::beginTransaction();
+
+            $created = Transaction::create([
+                'bill_id' => $bill_id,
+                'transaction_reference' => Transaction::generateUniqueTransactionReferenceNumber(),
+                'third_party_reference' => $third_party_reference,
+                'patient_account_no' => $patient_account_no,
+                'hospital_account_no' => $hospital_account_no,
+                'scheme_name' => $scheme_name,
+                'scheme_id' => $scheme_id,
+                'initiation_time' => $initiation_time,
+                'amount' => $amount,
+                'fee' => $fee,
+                'receipt_date' => $receipt_date,
+                'status' => $status,
+                'reason' => $reason
+            ]);
+
+            DB::commit();
+        }
+
+        catch(Exception $e){
+            DB::rollBack();
+
+            throw new TransactionException("COULD NOT SAVE TRANSACTION!!!!!!!11");
+        }
+        
+
+        return Transaction::selectTransactions($created->id, null);
+    }
+
+    //function to generate unique transaction reference number
+    private static function generateUniqueTransactionReferenceNumber(){
+
+        // Generate a random six-digit number
+        $randomNumber = str_pad(mt_rand(1, 999999999999), 12, '0', STR_PAD_LEFT);
+
+        // Add the B prefix
+        $transaction_reference = 'T' . $randomNumber;
+
+        // Check if the code already exists in the database
+        while (Transaction::where('transaction_reference', $transaction_reference)->exists()) {
+            $transaction_reference = str_pad(mt_rand(1, 999999999999), 12, '0', STR_PAD_LEFT);
+            $transaction_reference = 'T' . $randomNumber;
+        }
+
+        return $transaction_reference;
+    }
+
 
     private static function mapResponse($transaction){
         return [

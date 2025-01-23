@@ -40,7 +40,7 @@ class PatientController extends Controller
         Validator::make($data, [ 
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
-            'dob' => 'required|date|before:today',
+            'dob' => 'required|date|date|before_or_equal:today',
             'identification_type' => 'nullable|string|min:1|max:255',
             'id_no' => 'nullable|string|unique:patients,id_no',
             'phonenumber1' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
@@ -211,7 +211,7 @@ class PatientController extends Controller
             'id' => 'required|exists:patients,id',
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
-            'dob' => 'required|date|before:today',
+            'dob' => 'required|date|date|before_or_equal:today',
             'identification_type' => 'nullable|string|min:1|max:255',
             'id_no' => 'nullable|string|unique:patients,id_no',
             'phonenumber1' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/|unique:patients,phonenumber1',
