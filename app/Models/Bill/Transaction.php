@@ -64,7 +64,7 @@ class Transaction extends Model
 
     //perform selection
     public static function selectTransactions($id, $transaction_reference){
-        $transactions_query = Bill::with([
+        $transactions_query = Transaction::with([
             'bill:id,bill_reference',
             'reversedBy:id,email'
         ])->whereNull('bills.deleted_by');
