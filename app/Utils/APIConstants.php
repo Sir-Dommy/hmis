@@ -74,6 +74,9 @@ class APIConstants
     public const NAME_OFFICE = 'Office';
     public const NAME_SERVICE_PRICE = 'Service price';
     public const NAME_BRANCH = 'Branch';
+    public const NAME_MAIN_ACCOUNT = 'Main account';
+    public const NAME_SUB_ACCOUNT = 'Sub account';
+    public const NAME_UNIT = 'Unit';
 
 
     // Bill and transactions statuses
