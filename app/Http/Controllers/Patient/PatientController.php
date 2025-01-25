@@ -123,6 +123,15 @@ class PatientController extends Controller
                         'principal_member_number' => 'required|string|min:3|max:255',
                         'member_validity' => 'nullable|date',
                     ]);
+
+                    if($validator->fails()){
+                        $error_string = '';
+                        foreach ($validator->errors()->all() as $error) {
+                            $error_string .= $error . "\n";
+                        }
+
+                        throw new InputsValidationException($error_string);
+                    }
                 
 
                     $desiredValue = $insurance_detail->scheme_type;
