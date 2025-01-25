@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PatientController extends Controller
@@ -114,7 +115,7 @@ class PatientController extends Controller
 
                 foreach($data->insurance_details as $insurance_detail){
 
-                    logger($insurance_detail);
+                    Log::info('Object Details:', ['object' => (array) $insurance_detail]);
 
                     $validator = Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
@@ -126,7 +127,8 @@ class PatientController extends Controller
                     ]);
                 
                     if ($validator->fails()) {
-                        throw new InputsValidationException($validator->errors());
+
+                        throw new InputsValidationException("SENOR"); //$validator->errors()
                     }
 
                     $desiredValue = $insurance_detail->scheme_type;
