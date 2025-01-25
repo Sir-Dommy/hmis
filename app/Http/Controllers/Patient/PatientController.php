@@ -18,6 +18,7 @@ use App\Models\Patient\PatientPaymentTypesJoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -113,7 +114,9 @@ class PatientController extends Controller
 
                 foreach($data->insurance_details as $insurance_detail){
 
-                    Validator::make((array) $insurance_detail, [
+                    logger($insurance_detail);
+
+                    $validator = Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
                         'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
@@ -121,6 +124,10 @@ class PatientController extends Controller
                         'principal_member_number' => 'required|string|min:3|max:255',
                         'member_validity' => 'nullable|date',
                     ]);
+                
+                    if ($validator->fails()) {
+                        throw new InputsValidationException($validator->errors());
+                    }
 
                     $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
