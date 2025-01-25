@@ -265,25 +265,25 @@ class AuthServiceProvider extends ServiceProvider
             "created_by" => $user_id
         ]);
 
-        MainAccounts::firstOrCreate([
+        Units::firstOrCreate([
             "name" => "ml",
             "description" => "milliliters",
             "created_by" => $user_id
         ]);
 
-        MainAccounts::firstOrCreate([
+        Units::firstOrCreate([
             "name" => "capsules",
             "description" => "Capsules",
             "created_by" => $user_id
         ]);
 
-        MainAccounts::firstOrCreate([
+        Units::firstOrCreate([
             "name" => "Tablets",
             "description" => "Tablets",
             "created_by" => $user_id
         ]);
 
-        MainAccounts::firstOrCreate([
+        Units::firstOrCreate([
             "name" => "International unit",
             "description" => "International unit",
             "created_by" => $user_id
