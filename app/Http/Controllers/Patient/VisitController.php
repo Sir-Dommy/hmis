@@ -45,6 +45,7 @@ class VisitController extends Controller
             'schemes' => 'nullable',
             'payment_types'=>'required',
             'bill_items'=>'required',
+            'bar_code'=>'nullable|string',
         
         ]);
         
@@ -60,7 +61,7 @@ class VisitController extends Controller
             $visit = Visit::create([
                 'patient_id' => $request->patient_id, 
                 'visit_type_id' => $visit_type[0]['id'],
-                'stage'=> 0,
+                'bar_code'=>$request->bar_code,
                 'created_by' => User::getLoggedInUserId()
             ]);
             //echo ("TUKO NA VISIT ID " . )
@@ -129,6 +130,7 @@ class VisitController extends Controller
             'visit_type'=>'required|string|exists:visit_types,name',
             'schemes' => 'nullable',
             'payment_types'=>'required',
+            'bar_code'=>'nullable|string',
         ]);
         
 
@@ -144,6 +146,7 @@ class VisitController extends Controller
                 'patient_id' => $request->patient_id, 
                 'visit_type_id' => $visit_type[0]['id'],
                 'stage'=> 0,
+                'bar_code'=>$request->bar_code,
                 'updated_by' => User::getLoggedInUserId()
             ]);
 

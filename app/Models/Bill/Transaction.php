@@ -98,6 +98,44 @@ class Transaction extends Model
 
     }
 
+
+
+    //perform selection
+    public static function deepTransactionSearch($id, $transaction_reference, $third_party_reference, $patient_account_no, $patient_id_no, ){
+        $transactions_query = Transaction::with([
+            'bill:id,bill_reference_number',
+            'reversedBy:id,email'
+        ])->whereNull('transactions.deleted_by');
+
+        if($id != null){
+            $transactions_query->where('transactions.id', $id);
+        }
+        elseif($transaction_reference != null){
+            $transactions_query->where('transactions.transaction_reference', $transaction_reference);
+        }
+
+
+        else{
+            $paginated_transactions = $transactions_query->paginate(10);
+
+            
+            $paginated_transactions->getCollection()->transform(function ($transaction) {
+                return Transaction::mapResponse($transaction);
+            });
+    
+            return $paginated_transactions;
+        }
+
+
+        return $transactions_query->get()->map(function ($transaction) {
+            $transaction_details = Transaction::mapResponse($transaction);
+
+            return $transaction_details;
+        });
+
+
+    }
+
     public static function createTransaction($bill_id, $third_party_reference, $patient_account_no, $hospital_account_no, $scheme_name, $initiation_time, $amount, $fee, $receipt_date, $status, $reason){
         
         $scheme_name == null ? $scheme_id = Scheme::selectSchemes(null, $scheme_name)[0]['id'] : $scheme_id = null;

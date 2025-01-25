@@ -83,8 +83,7 @@ class AuthController extends Controller
 
 
     //login function
-    public function login(Request $request)
-    {
+    public function login(Request $request){
 
         try{
             $request->validate([
@@ -145,8 +144,7 @@ class AuthController extends Controller
     }
 
     // logout function
-    public function logout()
-    {
+    public function logout(){
         $user =  Auth::user();
         Auth::logout();
             
@@ -159,8 +157,7 @@ class AuthController extends Controller
     }
 
     // function to refresh jwt token
-    public function refresh()
-    {
+    public function refresh(){
         $user = Auth::user();
         
         UserActivityLog::createUserActivityLog("REFRESHING_TOKEN", "User refreshed token........ Email : ". $user->email);
