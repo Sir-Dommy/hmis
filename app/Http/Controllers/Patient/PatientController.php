@@ -115,8 +115,6 @@ class PatientController extends Controller
 
                 foreach($data->insurance_details as $insurance_detail){
 
-                    Log::info('Object Details:', ['object' => (array) $insurance_detail]);
-
                     $validator = Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
@@ -126,10 +124,6 @@ class PatientController extends Controller
                         'member_validity' => 'nullable|date',
                     ]);
                 
-                    if ($validator->fails()) {
-
-                        throw new InputsValidationException("SENOR"); //$validator->errors()
-                    }
 
                     $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
