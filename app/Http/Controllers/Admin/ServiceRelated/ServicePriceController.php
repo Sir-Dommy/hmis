@@ -75,7 +75,7 @@ class ServicePriceController extends Controller
             'unit' => 'required|exists:units,name',
             'smallest_sellable_quantity' => 'required|numeric|min:0',
             'cost_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
+            'selling_price' => 'nullable|numeric|min:0',
             'mark_up_type' => 'required|string|in:Percentage,Fixed',
             'mark_up_value' => 'required|numeric|min:0',
             'promotion_type' => 'required|string|in:Percentage,Fixed',
