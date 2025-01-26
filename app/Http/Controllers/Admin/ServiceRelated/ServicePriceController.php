@@ -339,7 +339,6 @@ class ServicePriceController extends Controller
             'wing' => 'nullable|exists:wings,name',
             'ward' => 'nullable|exists:wards,name',
             'office' => 'nullable|exists:offices,name',
-            'price' => 'required|numeric', // Price should be numeric
             'price_applies_from' => 'nullable|date_format:H:i', // Valid time in 24-hour format
             'price_applies_to' => 'nullable|date_format:H:i', // Valid time in 24-hour format
             'duration' => 'nullable|numeric|regex:/^\d+(\.\d{1,4})?$/'
