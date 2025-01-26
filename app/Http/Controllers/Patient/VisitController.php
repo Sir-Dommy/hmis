@@ -81,24 +81,31 @@ class VisitController extends Controller
     
             $this->validateAndSaveVisitPaymentType( (object) $request->payment_types, $visit->id, $request->schemes);
     
-            foreach($request->schemes as $scheme){
-                Validator::make((array) $scheme, [
-                    'claim_number' => 'required|string',
-                    'available_balance' => 'required|numeric',
-                    'insurer' => 'required|string|exists:schemes,name',
-                ]);
+            foreach($request->payment_types as $payment_type){
+                if($payment_type['insurance'] == 1){
+                    
+                    foreach($request->schemes as $scheme){
+                        
 
-                $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
-                
-                count($existing_scheme) < 1 ? throw new InputsValidationException("Provide a valid insurer!!!!!!!!") : null;
+                        Validator::make((array) $scheme, [
+                            'claim_number' => 'required|string',
+                            'available_balance' => 'required|numeric',
+                            'insurer' => 'required|string|exists:schemes,name',
+                        ]);
 
-                VisitInsuranceDetail::create([
-                    'visit_id' => $visit->id,
-                    'claim_number' => $scheme['claim_number'],
-                    'available_balance' => $scheme['available_balance'],
-                    'scheme_id' => $existing_scheme[0]['id'],
-                    'signature' => $request->signature,
-                ]);
+                        $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
+                        
+                        count($existing_scheme) < 1  ? throw new InputsValidationException("Provide a valid insurer!!!!!!!!") : null;
+
+                        VisitInsuranceDetail::create([
+                            'visit_id' => $visit->id,
+                            'claim_number' => $scheme['claim_number'],
+                            'available_balance' => $scheme['available_balance'],
+                            'scheme_id' => $existing_scheme[0]['id'],
+                            'signature' => $request->signature,
+                        ]);
+                    }
+                }
             }
 
             //now create bill and its related bill items
