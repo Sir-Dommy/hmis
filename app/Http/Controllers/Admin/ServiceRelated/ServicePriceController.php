@@ -49,7 +49,7 @@ class ServicePriceController extends Controller
                 $all ,200);
     }
 
-    //get a single service price
+    //get a single service price 
     public function getSingleServicePrice($id){   
         
         $all = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,

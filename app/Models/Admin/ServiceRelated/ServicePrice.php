@@ -155,7 +155,7 @@ class ServicePrice extends Model
         return $this->belongsTo(Building::class, 'building_id');
     }
 
-    public function wing()
+    public function wing() 
     {
         return $this->belongsTo(Wing::class, 'wing_id');
     }
