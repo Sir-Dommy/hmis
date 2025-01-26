@@ -33,6 +33,8 @@ class SubAccountsController extends Controller
 
         $all = SubAccounts::selectSubAccounts($request->id, $request->name);
 
+        count($all) < 1 ? throw new NotFoundException(APIConstants::NAME_SUB_ACCOUNT) : null;
+
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched sub Account with id: ".$all[0]['name']);
 
         return response()->json(
