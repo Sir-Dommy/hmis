@@ -49,7 +49,7 @@ class MainAccounts extends Model
             $main_accounts_query->where('main_accounts.id', $id);
         }
         elseif($name != null){
-            $main_accounts_query->where('schemes.name', $name);
+            $main_accounts_query->where('main_accounts.name', $name);
         }
 
         // return $schemes_query->get();
