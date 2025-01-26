@@ -50,7 +50,7 @@ class SubAccountsController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        $all = SubAccounts::selectSubAccounts(null, $request->main_account);
+        $all = MainAccounts::selectMainAccounts(null, $request->main_account);
 
     
         $created = SubAccounts::create([
@@ -72,7 +72,7 @@ class SubAccountsController extends Controller
         $request->validate([
             'id' => 'required|exists:sub_accounts,id',
             'name' => 'required|string|max:255',
-            'main_account_id' => 'required|exists:main_accounts,id',
+            'main_account' => 'required|exists:main_accounts,name',
             'description' => 'nullable|string|max:255',
         ]);
 
@@ -80,11 +80,12 @@ class SubAccountsController extends Controller
 
         count($existing) > 0 && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_SUB_ACCOUNT) : null ;
 
-    
+        $all = MainAccounts::selectMainAccounts(null, $request->main_account);
+
         SubAccounts::where('id', $request->id)
              ->update([
                 'name' => $request->name,
-                'main_account_id' => $request->main_account_id,
+                'main_account_id' => $all[0]['id'],
                 'description' => $request->description,
                 'updated_by' => User::getLoggedInUserId()
         ]);
