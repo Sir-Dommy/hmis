@@ -2,6 +2,8 @@
 
 namespace App\Models\Admin\ServiceRelated;
 
+use App\Models\Accounts\SubAccounts;
+use App\Models\Accounts\Units;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
@@ -50,7 +52,19 @@ class ServicePrice extends Model
         'wing_id',
         'ward_id',
         'office_id',
-        'price',
+        'category',
+        'unit_id',
+        'smallest_sellable_quantity',
+        'cost_price',
+        'selling_price',
+        'mark_up_type',
+        'mark_up_value',
+        'promotion_type',
+        'income_account_id',
+        'asset_account_id',
+        'expense_account_id',
+        'expiry_date',
+        'bar_code',
         'created_by',
         'updated_by',
         'approved_by',
@@ -153,7 +167,27 @@ class ServicePrice extends Model
 
     public function office()
     {
-        return $this->belongsTo(Office::class, 'office_id');
+        return $this->belongsTo(Units::class, 'office_id');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Office::class, 'unit_id');
+    }
+
+    public function incomeAccount()
+    {
+        return $this->belongsTo(SubAccounts::class, 'income_account_id');
+    }
+
+    public function assetAccount()
+    {
+        return $this->belongsTo(SubAccounts::class, 'asset_account_id');
+    }
+
+    public function expenseAccount()
+    {
+        return $this->belongsTo(SubAccounts::class, 'expense_account_id');
     }
 
 
@@ -183,6 +217,10 @@ class ServicePrice extends Model
             'wing:id,name',
             'ward:id,name',
             'office:id,name',
+            'unit:id,name',
+            'incomeAccount:id,name',
+            'assetAccount:id,name',
+            'expenseAccount:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'

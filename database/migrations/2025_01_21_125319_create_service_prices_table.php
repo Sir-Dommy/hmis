@@ -37,9 +37,9 @@ return new class extends Migration
             $table->unsignedBigInteger('office_id')->nullable();
             $table->enum('category', ['Drug', 'Non-Drug', 'Others']);
             $table->unsignedBigInteger('unit_id');
-            $table->double('smallest_sellable_quantity', 8, 4);
-            $table->double('cost_price', 8, 4);
-            $table->double('selling_price')->default(0.0);
+            $table->double('smallest_sellable_quantity', 10, 4);
+            $table->double('cost_price', 10, 4);
+            $table->double('selling_price', 10, 4)->default(0.0);
             $table->enum('mark_up_type', ['Percentage', 'Fixed'])->nullable();
             $table->double('mark_up_value')->default(0.0);
             $table->enum('promotion_type', ['Percentage', 'Fixed'])->nullable();
@@ -47,6 +47,8 @@ return new class extends Migration
             $table->unsignedBigInteger('income_account_id');
             $table->unsignedBigInteger('asset_account_id');
             $table->unsignedBigInteger('expense_account_id');
+            $table->date('expiry_date');
+            $table->text('bar_code')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
