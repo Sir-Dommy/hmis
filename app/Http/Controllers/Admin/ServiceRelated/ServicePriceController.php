@@ -502,7 +502,6 @@ class ServicePriceController extends Controller
         $servicePrice->wing_id = $wing_id;
         $servicePrice->ward_id = $ward_id;
         $servicePrice->office_id = $office_id;
-        $servicePrice->price = $request->price;
 
         // Save the updated model
         $servicePrice->save();
