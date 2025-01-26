@@ -118,7 +118,7 @@ class PatientController extends Controller
                     $validator = Validator::make((array) $insurance_detail, [
                         'insurer' => 'required|string|exists:schemes,name',
                         'scheme_type' => 'required|string|exists:scheme_types,name',
-                        'insurer_contact' => 'required|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
+                        'insurer_contact' => 'nullable|string|min:10|max:20|regex:/^\+?[0-9]{10,20}$/',
                         'principal_member_name' => 'required|string|min:3|max:255',
                         'principal_member_number' => 'required|string|min:3|max:255',
                         'member_validity' => 'nullable|date',
