@@ -28,9 +28,9 @@ use Illuminate\Support\Facades\Validator;
 class VisitController extends Controller
 {
     //saving a new emergency visit
-    public function createVisit(ValidateBillItemsRequest $request){
+    public function createVisit(Request $request){
 
-
+        //ValidateBillItemsRequest
         //$request->validated();
         
         $request->validate([
