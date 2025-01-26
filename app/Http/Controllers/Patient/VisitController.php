@@ -102,7 +102,7 @@ class VisitController extends Controller
             }
 
             //now create bill and its related bill items
-            Bill::createBillAndBillItems($request, $visit->id);
+            //Bill::createBillAndBillItems($request, $visit->id);
 
             //Commit transaction
             DB::commit();
