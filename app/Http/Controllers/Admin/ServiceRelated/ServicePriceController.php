@@ -80,9 +80,9 @@ class ServicePriceController extends Controller
             'mark_up_value' => 'required|numeric|min:0',
             'promotion_type' => 'required|string|in:Percentage,Fixed',
             'promotion_value' => 'required|numeric|min:0',
-            'income_account' => 'required|exists:sub_account,name',
-            'asset_account' => 'required|exists:sub_account,name',
-            'expense_account' => 'required|exists:sub_account,name',
+            'income_account' => 'required|exists:sub_accounts,name',
+            'asset_account' => 'required|exists:sub_accounts,name',
+            'expense_account' => 'required|exists:sub_accounts,name',
             'expiry_date' => 'nullable|string',
             'bar_code' => 'nullable|string',
         ]);
