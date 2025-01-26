@@ -32,7 +32,7 @@ class Units extends Model
     public static function selectUnits($id, $name){
 
         // return $this->aggregateAllRels();
-        $units_query = SubAccounts::with([
+        $units_query = Units::with([
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
