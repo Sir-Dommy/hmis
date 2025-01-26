@@ -6,6 +6,7 @@ use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\SubAccounts;
 use App\Models\User;
 use App\Models\UserActivityLog;
@@ -45,14 +46,16 @@ class SubAccountsController extends Controller
     public function createSubAccount(Request $request){
         $request->validate([
             'name' => 'required|string|max:255|unique:sub_accounts,name',
-            'main_account_id' => 'required|exists:main_accounts,id',
+            'main_account' => 'required|exists:main_accounts,name',
             'description' => 'nullable|string|max:255',
         ]);
+
+        $all = SubAccounts::selectSubAccounts(null, $request->main_account);
 
     
         $created = SubAccounts::create([
             'name' => $request->name,
-            'main_account_id' => $request->main_account_id,
+            'main_account_id' => $all[0]['id'],
             'description' => $request->description,
             'created_by' => User::getLoggedInUserId()
         ]);

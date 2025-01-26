@@ -189,6 +189,8 @@ class Patient extends Model
             'phonenumber2' => $patient->phonenumber2,
             'email' => $patient->email,
             'address' => $patient->address,
+            'gender' => $patient->address,
+            'occupation' => $patient->address,
             'residence' => $patient->residence, 
             'insurance_membership' => $patient->insurance_membership, 
             'next_of_kin_name' => $patient->next_of_kin_name,  
