@@ -31,7 +31,7 @@ class VisitController extends Controller
     public function createVisit(ValidateBillItemsRequest $request){
 
 
-        $request->validated();
+        //$request->validated();
         
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
