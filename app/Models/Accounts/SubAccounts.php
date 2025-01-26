@@ -41,7 +41,7 @@ class SubAccounts extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'subAccounts:id,name'
+            'mainAccount:id,name'
         ])->whereNull('sub_accounts.deleted_by')
           ->whereNull('sub_accounts.deleted_at');
 
