@@ -91,6 +91,8 @@ class ServicePriceController extends Controller
         // Initialize variables for each entity
         $service_id = null;
 
+        $request->selling_price == null ? $selling_price = 0 : $selling_price = $request->selling_price;
+
         // Perform individual queries and assign the ids or null
         if ($request->has('service')) {
             $service = Service::where('name', $request->service)->first();
@@ -111,7 +113,7 @@ class ServicePriceController extends Controller
                 'unit_id' => $existing_unit[0]['id'],
                 'smallest_sellable_quantity' => $request->smallest_sellable_quantity,
                 'cost_price' => $request->cost_price,
-                'selling_price' => $request->selling_price,
+                'selling_price' => $selling_price,
                 'mark_up_type' => $request->mark_up_type,
                 'mark_up_value' => $request->mark_up_value,
                 'promotion_type' => $request->promotion_type,
