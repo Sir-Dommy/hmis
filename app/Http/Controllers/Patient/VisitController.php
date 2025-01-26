@@ -62,6 +62,7 @@ class VisitController extends Controller
                 'patient_id' => $request->patient_id, 
                 'visit_type_id' => $visit_type[0]['id'],
                 'bar_code'=>$request->bar_code,
+                'stage'=>0,
                 'created_by' => User::getLoggedInUserId()
             ]);
             //echo ("TUKO NA VISIT ID " . )
