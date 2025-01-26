@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\ServiceRelated;
 use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Accounts\SubAccounts;
+use App\Models\Accounts\Units;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
@@ -69,7 +71,20 @@ class ServicePriceController extends Controller
     public function createServicePrice(Request $request){
         $request->validate([
             'service' => 'required|exists:services,name',
-            'price' => 'required|numeric',
+            'category' => 'required|string|in:Drug,Non-Drug,Others',
+            'unit' => 'required|exists:units,name',
+            'smallest_sellable_quantity' => 'required|numeric|min:0',
+            'cost_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
+            'mark_up_type' => 'required|string|in:Percentage,Fixed',
+            'mark_up_value' => 'required|numeric|min:0',
+            'promotion_type' => 'required|string|in:Percentage,Fixed',
+            'promotion_value' => 'required|numeric|min:0',
+            'income_account' => 'required|exists:sub_account,name',
+            'asset_account' => 'required|exists:sub_account,name',
+            'expense_account' => 'required|exists:sub_account,name',
+            'expiry_date' => 'nullable|string',
+            'bar_code' => 'nullable|string',
         ]);
         
 
@@ -81,13 +96,31 @@ class ServicePriceController extends Controller
             $service = Service::where('name', $request->service)->first();
             $service_id = $service ? $service->id : null;
         }
+
+        $existing_unit = Units::selectUnits(null, $request->unit);
+        $existing_income_account = SubAccounts::selectSubAccounts(null, $request->income_account);
+        $existing_asset_account = SubAccounts::selectSubAccounts(null, $request->asset_account);
+        $existing_expense_account = SubAccounts::selectSubAccounts(null, $request->expense_account);
     
         DB::beginTransaction();
 
         try{
             $created = ServicePrice::create([
                 'service_id' => $service_id,
-                'price' => $request->price,
+                'category' => $request->category,
+                'unit_id' => $existing_unit[0]['id'],
+                'smallest_sellable_quantity' => $request->smallest_sellable_quantity,
+                'cost_price' => $request->cost_price,
+                'selling_price' => $request->selling_price,
+                'mark_up_type' => $request->mark_up_type,
+                'mark_up_value' => $request->mark_up_value,
+                'promotion_type' => $request->promotion_type,
+                'promotion_value' => $request->promotion_value,
+                'income_account_id' => $existing_income_account[0]['id'],
+                'asset_account_id' => $existing_asset_account[0]['id'],
+                'expense_account_id' => $existing_expense_account[0]['id'],
+                'expiry_date' => $request->expiry_date,
+                'bar_code' => $request->bar_code,
                 'price_applies_from' => $request->price_applies_from,
                 'price_applies_to' => $request->price_applies_to,
                 'duration' => $request->duration,

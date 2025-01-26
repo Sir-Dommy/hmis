@@ -60,6 +60,7 @@ class ServicePrice extends Model
         'mark_up_type',
         'mark_up_value',
         'promotion_type',
+        'promotion_value',
         'income_account_id',
         'asset_account_id',
         'expense_account_id',
