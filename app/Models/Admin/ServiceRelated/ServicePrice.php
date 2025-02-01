@@ -427,11 +427,11 @@ class ServicePrice extends Model
                 });
             }
 
-        //     if ($department) {
-        //         $service_prices_query->whereHas('department', function ($query) use ($department) {
-        //             $query->where('name', $department);
-        //         });
-        //     }
+            if ($department) {
+                $service_prices_query->whereHas('department', function ($query) use ($department) {
+                    $query->where('name', $department);
+                });
+            }
 
         //     if ($consultation_category) {
         //         $service_prices_query->whereHas('consultationCategory', function ($query) use ($consultation_category) {
