@@ -315,7 +315,6 @@ class VisitController extends Controller
                 }
 
                 if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
-                    echo "tuko hapa1";
                     $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                     $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                     $request->wing, $request->ward, $request->office)->toArray()));
@@ -362,7 +361,6 @@ class VisitController extends Controller
                 }
 
                 if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
-                    echo "tuko hapa2";
                     $schemes_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "insurance", null, null,
                             $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                             $request->wing, $request->ward, $request->office)->toArray()));
