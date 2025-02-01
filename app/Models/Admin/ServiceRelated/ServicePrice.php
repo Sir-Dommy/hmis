@@ -593,7 +593,7 @@ class ServicePrice extends Model
             'wing' => $service_price->wing ? $service_price->wing->name : null, // Check if wing exists
             'ward' => $service_price->ward ? $service_price->ward->name : null, // Check if ward exists
             'office' => $service_price->office ? $service_price->office->name : null, // Check if office exists
-            'price' => $service_price->price, // Service price
+            'price' => ServicePrice::calculatePrice($service_price), // Service price
             'price_applies_from' => $service_price->price_applies_from, // Price applies from date
             'price_applies_to' => $service_price->price_applies_to, // Price applies to date
             'duration' => $service_price->duration, // Duration
@@ -604,6 +604,36 @@ class ServicePrice extends Model
             'approved_by' => $service_price->approvedBy ? $service_price->approvedBy->email : null, // Approved by user email
             'approved_at' => $service_price->approved_at, // Approved at timestamp
         ];
+    }
+
+    private static function calculatePrice($service_price){
+        $cost_price = $service_price->cost_price;
+        $selling_price = $service_price->selling_price;
+        $mark_up_type = $service_price->mark_up_type;
+        $mark_up_value = $service_price->mark_up_value;
+        $promotion_type = $service_price->promotion_type;
+        $promotion_value = $service_price->promotion_value;
+
+        $return_price = $cost_price;
+
+        if($mark_up_type == "Percentage"){
+            $return_price =  $cost_price * (100 + $mark_up_value/100);
+        }
+
+        else if($mark_up_type == "Fixed"){
+            $return_price += $mark_up_value;
+        }
+
+        //subtract promotions
+        if($promotion_type == "Percentage"){
+            $return_price -=  $return_price * $promotion_type/100;
+        }
+
+        else if($promotion_type == "Fixed"){
+            $return_price -= $promotion_value;
+        }
+
+        return $return_price;
     }
 
 
