@@ -319,7 +319,9 @@ class VisitController extends Controller
                         $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                         $request->wing, $request->ward, $request->office)->toArray()));
 
-                return response()->json($cash_related_prices_array, 200);
+                return response()->json((ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
+                $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
+                $request->wing, $request->ward, $request->office)->toArray()), 200);
 
             }
 
