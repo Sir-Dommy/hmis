@@ -457,17 +457,17 @@ class ServicePrice extends Model
         //         });
         //     }
 
-        //     if ($scheme_type) {
-        //         $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type) {
-        //             $query->where('name', $scheme_type);
-        //         });
-        //     }
+            if ($scheme_type) {
+                $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type) {
+                    $query->where('name', $scheme_type);
+                });
+            }
 
-        //     if ($consultation_type) {
-        //         $service_prices_query->whereHas('consultationType', function ($query) use ($consultation_type) {
-        //             $query->where('name', $consultation_type);
-        //         });
-        //     }
+            if ($consultation_type) {
+                $service_prices_query->whereHas('consultationType', function ($query) use ($consultation_type) {
+                    $query->where('name', $consultation_type);
+                });
+            }
 
         //     if ($visit_type) {
         //         $service_prices_query->whereHas('visitType', function ($query) use ($visit_type) {
