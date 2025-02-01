@@ -40,6 +40,10 @@ Route::group(['prefix'=>'visits'], function(){
     Route::get('', [VisitController::class, 'getAllVisits']);
     Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
     Route::delete('permanentlyDelete/{id}', [VisitController::class, 'permanentlyDelete']);
+
+
+
+    Route::put('selectPrices', [VisitController::class, 'listServicePrices']);
 });
 
 

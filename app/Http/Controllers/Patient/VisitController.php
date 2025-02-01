@@ -10,6 +10,7 @@ use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
 use App\Models\Patient\Visit;
@@ -109,7 +110,7 @@ class VisitController extends Controller
             }
 
             //now create bill and its related bill items
-            //Bill::createBillAndBillItems($request, $visit->id);
+            Bill::createBillAndBillItems($request, $visit->id);
 
             //Commit transaction
             DB::commit();
@@ -273,6 +274,14 @@ class VisitController extends Controller
             ]);
         }
         
+    }
+
+    public function listServicePrices(Request $request){
+        
+        return ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
+        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
+        $request->wing, $request->ward, $request->office);
+
     }
 
 }
