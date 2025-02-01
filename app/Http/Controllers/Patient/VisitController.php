@@ -279,7 +279,7 @@ class VisitController extends Controller
 
     public function listServicePrices(Request $request){
         foreach($request->payment_types as $payment_type){
-            throw new AlreadyExistsException($payment_type->cash);
+            throw new AlreadyExistsException($payment_type['cash']);
         }
         foreach($request->schemes as $scheme){
             $schemes_related_prices_array = [];
