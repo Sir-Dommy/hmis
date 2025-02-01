@@ -43,7 +43,7 @@ Route::group(['prefix'=>'visits'], function(){
 
 
 
-    Route::get('selectPrices', [VisitController::class, 'listServicePrices']);
+    Route::post('selectPrices', [VisitController::class, 'listServicePrices']);
 });
 
 
