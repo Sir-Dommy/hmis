@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin\ServiceRelated;
 
+use App\Exceptions\AlreadyExistsException;
 use App\Models\Accounts\SubAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Brand;
@@ -377,7 +378,7 @@ class ServicePrice extends Model
             return $paginated_service_prices;
         }
 
-        
+        throw new AlreadyExistsException($service_prices_query->toSql());
         return $service_prices_query->get()->map(function ($service_price) {
             $service_price_details = ServicePrice::mapResponse($service_price);
 
