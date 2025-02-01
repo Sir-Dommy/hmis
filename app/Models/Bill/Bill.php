@@ -136,7 +136,9 @@ class Bill extends Model
 
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
-                !is_numeric($service_price_detail['discount']) || !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Discount and Quantity must be numeric!!!!") : null;
+                !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
+
+                
     
                 BillItem::createBillItem(
                     $created_bill->id

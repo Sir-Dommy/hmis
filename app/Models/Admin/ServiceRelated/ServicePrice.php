@@ -576,7 +576,7 @@ class ServicePrice extends Model
             'department' => $service_price->department ? $service_price->department->name : null, // Check if department exists
             'consultation_category' => $service_price->consultationCategory ? $service_price->consultationCategory->name : null, // Check if consultationCategory exists
             'clinic' => $service_price->clinic ? $service_price->clinic->name : null, // Check if clinic exists
-            'payment_type' => $service_price->paymentType ? $service_price->paymentType->name : null, // Check if paymentType exists
+            'payment_type' => $service_price->paymentType ? $service_price->paymentType->id : null, // Check if paymentType exists
             'scheme' => $service_price->scheme ? $service_price->scheme->name : null, // Check if scheme exists
             'scheme_type' => $service_price->schemeType ? $service_price->schemeType->name : null, // Check if schemeType exists
             'consultation_type' => $service_price->consultationType ? $service_price->consultationType->name : null, // Check if consultationType exists
