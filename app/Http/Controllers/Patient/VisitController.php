@@ -376,7 +376,7 @@ class VisitController extends Controller
         }
         
         
-        return $cash_related_prices_array;
+        return $schemes_related_prices_array;
         return array_merge($cash_related_prices_array, $schemes_related_prices_array);
 
     }
