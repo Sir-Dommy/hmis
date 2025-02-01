@@ -563,7 +563,6 @@ class ServicePrice extends Model
         return $service_prices_query->get()->map(function ($service_price) {
             $service_price_details = ServicePrice::mapResponse($service_price);
 
-            throw new AlreadyExistsException(json_encode($service_price_details));
             return $service_price_details;
         });
 
