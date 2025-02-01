@@ -293,7 +293,7 @@ class VisitController extends Controller
                     }
                 }
                     
-    
+                echo "SENOR";
                 //merge results with those of result types depending on image test types requests
                 if(is_array($request->image_test_types) && count($request->image_test_types) > 0){
 
