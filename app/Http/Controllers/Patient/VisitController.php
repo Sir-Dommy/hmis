@@ -373,10 +373,10 @@ class VisitController extends Controller
                         $request->wing, $request->ward, $request->office)->toArray()));
             }
 
-            return $cash_related_prices_array;
         }
         
         
+        return $cash_related_prices_array;
         return array_merge($cash_related_prices_array, $schemes_related_prices_array);
 
     }
