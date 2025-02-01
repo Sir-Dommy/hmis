@@ -433,17 +433,17 @@ class ServicePrice extends Model
                 });
             }
 
-        //     if ($consultation_category) {
-        //         $service_prices_query->whereHas('consultationCategory', function ($query) use ($consultation_category) {
-        //             $query->where('name', $consultation_category);
-        //         });
-        //     }
+            if ($consultation_category) {
+                $service_prices_query->whereHas('consultationCategory', function ($query) use ($consultation_category) {
+                    $query->where('name', $consultation_category);
+                });
+            }
 
-        //     if ($clinic) {
-        //         $service_prices_query->whereHas('clinic', function ($query) use ($clinic) {
-        //             $query->where('name', $clinic);
-        //         });
-        //     }
+            if ($clinic) {
+                $service_prices_query->whereHas('clinic', function ($query) use ($clinic) {
+                    $query->where('name', $clinic);
+                });
+            }
 
         //     if ($payment_type) {
         //         $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
