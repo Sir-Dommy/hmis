@@ -445,11 +445,11 @@ class ServicePrice extends Model
                 });
             }
 
-        //     if ($payment_type) {
-        //         $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
-        //             $query->where('name', $payment_type);
-        //         });
-        //     }
+            if ($payment_type) {
+                $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
+                    $query->where('name', $payment_type);
+                });
+            }
 
         //     if ($scheme) {
         //         $service_prices_query->whereHas('scheme', function ($query) use ($scheme) {
