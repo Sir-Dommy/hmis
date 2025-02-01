@@ -315,9 +315,12 @@ class VisitController extends Controller
                     }
                 }
 
-                $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
-                        $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                if((is_array($request->drugs) && count($request->drugs) < 1) && (is_array($request->image_test_types) && count($request->image_test_types) < 1)  && (is_array($request->lab_test_types) && count($request->lab_test_types) < 1)){
+                    $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
+                    $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
+                    $request->wing, $request->ward, $request->office)->toArray()));
+                }
+                
 
                 // return response()->json($cash_related_prices_array, 200);
 
@@ -356,9 +359,11 @@ class VisitController extends Controller
                     }
                 }
 
-                $schemes_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "insurance", null, null,
-                        $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                if((is_array($request->drugs) && count($request->drugs) < 1) && (is_array($request->image_test_types) && count($request->image_test_types) < 1)  && (is_array($request->lab_test_types) && count($request->lab_test_types) < 1)){
+                    $schemes_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "insurance", null, null,
+                            $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
+                            $request->wing, $request->ward, $request->office)->toArray()));
+                }
 
             }
         }
