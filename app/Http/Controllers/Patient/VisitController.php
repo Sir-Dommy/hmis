@@ -284,26 +284,35 @@ class VisitController extends Controller
         foreach($request->payment_types as $payment_type){
             if($payment_type['cash'] == 1){      
                 //merge results with those of result types depending on lab requests
-                foreach($request->lab_test_types as $lab_test_type){
-                    array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
-                    $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
-                    $request->wing, $request->ward, $request->office)->toArray()));
+
+                if(is_array($request->lab_test_types) && count($request->lab_test_types) > 0){
+                    foreach($request->lab_test_types as $lab_test_type){
+                        array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
+                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
+                        $request->wing, $request->ward, $request->office)->toArray()));
+                    }
                 }
+                    
     
                 //merge results with those of result types depending on image test types requests
-                foreach($request->image_test_types as $image_test_type){
-                    array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
-                    $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
-                    $request->wing, $request->ward, $request->office)->toArray()));
+                if(is_array($request->image_test_types) && count($request->image_test_types) > 0){
+
+                    foreach($request->image_test_types as $image_test_type){
+                        array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
+                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
+                        $request->wing, $request->ward, $request->office)->toArray()));
+                    }
                 }
     
     
     
                 //merge results with those of result types depending on drugs requests
-                foreach($request->drugs as $drug){
-                    array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
-                    $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
-                    $request->wing, $request->ward, $request->office)->toArray()));
+                if(is_array($request->drugs) && count($request->drugs) > 0){
+                    foreach($request->drugs as $drug){
+                        array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, null, null,
+                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
+                        $request->wing, $request->ward, $request->office)->toArray()));
+                    }
                 }
 
             }
@@ -312,26 +321,32 @@ class VisitController extends Controller
             if($payment_type['insurance'] == 1){
                 foreach($request->schemes as $scheme){        
                     //merge results with those of result types depending on lab requests
-                    foreach($request->lab_test_types as $lab_test_type){
-                        array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
-                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                    if(is_array($request->lab_test_types) && count($request->lab_test_types) > 0){
+                        foreach($request->lab_test_types as $lab_test_type){
+                            array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
+                            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
+                            $request->wing, $request->ward, $request->office)->toArray()));
+                        }
                     }
         
                     //merge results with those of result types depending on image test types requests
-                    foreach($request->image_test_types as $image_test_type){
-                        array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
-                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                    if(is_array($request->image_test_types) && count($request->image_test_types) > 0){
+                        foreach($request->image_test_types as $image_test_type){
+                            array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
+                            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
+                            $request->wing, $request->ward, $request->office)->toArray()));
+                        }
                     }
         
         
         
                     //merge results with those of result types depending on drugs requests
-                    foreach($request->drugs as $drug){
-                        array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
-                        $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                    if(is_array($request->drugs) && count($request->drugs) > 0){
+                        foreach($request->drugs as $drug){
+                            array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
+                            $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
+                            $request->wing, $request->ward, $request->office)->toArray()));
+                        }
                     }
                 }
 
