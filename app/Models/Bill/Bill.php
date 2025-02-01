@@ -137,8 +137,11 @@ class Bill extends Model
                 BillItem::createBillItem(
                     $created_bill->id
                     , $existing_service_price_details[0]['id']
+                    , null
+                    ,null
                     , $existing_service_price_details[0]['price']
                     , $service_price_detail['discount']
+                    , $service_price_detail['quantity']
                     , $service_price_detail['description'] ? $service_price_detail['description'] : null
                 );
     
