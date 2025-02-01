@@ -46,7 +46,7 @@ class VisitController extends Controller
             // 'service'=>'required|string|exists:services,name',
             'schemes' => 'nullable',
             'payment_types'=>'required',
-            'bill_items'=>'required',
+            'service_prices'=>'required',
             'bar_code'=>'nullable|string',
         
         ]);
@@ -111,7 +111,7 @@ class VisitController extends Controller
             }
 
             //now create bill and its related bill items
-            Bill::createBillAndBillItems($request, $visit->id);
+            //Bill::createBillAndBillItems($request, $visit->id);
 
             //Commit transaction
             DB::commit();
