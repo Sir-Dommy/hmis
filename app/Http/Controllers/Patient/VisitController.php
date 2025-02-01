@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
@@ -277,6 +278,35 @@ class VisitController extends Controller
     }
 
     public function listServicePrices(Request $request){
+        foreach($request->payment_types as $payment_type){
+            throw new AlreadyExistsException($payment_type->cash);
+        }
+        foreach($request->schemes as $scheme){
+            $schemes_related_prices_array = [];
+
+            //merge results with those of result types depending on lab requests
+            foreach($request->lab_test_types as $lab_test_type){
+                array_merge($schemes_related_prices_array, ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme->name, $scheme->scheme_type,
+                $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $lab_test_type->name, null, null, null, $request->branch, $request->building,
+                $request->wing, $request->ward, $request->office));
+            }
+
+            //merge results with those of result types depending on image test types requests
+            foreach($request->image_test_types as $image_test_type){
+                array_merge($schemes_related_prices_array, ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme->name, $scheme->scheme_type,
+                $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, $image_test_type->name, null, null, $request->branch, $request->building,
+                $request->wing, $request->ward, $request->office));
+            }
+
+
+
+            //merge results with those of result types depending on drugs requests
+            foreach($request->drugs as $drug){
+                array_merge($schemes_related_prices_array, ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme->name, $scheme->scheme_type,
+                $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, null, null, $drug->name, $drug->brand, $request->branch, $request->building,
+                $request->wing, $request->ward, $request->office));
+            }
+        }
         
         return ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
         $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
