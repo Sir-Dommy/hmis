@@ -364,10 +364,6 @@ class VisitController extends Controller
                 $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                 $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                 $request->wing, $request->ward, $request->office)->toArray()));
-
-                return ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
-                $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
-                $request->wing, $request->ward, $request->office)->toArray();
             }
 
             // insurance incase of other services    
