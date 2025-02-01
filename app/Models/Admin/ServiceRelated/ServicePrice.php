@@ -420,7 +420,6 @@ class ServicePrice extends Model
         ])->whereNull('service_prices.deleted_by')
         ->whereNull('service_prices.deleted_at');
 
-        throw new AlreadyExistsException($service);
         // Filter by matching the provided arguments using LIKE for text fields
             if ($service) {
                 $service_prices_query->whereHas('service', function ($query) use ($service) {
@@ -564,6 +563,7 @@ class ServicePrice extends Model
         return $service_prices_query->get()->map(function ($service_price) {
             $service_price_details = ServicePrice::mapResponse($service_price);
 
+            throw new AlreadyExistsException(json_encode($service_price_details));
             return $service_price_details;
         });
 
