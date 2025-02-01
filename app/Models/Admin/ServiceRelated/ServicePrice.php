@@ -451,11 +451,11 @@ class ServicePrice extends Model
                 });
             }
 
-        //     if ($scheme) {
-        //         $service_prices_query->whereHas('scheme', function ($query) use ($scheme) {
-        //             $query->where('name', $scheme);
-        //         });
-        //     }
+            if ($scheme) {
+                $service_prices_query->whereHas('scheme', function ($query) use ($scheme) {
+                    $query->where('name', $scheme);
+                });
+            }
 
             if ($scheme_type) {
                 $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type) {
@@ -469,93 +469,93 @@ class ServicePrice extends Model
                 });
             }
 
-        //     if ($visit_type) {
-        //         $service_prices_query->whereHas('visitType', function ($query) use ($visit_type) {
-        //             $query->where('name', $visit_type);
-        //         });
-        //     }
+            if ($visit_type) {
+                $service_prices_query->whereHas('visitType', function ($query) use ($visit_type) {
+                    $query->where('name', $visit_type);
+                });
+            }
 
-        //     if ($doctor) {
-        //         $service_prices_query->whereHas('doctor', function ($query) use ($doctor) {
-        //             $query->where('employee_code', $doctor)
-        //                     ->orWhere('ipnumber', $doctor);
-        //         });
-        //     }
+            if ($doctor) {
+                $service_prices_query->whereHas('doctor', function ($query) use ($doctor) {
+                    $query->where('employee_code', $doctor)
+                            ->orWhere('ipnumber', $doctor);
+                });
+            }
 
-        //     if ($lab_test_type) {
-        //         $service_prices_query->whereHas('labTestType', function ($query) use ($lab_test_type) {
-        //             $query->where('name', $lab_test_type);
-        //         });
-        //     }
+            if ($lab_test_type) {
+                $service_prices_query->whereHas('labTestType', function ($query) use ($lab_test_type) {
+                    $query->where('name', $lab_test_type);
+                });
+            }
 
-        //     if ($image_test_type) {
-        //         $service_prices_query->whereHas('imageTestType', function ($query) use ($image_test_type) {
-        //             $query->where('name', $image_test_type);
-        //         });
-        //     }
+            if ($image_test_type) {
+                $service_prices_query->whereHas('imageTestType', function ($query) use ($image_test_type) {
+                    $query->where('name', $image_test_type);
+                });
+            }
 
-        //     if ($drug_id) {
-        //         $service_prices_query->whereHas('drug', function ($query) use ($drug_id) {
-        //             $query->where('name', $drug_id);
-        //         });
-        //     }
+            if ($drug_id) {
+                $service_prices_query->whereHas('drug', function ($query) use ($drug_id) {
+                    $query->where('name', $drug_id);
+                });
+            }
 
-        //     if ($brand) {
-        //         $service_prices_query->whereHas('brand', function ($query) use ($brand) {
-        //             $query->where('name', $brand);
-        //         });
-        //     }
+            if ($brand) {
+                $service_prices_query->whereHas('brand', function ($query) use ($brand) {
+                    $query->where('name', $brand);
+                });
+            }
 
-        //     if ($branch) {
-        //         $service_prices_query->whereHas('branch', function ($query) use ($branch) {
-        //             $query->where('name', $branch);
-        //         });
-        //     }
+            if ($branch) {
+                $service_prices_query->whereHas('branch', function ($query) use ($branch) {
+                    $query->where('name', $branch);
+                });
+            }
 
-        //     if ($building) {
-        //         $service_prices_query->whereHas('building', function ($query) use ($building) {
-        //             $query->where('name', $building);
-        //         });
-        //     }
+            if ($building) {
+                $service_prices_query->whereHas('building', function ($query) use ($building) {
+                    $query->where('name', $building);
+                });
+            }
 
-        //     if ($wing) {
-        //         $service_prices_query->whereHas('wing', function ($query) use ($wing) {
-        //             $query->where('name', $wing);
-        //         });
-        //     }
+            if ($wing) {
+                $service_prices_query->whereHas('wing', function ($query) use ($wing) {
+                    $query->where('name', $wing);
+                });
+            }
 
-        //     if ($ward) {
-        //         $service_prices_query->whereHas('ward', function ($query) use ($ward) {
-        //             $query->where('name', $ward);
-        //         });
-        //     }
+            if ($ward) {
+                $service_prices_query->whereHas('ward', function ($query) use ($ward) {
+                    $query->where('name', $ward);
+                });
+            }
 
-        //     if ($office) {
-        //         $service_prices_query->whereHas('office', function ($query) use ($office) {
-        //             $query->where('name', $office);
-        //         });
-        //     }
+            if ($office) {
+                $service_prices_query->whereHas('office', function ($query) use ($office) {
+                    $query->where('name', $office);
+                });
+            }
 
-        //     // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
-        //     if ($current_time) {
-        //         $service_prices_query->where(function ($query) use ($current_time) {
-        //             $query->where('price_applies_from', '<=', $current_time)
-        //                 ->where('price_applies_to', '>=', $current_time);
-        //         });
-        //     }
-
-
-        //     // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
-        //     if ($duration) {
-        //         $service_prices_query->where(function ($query) use ($duration) {
-        //             $query->where('duration', '<=', $duration);
-        //         });
-        //     }
+            // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
+            if ($current_time) {
+                $service_prices_query->where(function ($query) use ($current_time) {
+                    $query->where('price_applies_from', '<=', $current_time)
+                        ->where('price_applies_to', '>=', $current_time);
+                });
+            }
 
 
-        // if($id != null){
-        //     $service_prices_query->where('service_prices.id', $id);
-        // }
+            // Filter by current time (check if current time is within 'price_applies_from' and 'price_applies_to')
+            if ($duration) {
+                $service_prices_query->where(function ($query) use ($duration) {
+                    $query->where('duration', '<=', $duration);
+                });
+            }
+
+
+        if($id != null){
+            $service_prices_query->where('service_prices.id', $id);
+        }
 
 
         //throw new AlreadyExistsException($service_prices_query->toSql());
