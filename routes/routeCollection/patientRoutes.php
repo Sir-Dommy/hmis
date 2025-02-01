@@ -43,7 +43,7 @@ Route::group(['prefix'=>'visits'], function(){
 
 
 
-    Route::put('selectPrices', [VisitController::class, 'listServicePrices']);
+    Route::get('selectPrices', [VisitController::class, 'listServicePrices']);
 });
 
 
