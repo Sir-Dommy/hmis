@@ -281,8 +281,6 @@ class VisitController extends Controller
         $cash_related_prices_array = [];
         $schemes_related_prices_array = [];
 
-        return $request;
-
         if(is_array($request->payment_types) && count($request->payment_types) > 0){
             foreach($request->payment_types as $payment_type){
                 if($payment_type['cash'] == 1){      
