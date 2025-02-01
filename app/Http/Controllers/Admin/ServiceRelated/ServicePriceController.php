@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\ServiceRelated;
 
 use App\Exceptions\AlreadyExistsException;
+use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Accounts\SubAccounts;
@@ -351,6 +352,10 @@ class ServicePriceController extends Controller
         $visit_type_id = $doctor_id = $lab_test_type_id = $image_test_type_id = null;
         $drug_id = $brand_id = $branch_id = $building_id = $wing_id = null;
         $ward_id = $office_id = null;
+
+        if(($request->payment_type == "Cash" || $request->payment_type == "cash") && ($request->has('scheme') ||$request->has('scheme_type'))){
+            throw new InputsValidationException("You cannot have insurance company details for cash payments!!!!!!!");
+        }
 
         // Perform individual queries and assign the ids or null
         if ($request->has('service')) {
