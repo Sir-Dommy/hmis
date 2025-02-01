@@ -618,7 +618,7 @@ class ServicePrice extends Model
 
         if($mark_up_type == "Percentage"){
             $return_price =  $cost_price * (100 + ($mark_up_value/100));
-            throw new AlreadyExistsException($return_price);
+            throw new AlreadyExistsException($mark_up_value);
         }
 
         else if($mark_up_type == "Fixed"){
