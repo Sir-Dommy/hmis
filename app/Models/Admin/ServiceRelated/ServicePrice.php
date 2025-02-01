@@ -557,6 +557,8 @@ class ServicePrice extends Model
             $service_prices_query->where('service_prices.id', $id);
         }
 
+
+        throw new AlreadyExistsException($service_prices_query->toSql());
         
         return $service_prices_query->get()->map(function ($service_price) {
             $service_price_details = ServicePrice::mapResponse($service_price);
