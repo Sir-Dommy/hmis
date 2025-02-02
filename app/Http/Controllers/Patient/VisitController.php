@@ -283,7 +283,6 @@ class VisitController extends Controller
 
         //return $request->payment_types;
         if(is_array($request->payment_types) && count($request->payment_types) > 0){
-            return "TUKO HAPA!!!!";
             foreach($request->payment_types as $payment_type){
                 if($payment_type['cash'] == 1){      
                     //merge results with those of result types depending on lab requests
@@ -362,6 +361,7 @@ class VisitController extends Controller
 
             //cash incase of other services    
             if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
+                return "WE HAVE SEARCHED IN 1";
                 $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                 $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                 $request->wing, $request->ward, $request->office)->toArray()));
@@ -369,6 +369,7 @@ class VisitController extends Controller
 
             // insurance incase of other services    
             if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
+                return "WE HAVE SEARCHED IN 2";
                 $schemes_related_prices_array = array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "insurance", null, null,
                         $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
                         $request->wing, $request->ward, $request->office)->toArray()));
