@@ -322,8 +322,6 @@ class PatientController extends Controller
 
                         throw new InputsValidationException($error_string);
                     }
-
-                    echo "123";
     
                     $desiredValue = $insurance_detail->scheme_type;
                     $scheme = Scheme::with([
@@ -351,6 +349,7 @@ class PatientController extends Controller
                     }
     
                     $existing_insurance_details = InsuranceDetail::where('patient_id', $data->id)
+                        ->where('scheme_id', $scheme[0]['id'])
                         ->where('scheme_type_id', $scheme_type[0]['id'])
                         ->get();
     
