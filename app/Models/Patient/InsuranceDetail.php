@@ -33,13 +33,13 @@ class InsuranceDetail extends Model
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function scheme()
+    public function schemes()
     {
-        return $this->belongsTo(Scheme::class, 'insurer_id');
+        return $this->hasMany(Scheme::class, 'insurer_id', 'id');
     }
 
-    public function schemeType()
+    public function schemeTypes()
     {
-        return $this->belongsTo(SchemeTypes::class, 'scheme_type_id');
+        return $this->hasMany(SchemeTypes::class, 'scheme_type_id', 'id');
     }
 }
