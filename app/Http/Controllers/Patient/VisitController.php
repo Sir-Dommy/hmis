@@ -373,7 +373,7 @@ class VisitController extends Controller
                         $request->wing, $request->ward, $request->office)->toArray()));
             }
 
-            return $request;
+            //return $request;
 
         }
         
