@@ -349,7 +349,7 @@ class PatientController extends Controller
                     }
     
                     $existing_insurance_details = InsuranceDetail::where('patient_id', $data->id)
-                        ->where('scheme_id', $scheme[0]['id'])
+                        ->where('insurer_id', $scheme[0]['id'])
                         ->where('scheme_type_id', $scheme_type[0]['id'])
                         ->get();
     
