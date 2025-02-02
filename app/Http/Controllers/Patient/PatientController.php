@@ -347,12 +347,10 @@ class PatientController extends Controller
                         $insurance_card_image_path = $image->move(public_path('images/patient/insurance_cards'), $newName);
                     }
     
-                    echo $scheme[0]['id'];
                     $existing_insurance_details = InsuranceDetail::where('patient_id', $data->id)
                         ->where('insurer_id', $scheme[0]['id'])
                         ->where('scheme_type_id', $scheme_type[0]['id'])
                         ->get();
-                    echo " And count is: ".count($existing_insurance_details). " ";
     
                     if(count($existing_insurance_details) < 1){
                         InsuranceDetail::create([
