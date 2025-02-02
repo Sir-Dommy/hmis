@@ -35,11 +35,11 @@ class InsuranceDetail extends Model
 
     public function schemes()
     {
-        return $this->hasMany(Scheme::class, 'insurer_id', 'id');
+        return $this->hasMany(Scheme::class, 'id', 'insurer_id');
     }
 
     public function schemeTypes()
     {
-        return $this->hasMany(SchemeTypes::class, 'scheme_type_id', 'id');
+        return $this->hasMany(SchemeTypes::class, 'id', 'scheme_type_id');
     }
 }
