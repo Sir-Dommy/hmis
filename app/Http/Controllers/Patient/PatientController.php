@@ -277,7 +277,6 @@ class PatientController extends Controller
             DB::beginTransaction();
             Patient::where('id', $data->id)
                 ->update([
-                    'patient_code' => $patient_code,
                     'firstname' => $data->firstname, 
                     'lastname' => $data->lastname,
                     'phonenumber1'=>$data->phonenumber1,
@@ -293,7 +292,7 @@ class PatientController extends Controller
                     'next_of_kin_name' => $data->next_of_kin_name,
                     'next_of_kin_contact' => $data->next_of_kin_contact,
                     'next_of_kin_relationship' => $data->next_of_kin_relationship,
-                    'created_by' => User::getLoggedInUserId()
+                    'updated_by' => User::getLoggedInUserId()
                 ]);
 
             //validate if identification is being provided properly
