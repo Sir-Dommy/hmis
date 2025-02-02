@@ -353,7 +353,7 @@ class PatientController extends Controller
                                 'principal_member_name' => $insurance_detail->principal_member_name,
                                 'principal_member_number' => $insurance_detail->principal_member_number,
                                 'member_validity' => $insurance_detail->member_validity,
-                                'updated_by' => User::getLoggedInUserId()
+                                'created_by' => User::getLoggedInUserId()
                             ]);
                     }
     
