@@ -2,6 +2,8 @@
 
 namespace App\Models\Patient;
 
+use App\Models\Admin\Scheme;
+use App\Models\Admin\SchemeTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,4 +27,19 @@ class InsuranceDetail extends Model
         'deleted_by',
         'deleted_at'
     ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
+    public function scheme()
+    {
+        return $this->belongsTo(Scheme::class, 'insurer_id');
+    }
+
+    public function schemeType()
+    {
+        return $this->belongsTo(SchemeTypes::class, 'scheme_type_id');
+    }
 }

@@ -74,6 +74,8 @@ class Patient extends Model
             'updatedBy:id,email',
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,member_validity', 
+            'insuranceDetails.scheme:id,name',  
+            'insuranceDetails.schemeType:id,name', 
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
             'visits.visitClinics.clinic:id,name',
