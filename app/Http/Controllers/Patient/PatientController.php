@@ -353,7 +353,7 @@ class PatientController extends Controller
                         ->where('insurer_id', $scheme[0]['id'])
                         ->where('scheme_type_id', $scheme_type[0]['id'])
                         ->get();
-                    echo " And count is: ".count($existing_insurance_details);
+                    echo " And count is: ".count($existing_insurance_details). " ";
     
                     if(count($existing_insurance_details) < 1){
                         InsuranceDetail::create([
