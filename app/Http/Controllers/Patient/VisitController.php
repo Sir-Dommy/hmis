@@ -283,7 +283,7 @@ class VisitController extends Controller
 
         //return $request->payment_types;
         if(is_array($request->payment_types) && count($request->payment_types) > 0){
-            echo "TUKO HAPA!!!!";
+            return "TUKO HAPA!!!!";
             foreach($request->payment_types as $payment_type){
                 if($payment_type['cash'] == 1){      
                     //merge results with those of result types depending on lab requests
