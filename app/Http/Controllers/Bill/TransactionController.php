@@ -8,17 +8,43 @@ use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
     //receive cash payment for a service
-    public function receiveCashPayment(Request $request){
+    public function clearBillUsingCashPayment(Request $request){
         $request->validate([
             'bill_id' => 'required|exists:bills,id',
             'amount' => 'required|numeric|min:0',
             'fee' => 'nullable|numeric|min:0',
             'initiation_time' => 'nullable|date|before_or_equal:today'
         ]);
+
+        $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
+        
+        return response()->json(
+            $create_transaction
+        ,200);
+
+    }
+
+    //receive cash payment for a service
+    public function payForSpecificBillItemsUsingCash(Request $request){
+        $request->validate([
+            'bill_item_details' => 'required',
+        ]);
+
+        Validator::make($request->bill_item_details, [ 
+            'bill_item_id' => 'required|exists:bill_items,id',
+            'amount' => 'required|numeric|min:0',
+            'fee' => 'nullable|numeric|min:0',
+            'initiation_time' => 'nullable|date|before_or_equal:today'
+            
+        ])->validate();
+
 
         $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
 

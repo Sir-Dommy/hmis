@@ -5,5 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix'=>'payments'], function(){
 
-    Route::post('cash', [TransactionController::class, 'receiveCashPayment']);
+    Route::group(['prefix'=>'cash'], function(){
+        Route::post('clear', [TransactionController::class, 'clearBillUsingCashPayment']);
+        Route::post('paySpecificItems', [TransactionController::class, 'payForSpecificBillItemsUsingCash']);
+    });
+    
 });
