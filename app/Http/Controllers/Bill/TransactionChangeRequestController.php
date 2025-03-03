@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Bill;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class BillItem extends Controller
+class TransactionChangeRequestController extends Controller
 {
     //
 }

@@ -4,6 +4,7 @@ namespace App\Models\Bill;
 
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\User;
+use App\Utils\APIConstants;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,7 @@ class BillItem extends Model
         'discount',
         'quantity',
         'description',
+        'status',
         'created_by',
         'updated_by',
         'approved_by',
@@ -90,6 +92,7 @@ class BillItem extends Model
             'amount' => $bill_item->amount,
             'discount' => $bill_item->discount,
             'description' => $bill_item->description,
+            'status' => $bill_item->status,
             'created_by' => $bill_item->createdBy ? $bill_item->createdBy->email : null,
             'created_at' => $bill_item->created_at,
             'updated_by' => $bill_item->updatedBy ? $bill_item->updatedBy->email : null,
@@ -111,6 +114,7 @@ class BillItem extends Model
             'discount' => $discount,
             'quantity' => $quantity,
             'description' => $description,
+            'status' => APIConstants::STATUS_PENDING,
             'created_by' => User::getLoggedInUserId()
         ]);
     }
