@@ -43,7 +43,7 @@ class VisitController extends Controller
             // 'doctor'=>'nullable',
             // 'consultation_type'=>'nullable',
             // 'consultation_category'=>'nullable',
-            // 'service'=>'required|strin g|exists:services,name',
+            // 'service'=>'required|string|exists:services,name',
             'schemes' => 'nullable',
             'payment_types'=>'required',
             'service_price_details'=>'required',
@@ -81,7 +81,7 @@ class VisitController extends Controller
             ]);
 
     
-            $this->validateAndSaveVisitPaymentType( (object) $request->payment_types, $visit->id, $request->schemes);
+            $this->validateAndSaveVisitPaymentTypeAndItsPrice( (object) $request->payment_types, $visit->id, $request->schemes);
     
             foreach($request->payment_types as $payment_type){
                 if($payment_type['insurance'] == 1){
@@ -247,7 +247,7 @@ class VisitController extends Controller
         ,200);
     }
 
-    private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
+    private function validateAndSaveVisitPaymentTypeAndItsPrice($payment_types, $visit_id, $schemes){
         foreach($payment_types as $payment_type){
 
             if($payment_type['cash'] == 1){
