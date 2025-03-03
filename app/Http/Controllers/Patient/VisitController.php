@@ -94,11 +94,15 @@ class VisitController extends Controller
                     foreach($request->schemes as $scheme){
                         
 
-                        Validator::make((array) $scheme, [
+                        $validator = Validator::make((array) $scheme, [
                             'claim_number' => 'required|string',
                             'available_balance' => 'required|numeric',
                             'insurer' => 'required|string|exists:schemes,name',
                         ]);
+
+                        if ($validator->fails()) {
+                            return response()->json(['errors' => $validator->errors()], 422);
+                        }
 
                         $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
                         
