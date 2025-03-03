@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Bill;
 
+use App\Exceptions\InputsValidationException;
 use App\Http\Controllers\Controller;
 use App\Models\Bill\Transaction;
 use App\Models\UserActivityLog;
@@ -37,13 +38,17 @@ class TransactionController extends Controller
             'bill_item_details' => 'required',
         ]);
 
-        Validator::make($request->bill_item_details, [ 
+        $validator = Validator::make($request->all(), [
             'bill_item_id' => 'required|exists:bill_items,id',
             'amount' => 'required|numeric|min:0',
             'fee' => 'nullable|numeric|min:0',
             'initiation_time' => 'nullable|date|before_or_equal:today'
-            
-        ])->validate();
+        ]);
+    
+        if ($validator->fails()) {
+            throw new InputsValidationException(json_encode($validator->errors()));
+            //return response()->json(['errors' => $validator->errors()], 422);
+        }
 
 
         $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
