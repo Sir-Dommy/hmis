@@ -38,16 +38,14 @@ class TransactionController extends Controller
             'bill_item_details' => 'required',
         ]);
 
-        $validator = Validator::make($request->all(), [
-            'bill_item_id' => 'required|exists:bill_items,id',
-            'amount' => 'required|numeric|min:0',
-            'fee' => 'nullable|numeric|min:0',
-            'initiation_time' => 'nullable|date|before_or_equal:today'
-        ]);
-    
-        if ($validator->fails()) {
-            throw new InputsValidationException(json_encode($validator->errors()));
-            //return response()->json(['errors' => $validator->errors()], 422);
+        foreach ($request->bill_item_details as $bill_item_detail) {
+            Validator::make((array) $bill_item_detail, [            
+                'bill_id' => 'required|exists:bills,id',
+                'amount' => 'required|numeric|min:0',
+                'fee' => 'nullable|numeric|min:0',
+                'initiation_time' => 'nullable|date|before_or_equal:today'
+            ]);
+
         }
 
 
