@@ -141,7 +141,6 @@ class Bill extends Model
 
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
-                echo $existing_service_price_details;
                 !is_numeric($service_price_detail['amount_to_pay']) ? throw new InputsValidationException("Amount to pay must be numeric!!!!") : null;
 
                 if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
