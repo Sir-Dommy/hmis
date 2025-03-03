@@ -142,7 +142,7 @@ class Bill extends Model
                 echo $existing_service_price_details;
                 !is_numeric($service_price_detail['amount_to_pay']) ? throw new InputsValidationException("Amount to pay must be numeric!!!!") : null;
 
-                if($service_dictionary[$existing_service_price_details[0]['service']]){
+                if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
                     $service_dictionary[$existing_service_price_details[0]['service']] > $existing_service_price_details[0]['price'] ? $service_dictionary[$existing_service_price_details[0]['service']]  = $existing_service_price_details[0]['price'] : null;
 
                     // assign amount to pay
