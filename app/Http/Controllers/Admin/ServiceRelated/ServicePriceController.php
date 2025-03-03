@@ -512,4 +512,25 @@ class ServicePriceController extends Controller
         $servicePrice->save();
     }
 
+    public function createAndAccessDictionary() {
+        // Initialize a dictionary (associative array)
+        $dictionary = [
+            'service1' => 'Service Price 1',
+            'service2' => 'Service Price 2',
+            'service3' => 'Service Price 3',
+        ];
+
+        // Add a new value to the dictionary
+        $dictionary['service4'] = 'Service Price 4';
+
+        // Access keys and values
+        $keys = array_keys($dictionary);
+        $values = array_values($dictionary);
+
+        return response()->json([
+            'dictionary' => $dictionary,
+            'keys' => $keys,
+            'values' => $values,
+        ], 200);
+    }
 }

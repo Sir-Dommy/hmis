@@ -124,8 +124,11 @@ class Bill extends Model
                 'created_by' => User::getLoggedInUserId()
             ]);
     
-            $final_bill_amount = 0.0;
             $final_bill_discount = 0.0;
+
+            //create a dictionary add values to it and access its keys and values
+            $service_dictionary = [];
+            $amount_to_pay_dictionary = [];
     
             foreach($request->service_price_details as $service_price_detail){
 
@@ -136,8 +139,36 @@ class Bill extends Model
 
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
-                !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
+                !is_numeric($service_price_detail['amount_to_pay']) ? throw new InputsValidationException("Amount to pay must be numeric!!!!") : null;
 
+                if($service_dictionary[$existing_service_price_details[0]['service_id']]){
+                    $service_dictionary[$existing_service_price_details[0]['service_id']] > $existing_service_price_details[0]['price'] ? $service_dictionary[$existing_service_price_details[0]['service_id']]  = $existing_service_price_details[0]['price'] : null;
+
+                    // assign amount to pay
+                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service_id']] = $service_price_detail['amount_to_pay'];
+                }
+
+                else{
+                    $service_dictionary[$existing_service_price_details[0]['service_id']]  = $existing_service_price_details[0]['price'];
+
+                    // increment amount to pay
+                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service_id']] += $service_price_detail['amount_to_pay'];
+                }
+    
+                $final_bill_discount += $service_price_detail['discount'];
+    
+            }
+
+            foreach($request->service_price_details as $service_price_detail){
+
+                $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null
+                );
+
+                count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
+
+                !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
                 
     
                 BillItem::createBillItem(
@@ -145,17 +176,33 @@ class Bill extends Model
                     , $existing_service_price_details[0]['id']
                     , null
                     ,null
-                    , $existing_service_price_details[0]['price']
+                    , $amount_to_pay_dictionary[$existing_service_price_details[0]['service_id']]
                     , $service_price_detail['discount']
                     , $service_price_detail['quantity']
                     , $service_price_detail['description'] ? $service_price_detail['description'] : null
                 );
     
-                $final_bill_amount += $existing_service_price_details[0]['price'];
-                $final_bill_discount += $service_price_detail['discount'];
     
             }
 
+            // loop through $service_dictionary adding all values to come up with resulting numeric value
+            $final_bill_amount = 0.0;
+            foreach ($service_dictionary as $service_amount) {
+                $final_bill_amount += $service_amount;
+            }
+
+            // let's validate service prices and amount to pay
+            $amounts_validation_error = null;
+            foreach ($service_dictionary as $key => $value) {
+                if (array_key_exists($key, $amount_to_pay_dictionary)) {
+                    if ($value != $amount_to_pay_dictionary[$key]) {
+                        $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ".$value ." is not equal to amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
+                    } 
+                }
+            } 
+
+            $amounts_validation_error != null ? throw new InputsValidationException($amounts_validation_error) : null;
+            
 
             Bill::where('id', $created_bill->id)
                     ->update([
