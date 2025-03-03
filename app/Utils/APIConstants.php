@@ -93,4 +93,13 @@ class APIConstants
     public const STATUS_PENDING_REVERSAL = 'PENDING REVERSAL';
     public const STATUS_PENDING_REVERSAL_CODE = '0010';
 
+
+    // visit stages
+    public const DEFAULT_STAGE = 'Default';
+    public const FRONT_OFFICE_STAGE = 'Front office';
+    public const LAB_STAGE = 'Lab';
+    public const BILLING_STAGE = 'Billing';
+    public const ADMITTED_STAGE = 'Admitted';
+    public const CONSULTING_STAGE = 'Consulting';
+
 }

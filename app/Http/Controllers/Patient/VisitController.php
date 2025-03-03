@@ -136,6 +136,7 @@ class VisitController extends Controller
 
     }
 
+    // updating a visit...
     public function updateVisit(Request $request){
         $request->validate([
             'id' => 'required|exists:visits,id',
@@ -183,7 +184,7 @@ class VisitController extends Controller
 
     }
 
-//     //Getting a single visit 
+    //Getting a single visit 
     public function getSingleVisit($id){
 
         $visit = Visit::selectVisits($id);
