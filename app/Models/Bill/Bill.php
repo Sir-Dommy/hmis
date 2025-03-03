@@ -129,6 +129,8 @@ class Bill extends Model
             //create a dictionary add values to it and access its keys and values
             $service_dictionary = [];
             $amount_to_pay_dictionary = [];
+
+            // cash falg
     
             foreach($request->service_price_details as $service_price_detail){
 
@@ -146,14 +148,14 @@ class Bill extends Model
                     $service_dictionary[$existing_service_price_details[0]['service']] > $existing_service_price_details[0]['price'] ? $service_dictionary[$existing_service_price_details[0]['service']]  = $existing_service_price_details[0]['price'] : null;
 
                     // assign amount to pay
-                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['amount_to_pay'];
+                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] += $service_price_detail['amount_to_pay'];
                 }
 
                 else{
                     $service_dictionary[$existing_service_price_details[0]['service']]  = $existing_service_price_details[0]['price'];
 
                     // increment amount to pay
-                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] += $service_price_detail['amount_to_pay'];
+                    $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['amount_to_pay'];
                 }
     
                 $final_bill_discount += $service_price_detail['discount'];

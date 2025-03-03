@@ -81,7 +81,7 @@ class VisitController extends Controller
             ]);
 
     
-            $this->validateAndSaveVisitPaymentTypeAndItsPrice( (object) $request->payment_types, $visit->id, $request->schemes);
+            $this->validateAndSaveVisitPaymentType( (object) $request->payment_types, $visit->id, $request->schemes);
     
             foreach($request->payment_types as $payment_type){
                 if($payment_type['insurance'] == 1){
@@ -247,7 +247,9 @@ class VisitController extends Controller
         ,200);
     }
 
-    private function validateAndSaveVisitPaymentTypeAndItsPrice($payment_types, $visit_id, $schemes){
+    private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
+
+
         foreach($payment_types as $payment_type){
 
             if($payment_type['cash'] == 1){
@@ -274,6 +276,7 @@ class VisitController extends Controller
                 'payment_type_id' => $existing_method[0]['id']
             ]);
         }
+
         
     }
 
