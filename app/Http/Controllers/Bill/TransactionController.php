@@ -97,7 +97,7 @@ class TransactionController extends Controller
 
     // auto complete or clear bill .... only after amount paid is greater than or equal to bill amount
     private function autoCompleteTransactionIfBillIsCleared($bill_id){
-        $existing_bill = Bill::where('id', $bill_id->get())->get();
+        $existing_bill = Bill::where('id', $bill_id)->get();
 
         count($existing_bill) != 1 ? throw new InputsValidationException("Cannot clear bill! No unique bill found! Contact admin for help") : null;
 
