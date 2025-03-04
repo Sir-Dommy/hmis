@@ -51,10 +51,10 @@ class VisitController extends Controller
         
         ]);
 
-        // ensure that there is no existing open visit for the patient...............
-        count(Visit::where('patient_id', $request->patient_id)
-                                ->where('open', 1)
-                                ->get()) > 0 ? throw new InputsValidationException("An open visit for patient ". $request->patient_id . " Already exists!!!!!!") : null;
+        // // ensure that there is no existing open visit for the patient...............
+        // count(Visit::where('patient_id', $request->patient_id)
+        //                         ->where('open', 1)
+        //                         ->get()) > 0 ? throw new InputsValidationException("An open visit for patient ". $request->patient_id . " Already exists!!!!!!") : null;
         
 
         $department = Department::where('name', $request->department)->get("id");
