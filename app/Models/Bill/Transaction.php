@@ -200,6 +200,12 @@ class Transaction extends Model
         return $transaction_reference;
     }
 
+    // function to ensure only a single instance of an array exists
+    public static function ensureSingleInstance($array, $error_message){
+        count($array) != 1 ? throw new InputsValidationException($error_message) : null;
+    }
+
+
 
     private static function mapResponse($transaction){
         return [

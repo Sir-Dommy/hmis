@@ -45,7 +45,7 @@ class TransactionController extends Controller
         foreach ($request->bill_item_details as $bill_item_detail) {
             $validator = Validator::make((array) $bill_item_detail, [            
                 'bill_item_id' => 'required|exists:bill_items,id',
-                'amount' => 'required|numeric|min:0',
+                'amount' => 'required|numeric|min:1',
                 'fee' => 'nullable|numeric|min:0',
                 'initiation_time' => 'nullable|date|before_or_equal:today'
             ]);
@@ -55,6 +55,29 @@ class TransactionController extends Controller
             }
 
             $existing_bill_item = BillItem::selectBillItems($bill_item_detail->bill_item_id);
+
+            // ensure only one bill item exists!
+            Transaction::ensureSingleInstance($existing_bill_item, "No unique bill item with id: ".$bill_item_detail->bill_item_id ." contact admin for help");
+
+            $existing_bill_item[0]['amount_paid'] >= ($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] ? throw new InputsValidationException("Bill item id: ".$bill_item_detail->bill_item_id. " Already paid in full! remove it from list") : null;
+
+            if(($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] <= $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount){
+                BillItem::where('id', $bill_item_detail->bill_item_id)
+                        ->update([
+                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount,
+                            'status' => APIConstants::STATUS_SUCCESS
+                        ]);
+
+                $this->autoCompleteTransactionIfBillIsCleared($existing_bill_item[0]['bill_id']);
+            }
+            else{
+                BillItem::where('id', $bill_item_detail->bill_item_id)
+                        ->update([
+                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount
+                        ]);
+            }
+
+
 
             $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
 
