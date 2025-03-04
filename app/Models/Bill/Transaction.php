@@ -66,7 +66,7 @@ class Transaction extends Model
     //perform selection
     public static function selectTransactions($id, $transaction_reference){
         $transactions_query = Transaction::with([
-            'bill:id,bill_reference_number',
+            'bill:id,bill_reference_number,bill_amount,discount',
             'reversedBy:id,email'
         ])->whereNull('transactions.deleted_by');
 
@@ -208,6 +208,7 @@ class Transaction extends Model
             'third_party_reference'=>$transaction->third_party_reference,
             'bill_id'=>$transaction->bill->id,
             'bill_reference_number'=>$transaction->bill->bill_reference_number,
+            'bill_balance'=>$transaction->bill->bill_amount - $transaction->bill->discount - Bill::calculateTotalPaidInTransactions($transaction->bill->id),
             'patient_account_no' => $transaction->patient_account_no,
             'hospital_account_no' => $transaction->hospital_account_no,
             'scheme_name' => $transaction->scheme_name,
