@@ -81,12 +81,16 @@ class TransactionController extends Controller
 
 
 
-            array_merge($created_transaction, Transaction::createTransaction($existing_bill_item[0]['bill_id'], null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason));
+            array_merge($created_transaction, Transaction::createTransaction($existing_bill_item[0]['bill_id'], null, null, null, null, $bill_item_detail['initiation_time'], $bill_item_detail['amount'], $bill_item_detail['fee'], Carbon::now(), "SUCCESS", null));
+            
+            
+            UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction for bill item payment of bill item id: ". $bill_item_detail['bill_item_id']);
 
-            UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
 
         }
+
+
 
 
         //$create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
