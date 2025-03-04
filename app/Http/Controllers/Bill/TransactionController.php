@@ -19,7 +19,7 @@ class TransactionController extends Controller
     public function clearBillUsingCashPayment(Request $request){
         $request->validate([
             'bill_id' => 'required|exists:bills,id',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:1',
             'fee' => 'nullable|numeric|min:0',
             'initiation_time' => 'nullable|date|before_or_equal:today'
         ]);        
