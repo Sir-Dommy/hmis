@@ -139,7 +139,7 @@ class Bill extends Model
                     null, null, null
                 );
 
-                //test commit
+                //test commit2
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
                 !is_numeric($service_price_detail['amount_to_pay']) ? throw new InputsValidationException("Amount to pay must be numeric!!!!") : null;
