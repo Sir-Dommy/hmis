@@ -50,12 +50,12 @@ class BillItem extends Model
 
     //perform selection
     public static function selectBillItems($id){
-        $bill_items_query = Bill::with([
+        $bill_items_query = BillItem::with([
             'bill:id,bill_reference_number',
             'serviceItem:id,price,duration',
             'serviceItem.service:id,name',
             'serviceItem.doctor:id,ipnumber'
-        ]);
+        ])->whereNull('bill_items.deleted_by');
 
         if($id != null){
             $bill_items_query->where('bill_items.id', $id);
@@ -75,7 +75,7 @@ class BillItem extends Model
 
 
         return $bill_items_query->get()->map(function ($bill_item) {
-            $bill_item_details = Bill::mapResponse($bill_item);
+            $bill_item_details = BillItem::mapResponse($bill_item);
 
             return $bill_item_details;
         });
