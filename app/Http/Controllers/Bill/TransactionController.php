@@ -54,27 +54,26 @@ class TransactionController extends Controller
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
-            var_dump($bill_item_detail['bill_item_id']);
-            $existing_bill_item = BillItem::selectBillItems($bill_item_detail->bill_item_id);
+            $existing_bill_item = BillItem::selectBillItems($bill_item_detail['bill_item_id']);
 
             // ensure only one bill item exists!
-            Transaction::ensureSingleInstance($existing_bill_item, "No unique bill item with id: ".$bill_item_detail->bill_item_id ." contact admin for help");
+            Transaction::ensureSingleInstance($existing_bill_item, "No unique bill item with id: ".$bill_item_detail['bill_item_id'] ." contact admin for help");
 
-            $existing_bill_item[0]['amount_paid'] >= ($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] ? throw new InputsValidationException("Bill item id: ".$bill_item_detail->bill_item_id. " Already paid in full! remove it from list") : null;
+            $existing_bill_item[0]['amount_paid'] >= ($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] ? throw new InputsValidationException("Bill item id: ".$bill_item_detail['bill_item_id']. " Already paid in full! remove it from list") : null;
 
-            if(($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] <= $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount){
-                BillItem::where('id', $bill_item_detail->bill_item_id)
+            if(($existing_bill_item[0]['one_item_selling_price'] - $existing_bill_item[0]['discount']) * $existing_bill_item[0]['quantity'] <= $existing_bill_item[0]['amount_paid'] + $bill_item_detail['amount']){
+                BillItem::where('id', $bill_item_detail['bill_item_id'])
                         ->update([
-                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount,
+                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail['amount'],
                             'status' => APIConstants::STATUS_SUCCESS
                         ]);
 
                 $this->autoCompleteTransactionIfBillIsCleared($existing_bill_item[0]['bill_id']);
             }
             else{
-                BillItem::where('id', $bill_item_detail->bill_item_id)
+                BillItem::where('id', $bill_item_detail['bill_item_id'])
                         ->update([
-                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail->amount
+                            'amount_paid' => $existing_bill_item[0]['amount_paid'] + $bill_item_detail['amount']
                         ]);
             }
 
