@@ -106,16 +106,16 @@ class BillItem extends Model
         ];
     }
 
-    public static function createBillItem($bill_id, $service_item_id, $item_movement_id, $unit_id, $one_item_selling_price, $discount, $quantity, $description){
+    public static function createBillItem($bill_id, $service_item_id, $item_movement_id, $units, $one_item_selling_price, $discount, $quantity, $amount_paid, $description){
         BillItem::create([
             'bill_id' => $bill_id,
             'service_item_id' => $service_item_id,
             'item_movement_id' => $item_movement_id,
-            'unit_id' => $unit_id,
+            'unit' => $units,
             'one_item_selling_price' => $one_item_selling_price,
-            'total_amount' => $one_item_selling_price * $quantity,
             'discount' => $discount,
             'quantity' => $quantity,
+            'amount_paid' => $amount_paid,
             'description' => $description,
             'status' => APIConstants::STATUS_PENDING,
             'created_by' => User::getLoggedInUserId()
