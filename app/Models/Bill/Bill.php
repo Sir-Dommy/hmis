@@ -296,7 +296,7 @@ class Bill extends Model
         ];
 
 
-        print_r($single_service_price[0]['selling_price']);
+        print_r($single_service_price[0]['id']);
 
         foreach($single_service_price as $service_price){
             if(isset($service_price['mark_up_type'])){
