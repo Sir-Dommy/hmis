@@ -42,6 +42,8 @@ class TransactionController extends Controller
             'bill_item_details' => 'required',
         ]);
 
+        $created_transaction = [];
+
         foreach ($request->bill_item_details as $bill_item_detail) {
             $validator = Validator::make((array) $bill_item_detail, [            
                 'bill_item_id' => 'required|exists:bill_items,id',
@@ -79,7 +81,7 @@ class TransactionController extends Controller
 
 
 
-            $create_transaction = Transaction::createTransaction($existing_bill_item[0]['bill_id'], null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
+            array_merge($created_transaction, Transaction::createTransaction($existing_bill_item[0]['bill_id'], null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason));
 
             UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
@@ -92,7 +94,7 @@ class TransactionController extends Controller
         //UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
         return response()->json(
-            $create_transaction
+            $created_transaction
         ,200);
 
     }
