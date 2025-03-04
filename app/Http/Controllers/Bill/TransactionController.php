@@ -120,7 +120,7 @@ class TransactionController extends Controller
             foreach($existing_bill_items as $bill_item){
                 BillItem::where('id', $bill_item->id)
                     ->update([
-                        'amount_paid' => (($bill_item['one_item_selling_price'] - $bill_item['discount']) * $bill_item['quantity']),
+                        //'amount_paid' => (($bill_item['one_item_selling_price'] - $bill_item['discount']) * $bill_item['quantity']),
                         'status' => APIConstants::STATUS_SUCCESS
                     ]);
             }
