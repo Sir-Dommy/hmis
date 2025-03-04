@@ -55,7 +55,7 @@ class BillItem extends Model
             'serviceItem:id,price,duration',
             'serviceItem.service:id,name',
             'serviceItem.doctor:id,ipnumber'
-        ])->whereNull('bill_items.deleted_by');
+        ]);
 
         if($id != null){
             $bill_items_query->where('bill_items.id', $id);
