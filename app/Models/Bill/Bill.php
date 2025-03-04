@@ -159,7 +159,7 @@ class Bill extends Model
                         $service_dictionary[$existing_service_price_details[0]['service']]  = $selling_price_and_discount_details['selling_price'];
     
                         //setting service price discount
-                        $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'];
+                        $service_discount_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'];
     
                         //setting service and its service price id to be used
                         $service_and_its_service_price_id[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['id'];
@@ -181,7 +181,7 @@ class Bill extends Model
                     $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['selling_price'] ;
 
                     //setting service price discount
-                    $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'] ;
+                    $service_discount_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'] ;
 
                     // increment amount to pay
                     $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['amount_to_pay'];
