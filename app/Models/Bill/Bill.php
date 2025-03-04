@@ -290,7 +290,7 @@ class Bill extends Model
     }
 
     // produces results of a single item item should be directly selected from db not the custom selection.... used for responses purposes only in this case!
-    public static function calculateSingleItemSellingPriceAndDiscount($single_service_price){
+    public static function calculateSingleItemSellingPriceAndDiscount($service_price){
 
         $selling_price_details = [
             'selling_price' => 0.0,
@@ -298,26 +298,17 @@ class Bill extends Model
         ];
 
 
-        print_r($single_service_price[0]['mark_up_type']);
-
-        foreach($single_service_price as $service_price){
-
-            print_r($service_price->mark_up_type);
-            if(isset($service_price['mark_up_type'])){
-                $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price->mark_up_value/100)) : $selling_price_details['selling_price'] = $service_price->cost_price + $service_price->mark_up_value;
-            }
-            else{
-                $selling_price_details['selling_price'] = $service_price['selling_price'];
-            }
-    
-            // we will use the just set selling price above...
-            if(isset($service_price->promotion_type)){
-                $service_price->promotion_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price->promotion_value/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price->promotion_value;
-            }
-
-            break;
+        if(isset($service_price[0]['mark_up_type'])){
+            $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price[0]['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price[0]['cost_price'] + $service_price[0]['mark_up_value'];
         }
-         
+        else{
+            $selling_price_details['selling_price'] = $service_price[0]['selling_price'];
+        }
+
+        // we will use the just set selling price above...
+        if(isset($service_price[0]['promotion_type'])){
+            $service_price->promotion_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price[0]['promotion_value'];
+        }         
 
         return $selling_price_details;
     }
