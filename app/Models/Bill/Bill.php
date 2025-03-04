@@ -308,7 +308,9 @@ class Bill extends Model
         // we will use the just set selling price above...
         if(isset($service_price[0]['promotion_type'])){
             $service_price[0]['promotion_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price[0]['promotion_value'];
-        }         
+        } 
+        
+        throw new InputsValidationException("TUKO HAPA!!!!!");
 
         return $selling_price_details;
     }
