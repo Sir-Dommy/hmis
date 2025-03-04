@@ -151,7 +151,7 @@ class Bill extends Model
                 !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
 
                 // lets calculate service price selling price and discount
-                $selling_price_and_discount_details = Bill::calculateSellingPriceAndDiscount($existing_service_price_details[0]);
+                $selling_price_and_discount_details = Bill::calculateSingleItemSellingPriceAndDiscount($existing_service_price_details);
 
                 if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
                     if($service_dictionary[$existing_service_price_details[0]['service']] > $selling_price_and_discount_details['selling_price']){
@@ -287,25 +287,30 @@ class Bill extends Model
         return $bill_amount_and_discount_details;
     }
 
-    public static function calculateSellingPriceAndDiscount($service_price){
+    // produces results of a single item
+    public static function calculateSingleItemSellingPriceAndDiscount($single_service_price){
 
         $selling_price_details = [
             'selling_price' => 0.0,
             'item_discount' => 0.0
         ];
 
-        printf($service_price);
-        if(isset($service_price['mark_up_type'])){
-            $service_price['mark_up_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price['cost_price'] + $service_price['mark_up_value'];
-        }
-        else{
-            $selling_price_details['selling_price'] = $service_price['selling_price'];
-        }
+        foreach($single_service_price as $service_price){
+            if(isset($service_price->mark_up_type)){
+                $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price->mark_up_value/100)) : $selling_price_details['selling_price'] = $service_price->cost_price + $service_price->mark_up_value;
+            }
+            else{
+                $selling_price_details['selling_price'] = $service_price['selling_price'];
+            }
+    
+            // we will use the just set selling price above...
+            if(isset($service_price->promotion_type)){
+                $service_price->promotion_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price->promotion_value/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price->promotion_value;
+            }
 
-        // we will use the just set selling price above...
-        if(isset($service_price['promotion_type'])){
-            $service_price['promotion_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price['promotion_value'];
-        } 
+            break;
+        }
+         
 
         return $selling_price_details;
     }
