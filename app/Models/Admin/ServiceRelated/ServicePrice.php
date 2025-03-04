@@ -414,6 +414,10 @@ class ServicePrice extends Model
             'wing:id,name',
             'ward:id,name',
             'office:id,name',
+            'unit:id,name',
+            'incomeAccount:id,name',
+            'assetAccount:id,name',
+            'expenseAccount:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
@@ -587,6 +591,7 @@ class ServicePrice extends Model
             'lab_test_type' => $service_price->labTestType ? $service_price->labTestType->name : null, // Check if labTestType exists
             'image_test_type' => $service_price->imageTestType ? $service_price->imageTestType->name : null, // Check if imageTestType exists
             'drug' => $service_price->drug ? $service_price->drug->name : null, // Check if drug exists
+            'units' => $service_price->unit ? $service_price->unit->name : null, // Check if brand exists
             'brand' => $service_price->brand ? $service_price->brand->name : null, // Check if brand exists
             'branch' => $service_price->branch ? $service_price->branch->name : null, // Check if branch exists
             'building' => $service_price->building ? $service_price->building->name : null, // Check if building exists

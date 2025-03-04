@@ -131,6 +131,7 @@ class Bill extends Model
             $service_dictionary = [];
             $service_discount_dictionary = [];
             $service_description_dictionary = [];
+            $service_units_dictionary = [];
             $service_quantity_dictionary = [];
             $amount_to_pay_dictionary = [];
             $service_and_its_service_price_id = [];
@@ -164,6 +165,9 @@ class Bill extends Model
                         //setting service and its service price id to be used
                         $service_and_its_service_price_id[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['id'];
 
+                        //setting service and its service price id to be used
+                        $service_units_dictionary[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['units'];
+
                     }
     
                     // increment amount to pay
@@ -188,6 +192,9 @@ class Bill extends Model
 
                     // setting service and its related service price id to be used
                     $service_and_its_service_price_id[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['id'];
+
+                    //setting service and its service price id to be used
+                    $service_units_dictionary[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['units'];
 
                     // assign service item quantity
                     $service_quantity_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['quantity'];
@@ -236,10 +243,11 @@ class Bill extends Model
                         $created_bill->id
                         , $service_and_its_service_price_id[$key]
                         , null
-                        ,null
+                        , $service_units_dictionary[$key]
                         , $value
                         , $service_discount_dictionary[$key]
                         , $service_quantity_dictionary[$key]
+                        , 0.0
                         , $service_description_dictionary[$key]
                     );
                     
