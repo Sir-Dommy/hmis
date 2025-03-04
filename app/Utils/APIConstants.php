@@ -78,6 +78,10 @@ class APIConstants
     public const NAME_SUB_ACCOUNT = 'Sub account';
     public const NAME_UNIT = 'Unit';
 
+    //mark up and discount calculation types
+    public const NAME_PERCENTAGE = 'Percentage';
+    public const NAME_FIXED = 'Fixed';
+
 
     // Bill and transactions statuses
     public const STATUS_PENDING = 'PENDING';

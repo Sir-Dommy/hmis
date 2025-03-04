@@ -53,6 +53,11 @@ class TransactionController extends Controller
 
             $existing_bill_item = BillItem::selectBillItems($bill_item_detail->bill_item_id);
 
+            $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
+
+            UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
+        
+
         }
 
 

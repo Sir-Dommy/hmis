@@ -122,15 +122,18 @@ class Bill extends Model
                 'is_reversed' => 0,
                 'reason' => $request->reason,
                 'created_by' => User::getLoggedInUserId()
-            ]);
-    
+            ]);    
+
+            $final_bill_amount = 0.0;
             $final_bill_discount = 0.0;
 
             //create a dictionary add values to it and access its keys and values
             $service_dictionary = [];
+            $service_discount_dictionary = [];
+            $service_description_dictionary = [];
+            $service_quantity_dictionary = [];
             $amount_to_pay_dictionary = [];
-
-            // cash falg
+            $service_and_its_service_price_id = [];
     
             foreach($request->service_price_details as $service_price_detail){
 
@@ -144,61 +147,102 @@ class Bill extends Model
 
                 !is_numeric($service_price_detail['amount_to_pay']) ? throw new InputsValidationException("Amount to pay must be numeric!!!!") : null;
 
-                if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
-                    $service_dictionary[$existing_service_price_details[0]['service']] > $existing_service_price_details[0]['price'] ? $service_dictionary[$existing_service_price_details[0]['service']]  = $existing_service_price_details[0]['price'] : null;
+                // Ensure that item quantity is numeric
+                !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
 
-                    // assign amount to pay
+                // lets calculate service price selling price and discount
+                $selling_price_and_discount_details = Bill::calculateSellingPriceAndDiscount($existing_service_price_details[0]);
+
+                if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
+                    if($service_dictionary[$existing_service_price_details[0]['service']] > $selling_price_and_discount_details['selling_price']){
+                        $service_dictionary[$existing_service_price_details[0]['service']]  = $selling_price_and_discount_details['selling_price'];
+    
+                        //setting service price discount
+                        $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'];
+    
+                        //setting service and its service price id to be used
+                        $service_and_its_service_price_id[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['id'];
+
+                    }
+    
+                    // increment amount to pay
                     $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] += $service_price_detail['amount_to_pay'];
+    
+                    // increment service item quantity
+                    $service_quantity_dictionary[$existing_service_price_details[0]['service']] += $service_price_detail['quantity'];
+
+
+                    // concat item description string
+                    $service_description_dictionary[$existing_service_price_details[0]['service']] = $service_description_dictionary[$existing_service_price_details[0]['service']] ." ". $service_price_detail['description'];
                 }
 
                 else{
-                    $service_dictionary[$existing_service_price_details[0]['service']]  = $existing_service_price_details[0]['price'];
+                    $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['selling_price'] ;
+
+                    //setting service price discount
+                    $service_dictionary[$existing_service_price_details[0]['service']] = $selling_price_and_discount_details['item_discount'] ;
 
                     // increment amount to pay
                     $amount_to_pay_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['amount_to_pay'];
+
+                    // setting service and its related service price id to be used
+                    $service_and_its_service_price_id[$existing_service_price_details[0]['service']] = $existing_service_price_details[0]['id'];
+
+                    // assign service item quantity
+                    $service_quantity_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['quantity'];
+
+                    // assign item description string
+                    $service_description_dictionary[$existing_service_price_details[0]['service']] = $service_price_detail['description'];
                 }
     
-                $final_bill_discount += $service_price_detail['discount'];
     
             }
 
-            foreach($request->service_price_details as $service_price_detail){
+            // foreach($request->service_price_details as $service_price_detail){
 
-                $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null
-                );
+            //     $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
+            //         null, null, null, null, null, null, null, null, null, null, null,
+            //         null, null, null
+            //     );
 
-                count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
+            //     count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
 
-                !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
+            //     !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
                 
     
-                BillItem::createBillItem(
-                    $created_bill->id
-                    , $existing_service_price_details[0]['id']
-                    , null
-                    ,null
-                    , $amount_to_pay_dictionary[$existing_service_price_details[0]['service']]
-                    , $service_price_detail['discount']
-                    , $service_price_detail['quantity']
-                    , $service_price_detail['description'] ? $service_price_detail['description'] : null
-                );
+            //     BillItem::createBillItem(
+            //         $created_bill->id
+            //         , $existing_service_price_details[0]['id']
+            //         , null
+            //         ,null
+            //         , $amount_to_pay_dictionary[$existing_service_price_details[0]['service']]
+            //         , $service_price_detail['discount']
+            //         , $service_price_detail['quantity']
+            //         , $service_price_detail['description'] ? $service_price_detail['description'] : null
+            //     );
     
     
-            }
+            // }
 
-            // loop through $service_dictionary adding all values to come up with resulting numeric value
-            $final_bill_amount = 0.0;
-            foreach ($service_dictionary as $service_amount) {
-                $final_bill_amount += $service_amount;
-            }
+            // let's save bill item and validate service prices and amount to pay
+            $amounts_validation_error = null; //variable to hold amount validation errors if any............
 
-            // let's validate service prices and amount to pay
-            $amounts_validation_error = null;
             foreach ($service_dictionary as $key => $value) {
-                if (array_key_exists($key, $amount_to_pay_dictionary)) {
-                    if ($value != $amount_to_pay_dictionary[$key]) {
+                if (array_key_exists($key, $amount_to_pay_dictionary) && array_key_exists($key, $service_quantity_dictionary) && array_key_exists($key, $service_discount_dictionary) && array_key_exists($key, $service_and_its_service_price_id)  && array_key_exists($key, $service_description_dictionary)) {
+                    
+                    // save bill item
+                    BillItem::createBillItem(
+                        $created_bill->id
+                        , $service_and_its_service_price_id[$key]
+                        , null
+                        ,null
+                        , $value
+                        , $service_discount_dictionary[$key]
+                        , $service_quantity_dictionary[$key]
+                        , $service_description_dictionary[$key]
+                    );
+                    
+                    if ($value != ($amount_to_pay_dictionary[$key] + $service_discount_dictionary[$key])) {
                         $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ".$value ." is not equal to amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
                     } 
                 }
@@ -224,6 +268,45 @@ class Bill extends Model
         
 
 
+    }
+
+    public static function calculateTotalBillAndDiscountAmountFromBillItems($bill_id){
+        $bill_items = BillItem::where('bill_id', $bill_id)->get();
+
+        $bill_amount_and_discount_details = [
+            'bill_amount' => 0.0,
+            'bill_discount' => 0.0
+        ];
+        
+        foreach($bill_items as $bill_item){
+            $bill_amount_and_discount_details['bill_amount'] += $bill_item->one_item_selling_price * $bill_item->quantity;
+
+            $bill_amount_and_discount_details['bill_discount'] += $bill_item->discount * $bill_item->quantity;
+        }
+
+        return $bill_amount_and_discount_details;
+    }
+
+    public static function calculateSellingPriceAndDiscount($service_price){
+
+        $selling_price_details = [
+            'selling_price' => 0.0,
+            'item_discount' => 0.0
+        ];
+
+        if(isset($service_price->mark_up_type)){
+            $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price->mark_up_value/100)) : $selling_price_details['selling_price'] = $service_price->cost_price + $service_price->mark_up_value;
+        }
+        else{
+            $selling_price_details['selling_price'] = $service_price->selling_price;
+        }
+
+        // we will use the just set selling price above...
+        if(isset($service_price->promotion_type)){
+            $service_price->promotion_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price->promotion_value/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price->promotion_value;
+        } 
+
+        return $selling_price_details;
     }
 
     public static function verifyServiceChargeRequest($bill_item){
