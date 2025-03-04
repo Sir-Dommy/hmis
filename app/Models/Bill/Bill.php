@@ -250,6 +250,10 @@ class Bill extends Model
                         , 0.0
                         , $service_description_dictionary[$key]
                     );
+
+                    // increment bill amount and discount too
+                    $final_bill_amount += $value;
+                    $final_bill_discount += $service_discount_dictionary[$key];
                     
                     if ($value != ($amount_to_pay_dictionary[$key] + $service_discount_dictionary[$key])) {
                         $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ". ($value - $service_discount_dictionary[$key]) ." is not equal to amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
