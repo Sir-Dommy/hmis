@@ -299,7 +299,7 @@ class Bill extends Model
 
 
         if(isset($service_price[0]['mark_up_type'])){
-            $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price[0]['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price[0]['cost_price'] + $service_price[0]['mark_up_value'];
+            $service_price[0]['mark_up_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price[0]['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price[0]['cost_price'] + $service_price[0]['mark_up_value'];
         }
         else{
             $selling_price_details['selling_price'] = $service_price[0]['selling_price'];
@@ -307,7 +307,7 @@ class Bill extends Model
 
         // we will use the just set selling price above...
         if(isset($service_price[0]['promotion_type'])){
-            $service_price->promotion_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price[0]['promotion_value'];
+            $service_price[0]['promotion_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price[0]['promotion_value'];
         }         
 
         return $selling_price_details;
