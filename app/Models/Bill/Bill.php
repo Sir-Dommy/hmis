@@ -328,7 +328,10 @@ class Bill extends Model
     public static function calculateTotalPaidInTransactions($bill_id){
         $transactions_total = 0.0;
 
-        foreach(Transaction::where('bill_id', $bill_id)->get() as $transaction){
+        foreach(Transaction::where('bill_id', $bill_id)
+                        ->where('status', APIConstants::STATUS_SUCCESS)
+                        ->get() 
+                as $transaction){
             $transactions_total += $transaction->amount;
         }
 
