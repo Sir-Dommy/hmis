@@ -295,8 +295,10 @@ class Bill extends Model
             'item_discount' => 0.0
         ];
 
+
+        print_r($service_price[0]['mark_up_type']);
+
         foreach($single_service_price as $service_price){
-            print_r($service_price[0]['mark_up_type']);
             if(isset($service_price['mark_up_type'])){
                 $service_price->mark_up_type == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price->mark_up_value/100)) : $selling_price_details['selling_price'] = $service_price->cost_price + $service_price->mark_up_value;
             }
