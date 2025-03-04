@@ -137,10 +137,12 @@ class Bill extends Model
     
             foreach($request->service_price_details as $service_price_detail){
 
-                $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null
-                );
+                // $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
+                //     null, null, null, null, null, null, null, null, null, null, null,
+                //     null, null, null
+                // );
+
+                $existing_service_price_details = ServicePrice::where('id', $service_price_detail['id'])->get();
 
                 //test commit2
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
@@ -287,7 +289,7 @@ class Bill extends Model
         return $bill_amount_and_discount_details;
     }
 
-    // produces results of a single item
+    // produces results of a single item item should be directly selected from db not the custom selection.... used for responses purposes only in this case!
     public static function calculateSingleItemSellingPriceAndDiscount($single_service_price){
 
         $selling_price_details = [
@@ -296,7 +298,7 @@ class Bill extends Model
         ];
 
 
-        print_r($single_service_price[0]['id']);
+        print_r($single_service_price[0]['mark_up_type']);
 
         foreach($single_service_price as $service_price){
             if(isset($service_price['mark_up_type'])){
