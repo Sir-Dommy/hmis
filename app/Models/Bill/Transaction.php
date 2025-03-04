@@ -2,6 +2,7 @@
 
 namespace App\Models\Bill;
 
+use App\Exceptions\InputsValidationException;
 use App\Exceptions\TransactionException;
 use App\Models\Admin\Scheme;
 use App\Models\User;
@@ -137,6 +138,9 @@ class Transaction extends Model
     }
 
     public static function createTransaction($bill_id, $third_party_reference, $patient_account_no, $hospital_account_no, $scheme_name, $initiation_time, $amount, $fee, $receipt_date, $status, $reason){
+
+        // validate bill id........... ensure a single matching bill exists
+        (count(Bill::selectBills($bill_id, null)) != 1) ? throw new InputsValidationException("Provide a valid bill id") : null;
         
         $scheme_name == null ? $scheme_id = Scheme::selectSchemes(null, $scheme_name)[0]['id'] : $scheme_id = null;
         //$existing_scheme = Scheme::selectSchemes(null, $scheme_name);
