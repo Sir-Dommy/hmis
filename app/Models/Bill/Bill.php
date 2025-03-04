@@ -252,7 +252,7 @@ class Bill extends Model
                     );
                     
                     if ($value != ($amount_to_pay_dictionary[$key] + $service_discount_dictionary[$key])) {
-                        $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ".$value ." is not equal to amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
+                        $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ". ($value - $service_discount_dictionary[$key]) ." is not equal to amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
                     } 
                 }
             } 
@@ -312,9 +312,9 @@ class Bill extends Model
             $selling_price_details['selling_price'] = $service_price[0]['selling_price'];
         }
 
-        // we will use the just set selling price above...
+        // we will use the just set selling price above to calculate discount...
         if(isset($service_price[0]['promotion_type'])){
-            $service_price[0]['promotion_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( 1 - ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $selling_price_details['selling_price'] - $service_price[0]['promotion_value'];
+            $service_price[0]['promotion_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['item_discount'] = $selling_price_details['selling_price'] * ( ($service_price[0]['promotion_value']/100)) : $selling_price_details['item_discount'] = $service_price[0]['promotion_value'];
         }        
 
         return $selling_price_details;
