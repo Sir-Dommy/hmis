@@ -54,6 +54,7 @@ class TransactionController extends Controller
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
+            echo "TUKO MTAA!!!!!";
             $existing_bill_item = BillItem::selectBillItems($bill_item_detail['bill_item_id']);
 
             // ensure only one bill item exists!
@@ -68,7 +69,6 @@ class TransactionController extends Controller
                             'status' => APIConstants::STATUS_SUCCESS
                         ]);
 
-                echo "TUKO MTAA!!!!!";
                 $this->autoCompleteTransactionIfBillIsCleared($existing_bill_item[0]['bill_id']);
             }
             else{
