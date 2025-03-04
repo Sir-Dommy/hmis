@@ -52,7 +52,6 @@ class BillItem extends Model
     public static function selectBillItems($id){
         $bill_items_query = BillItem::with([
             'bill:id,bill_reference_number',
-            'serviceItem:id,price,duration',
             'serviceItem.service:id,name',
             'serviceItem.doctor:id,ipnumber'
         ])->whereNull('bill_items.deleted_by');
@@ -88,8 +87,8 @@ class BillItem extends Model
             'id' => $bill_item->id,
             'bill_id' => $bill_item->bill_id,
             'bill_reference_number'=>$bill_item->bill->bill_reference_number,
-            'service_details' => $bill_item->serviceItem,
-            'unit' => $bill_item->serviceItem,
+            'service_details' => $bill_item->serviceItem->service->name,
+            'units' => $bill_item->units,
             'one_item_selling_price' => $bill_item->one_item_selling_price,
             'discount' => $bill_item->discount,
             'quantity' => $bill_item->quantity,
