@@ -68,6 +68,7 @@ class TransactionController extends Controller
                             'status' => APIConstants::STATUS_SUCCESS
                         ]);
 
+                echo "TUKO MTAA!!!!!";
                 $this->autoCompleteTransactionIfBillIsCleared($existing_bill_item[0]['bill_id']);
             }
             else{
@@ -79,7 +80,7 @@ class TransactionController extends Controller
 
 
 
-            $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
+            $create_transaction = Transaction::createTransaction($existing_bill_item[0]['bill_id'], null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
 
             UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
@@ -87,9 +88,9 @@ class TransactionController extends Controller
         }
 
 
-        $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
+        //$create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
+        //UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
         return response()->json(
             $create_transaction
