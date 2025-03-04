@@ -299,7 +299,7 @@ class Bill extends Model
 
 
         if(isset($service_price[0]['mark_up_type'])){
-            $service_price[0]['mark_up_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price->cost_price * ( 1 + ($service_price[0]['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price[0]['cost_price'] + $service_price[0]['mark_up_value'];
+            $service_price[0]['mark_up_type'] == APIConstants::NAME_PERCENTAGE ? $selling_price_details['selling_price'] = $service_price[0]['cost_price'] * ( 1 + ($service_price[0]['mark_up_value']/100)) : $selling_price_details['selling_price'] = $service_price[0]['cost_price'] + $service_price[0]['mark_up_value'];
         }
         else{
             $selling_price_details['selling_price'] = $service_price[0]['selling_price'];
