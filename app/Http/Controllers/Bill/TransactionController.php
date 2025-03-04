@@ -54,7 +54,6 @@ class TransactionController extends Controller
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
-            echo "TUKO MTAA!!!!!";
             $existing_bill_item = BillItem::selectBillItems($bill_item_detail['bill_item_id']);
 
             // ensure only one bill item exists!
