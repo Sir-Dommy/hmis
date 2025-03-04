@@ -137,12 +137,11 @@ class Bill extends Model
     
             foreach($request->service_price_details as $service_price_detail){
 
-                // $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
-                //     null, null, null, null, null, null, null, null, null, null, null,
-                //     null, null, null
-                // );
-
-                $existing_service_price_details = ServicePrice::where('id', $service_price_detail['id'])->get();
+                // custom selection.......
+                $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null
+                );
 
                 //test commit2
                 count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
@@ -153,7 +152,7 @@ class Bill extends Model
                 !is_numeric($service_price_detail['quantity']) ? throw new InputsValidationException("Quantity must be numeric!!!!") : null;
 
                 // lets calculate service price selling price and discount
-                $selling_price_and_discount_details = Bill::calculateSingleItemSellingPriceAndDiscount($existing_service_price_details);
+                $selling_price_and_discount_details = Bill::calculateSingleItemSellingPriceAndDiscount(ServicePrice::where('id', $service_price_detail['id'])->get());
 
                 if(isset($service_dictionary[$existing_service_price_details[0]['service']])){
                     if($service_dictionary[$existing_service_price_details[0]['service']] > $selling_price_and_discount_details['selling_price']){
@@ -230,7 +229,6 @@ class Bill extends Model
             $amounts_validation_error = null; //variable to hold amount validation errors if any............
 
             foreach ($service_dictionary as $key => $value) {
-                throw new InputsValidationException($key);
                 if (array_key_exists($key, $amount_to_pay_dictionary) && array_key_exists($key, $service_quantity_dictionary) && array_key_exists($key, $service_discount_dictionary) && array_key_exists($key, $service_and_its_service_price_id)  && array_key_exists($key, $service_description_dictionary)) {
                     
                     // save bill item
