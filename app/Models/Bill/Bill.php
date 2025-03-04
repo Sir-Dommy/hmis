@@ -324,6 +324,17 @@ class Bill extends Model
         return $selling_price_details;
     }
 
+    // calculate transaction amounts total
+    public static function calculateTotalPaidInTransactions($bill_id){
+        $transactions_total = 0.0;
+
+        foreach(Transaction::where('bill_id', $bill_id)->get() as $transaction){
+            $transactions_total += $transaction->amount;
+        }
+
+        return $transactions_total;
+    }
+
     public static function verifyServiceChargeRequest($bill_item){
         Validator::make($bill_item, [
             'service' => 'required|exists:services,name',
@@ -378,7 +389,8 @@ class Bill extends Model
             'initiated_at' => $bill->initiated_at,
             'bill_amount' => $bill->bill_amount,
             'discount' => $bill->discount,
-            'status' => $bill->status,
+            'balance' => $bill->discount,
+            'status' => $bill->bill_amount - $bill->status - Bill::calculateTotalPaidInTransactions($bill->id),
             'reason' => $bill->reason,
             'is_reversed' => $bill->is_reversed,
             'reversed_at' => $bill->reversed_at,
