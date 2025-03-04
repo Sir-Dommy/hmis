@@ -26,7 +26,7 @@ class TransactionController extends Controller
 
         $create_transaction = Transaction::createTransaction($request->bill_id, null, null, null, null, $request->initiation_time, $request->amount, $request->fee, Carbon::now(), "SUCCESS", $request->reason);
 
-        $this->autoCompleteTransactionIfBillIsCleared($$request->bill_id);
+        $this->autoCompleteTransactionIfBillIsCleared($request->bill_id);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Transaction with id: ". $create_transaction[0]['id']);
         
