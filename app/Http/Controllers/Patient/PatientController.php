@@ -548,7 +548,14 @@ class PatientController extends Controller
     }
 
     public function selectPatientsBilledForService(Request $request){
-        
+        $request->validate([
+            'patient_id'=>'nullable|exists:patients,id',
+            'department'=>'exists:departments,name',
+            'payment_status'=>'nullable',
+            'service_offer_status'=>'nullable'
+        ]);
+
+        //let the war begin
     }
 
     //function to generate employeecode
