@@ -27,7 +27,7 @@ class EmployeeController extends Controller
             'ipnumber'=>'required|unique:employees,ipnumber',
             'age' => 'integer|min:0|max:200',
             'dob' => 'required|date|before:today',
-            'user_id' => 'required|integer|min:1|exists:users,id',
+            'user_id' => 'required|integer|min:1|exists:users,id|unique:employees,user_id',
             'speciality' => 'required|string|min:3|max:25',
             'role' => 'required|string|min:2|max:255|exists:roles,name',
             'departments' => 'required'
