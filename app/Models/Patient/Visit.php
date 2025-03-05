@@ -149,6 +149,7 @@ class Visit extends Model
             'visit_type' => $visit->visitType ? $visit->visitType->name : null,
             'schemes' => $visit->visitInsuranceDetails,
             'payment_types' => $visit->visitPaymentTypes,
+            'bill' => $visit->bills,
             'stage' => $visit->stage,
             'open' => $visit->open,
             'bar_code'=>$visit->bar_code,
