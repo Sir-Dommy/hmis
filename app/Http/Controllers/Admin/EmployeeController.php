@@ -53,16 +53,20 @@ class EmployeeController extends Controller
             Auth::user()->assignRole($request->role);
 
             foreach ($request->departments as $department) {
-                $validator = Validator::make((array) $department, [            
-                    'name' => 'required|exists:department,name'
-                ]);
 
-                if ($validator->fails()) {
-                    return response()->json(['errors' => $validator->errors()], 422);
-                }
+                //use this if department will be provide as an array of json objects
+                // $validator = Validator::make((array) $department, [            
+                //     'name' => 'required|exists:department,name'
+                // ]);
+
+                // if ($validator->fails()) {
+                //     return response()->json(['errors' => $validator->errors()], 422);
+                // }
 
                 //get department name and save it to db
-                $existing_department_details = Department::selectDepartments(null, $department['name']);
+                $existing_department_details = Department::selectDepartments(null, $department);
+
+                count($existing_department_details) < 1 ? throw new InputsValidationException("No Department with named: ". $department." exists!") : null;
 
                 EmployeeDepartmentJoin::create([
                     'employee_id' => $created_employee->id,
