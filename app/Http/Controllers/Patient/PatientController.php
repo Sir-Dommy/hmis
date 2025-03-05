@@ -547,6 +547,8 @@ class PatientController extends Controller
         ,200);
     }
 
+    //public function selectPatientsBilledForService
+
     //function to generate employeecode
     private function generatePatientCode(){
         // Generate a random six-digit number

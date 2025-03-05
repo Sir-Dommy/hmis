@@ -28,6 +28,7 @@ class BillItem extends Model
         'amount_paid',
         'description',
         'status',
+        'offer_status',
         'created_by',
         'updated_by',
         'approved_by',
@@ -95,6 +96,7 @@ class BillItem extends Model
             'amount_paid' => $bill_item->amount_paid,
             'description' => $bill_item->description,
             'status' => $bill_item->status,
+            'offer_status' => $bill_item->offer_status,
             'created_by' => $bill_item->createdBy ? $bill_item->createdBy->email : null,
             'created_at' => $bill_item->created_at,
             'updated_by' => $bill_item->updatedBy ? $bill_item->updatedBy->email : null,
@@ -117,6 +119,7 @@ class BillItem extends Model
             'amount_paid' => $amount_paid,
             'description' => $description,
             'status' => APIConstants::STATUS_PENDING,
+            'offer_status' => APIConstants::STATUS_PENDING,
             'created_by' => User::getLoggedInUserId()
         ]);
     }
