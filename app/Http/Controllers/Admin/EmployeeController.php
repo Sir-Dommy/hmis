@@ -69,7 +69,7 @@ class EmployeeController extends Controller
                 count($existing_department_details) < 1 ? throw new InputsValidationException("No Department with named: ". $department." exists!") : null;
 
                 //if user is already assigned to department continue... no need to save
-                if(count(EmployeeDepartmentJoin::where('employee_id', $created_employee->id)->where('department_id', $existing_department_details[0]['id'])) > 0){
+                if(count(EmployeeDepartmentJoin::where('employee_id', $created_employee->id)->where('department_id', $existing_department_details[0]['id'])->get()) > 0){
                     continue;
                 }
 
