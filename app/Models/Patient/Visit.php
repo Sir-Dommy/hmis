@@ -3,6 +3,7 @@
 namespace App\Models\Patient;
 
 use App\Models\Admin\VisitType;
+use App\Models\Bill\Bill;
 use App\Models\Patient\Visits\VisitClinic;
 use App\Models\Patient\Visits\VisitDepartment;
 use App\Models\Patient\Visits\VisitInsuranceDetail;
@@ -60,6 +61,12 @@ class Visit extends Model
         return $this->hasMany(VisitPaymentType::class, 'visit_id', 'id');
     }
 
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'visit_id', 'id');
+    }
+
     //relationship with department
     public function visitType()
     {
@@ -102,6 +109,9 @@ class Visit extends Model
             'visitPaymentTypes.paymentType:id,name',
             'visitInsuranceDetails:id,visit_id,scheme_id,claim_number,available_balance,signature',
             'visitInsuranceDetails.scheme:id,name',
+            'bills:id,bill_reference_number',
+            'bills.billItems:id,status,offer_status',
+            'bills.billItems.serviceItem.service:id,name',
             'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');

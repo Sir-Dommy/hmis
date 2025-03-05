@@ -547,7 +547,9 @@ class PatientController extends Controller
         ,200);
     }
 
-    //public function selectPatientsBilledForService
+    public function selectPatientsBilledForService(Request $request){
+        
+    }
 
     //function to generate employeecode
     private function generatePatientCode(){
