@@ -150,6 +150,7 @@ class Visit extends Model
             'schemes' => $visit->visitInsuranceDetails,
             'payment_types' => $visit->visitPaymentTypes,
             'bill' => $visit->bills,
+            'sir' => "senor",
             'stage' => $visit->stage,
             'open' => $visit->open,
             'bar_code'=>$visit->bar_code,
