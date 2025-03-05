@@ -110,8 +110,8 @@ class Visit extends Model
             'visitInsuranceDetails:id,visit_id,scheme_id,claim_number,available_balance,signature',
             'visitInsuranceDetails.scheme:id,name',
             'bills:id,visit_id,bill_reference_number',
-            //'bills.billItems:id,bill_id,status,offer_status',
-            //'bills.billItems.serviceItem.service:id,name',
+            'bills.billItems:id,bill_id,status,offer_status',
+            'bills.billItems.serviceItem.service:id,name',
             'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
