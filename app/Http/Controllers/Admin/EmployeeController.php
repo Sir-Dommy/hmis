@@ -116,7 +116,7 @@ class EmployeeController extends Controller
     public function updateEmployee(Request $request){
         $request->validate([
             'id' => 'required|integer|min:1|exists:employees,id',
-            'ipnumber'=> 'required|integer|min:1|exists:employees,ipnumber',
+            'ipnumber'=> 'required|integer|min:1',
             'age' => 'integer|min:0|max:200',
             'dob'=> 'required|date:before:today',
             'role'=> 'required|string|min:2|max:255|exists:roles,name',
@@ -129,16 +129,54 @@ class EmployeeController extends Controller
         if(count($existing) > 0 && $existing[0]["id"] != $request->id){
             throw new AlreadyExistsException(APIConstants::NAME_EMPLOYEE. " ". $request->id);
         }
+        DB::beginTransaction();
+        try {
+            Employee::where('id', $request->id)
+            ->update([
+                'employee_name'=>$request->employee_name, 
+                'age' =>$request->age,
+                'dob'=>$request->dob,
+                'role'=> $request->role,
+                'speciality'=> $request->speciality,
+                'updated_by' => User::getLoggedInUserId()
+            ]);
 
-        Employee::where('id', $request->id)
-                ->update([
-                    'employee_name'=>$request->employee_name, 
-                    'age' =>$request->age,
-                    'dob'=>$request->dob,
-                    'role'=> $request->role,
-                    'speciality'=> $request->speciality,
-                    'updated_by' => User::getLoggedInUserId()
+            Auth::user()->assignRole($request->role);
+
+            foreach ($request->departments as $department) {
+
+                //use this if department will be provide as an array of json objects
+                // $validator = Validator::make((array) $department, [            
+                //     'name' => 'required|exists:department,name'
+                // ]);
+
+                // if ($validator->fails()) {
+                //     return response()->json(['errors' => $validator->errors()], 422);
+                // }
+
+                //get department name and save it to db
+                $existing_department_details = Department::selectDepartments(null, $department);
+
+                count($existing_department_details) < 1 ? throw new InputsValidationException("No Department with named: ". $department." exists!") : null;
+
+                //if user is already assigned to department continue... no need to save
+                if(count(EmployeeDepartmentJoin::where('employee_id', $request->id)->where('department_id', $existing_department_details[0]['id'])->get()) > 0){
+                    continue;
+                }
+
+                EmployeeDepartmentJoin::create([
+                    'employee_id' => $request->id,
+                    'department_id' => $existing_department_details[0]['id'],
                 ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated an employee with id: ". $request->id);
         
