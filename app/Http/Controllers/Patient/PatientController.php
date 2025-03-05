@@ -18,9 +18,7 @@ use App\Models\Patient\PatientPaymentTypesJoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PatientController extends Controller
@@ -550,7 +548,7 @@ class PatientController extends Controller
     public function selectPatientsBilledForService(Request $request){
         $request->validate([
             'patient_id'=>'nullable|exists:patients,id',
-            'department'=>'exists:departments,name',
+            'department'=>'nullable|exists:departments,name',
             'payment_status'=>'nullable',
             'service_offer_status'=>'nullable'
         ]);

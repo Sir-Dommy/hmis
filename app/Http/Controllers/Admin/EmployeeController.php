@@ -11,8 +11,12 @@ use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
+use App\Models\Admin\Department;
+use App\Models\Admin\EmployeeDepartmentJoin;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -25,23 +29,53 @@ class EmployeeController extends Controller
             'dob' => 'required|date|before:today',
             'user_id' => 'required|integer|min:1|exists:users,id',
             'speciality' => 'required|string|min:3|max:25',
-            'role' => 'required|string|min:2|max:255|exists:roles,name'
+            'role' => 'required|string|min:2|max:255|exists:roles,name',
+            'departments' => 'required'
         ]);
             
 
         $employeeCode = $this->generateEmployeeCode();
 
-        Employee::create([
-            'employee_name' => $request->employee_name, 
-            'ipnumber'=>$request->ipnumber,
-            'employee_code'=>$employeeCode, 
-            'age' => $request->age,
-            'dob' => $request->dob,
-            'role'=>$request->role,
-            'speciality' => $request->speciality,
-            'user_id' => $request->user_id,
-            'created_by' => Auth::user()->id
-        ]);
+        DB::beginTransaction();
+        try {
+            $created_employee = Employee::create([
+                'employee_name' => $request->employee_name, 
+                'ipnumber'=>$request->ipnumber,
+                'employee_code'=>$employeeCode, 
+                'age' => $request->age,
+                'dob' => $request->dob,
+                'role'=>$request->role,
+                'speciality' => $request->speciality,
+                'user_id' => $request->user_id,
+                'created_by' => Auth::user()->id
+            ]);
+
+            Auth::user()->assignRole($request->role);
+
+            foreach ($request->departments as $department) {
+                $validator = Validator::make((array) $department, [            
+                    'name' => 'required|exists:department,name'
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                //get department name and save it to db
+                $existing_department_details = Department::selectDepartments(null, $department['name']);
+
+                EmployeeDepartmentJoin::create([
+                    'employee_id' => $created_employee->id,
+                    'department_id' => $existing_department_details[0]['id'],
+                ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created an employee with name: ". $request->employee_name);
 
@@ -84,7 +118,7 @@ class EmployeeController extends Controller
         $existing = Employee::selectEmployees(null, $request->ipnumber, null);
 
         if(count($existing) > 0 && $existing[0]["id"] != $request->id){
-            throw new AlreadyExistsException(APIConstants::NAME_DEPARTMENT. " ". $request->id);
+            throw new AlreadyExistsException(APIConstants::NAME_EMPLOYEE. " ". $request->id);
         }
 
         Employee::where('id', $request->id)
