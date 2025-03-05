@@ -61,6 +61,26 @@ class APIConstants
     public const NAME_BRAND = 'Brand';
     public const NAME_DRUG_FORMULATION = 'Drug formulation';
     public const NAME_DRUG = 'Drug';
+    public const NAME_SERVICE = 'Service';
+    public const NAME_BILL = 'Bill';
+    public const NAME_BILL_ITEM = 'Bill item';
+    public const NAME_BILL_CHANGE_REQUEST = 'Bill change request';
+    public const NAME_BILL_ITEM_CHANGE_REQUEST = 'Bill item Change request';
+    public const NAME_TRANSACTION = 'Transaction';
+    public const NAME_TRANSACTION_CHANGE_REQUEST = 'Transaction change request';
+    public const NAME_BUILDING = 'Building';
+    public const NAME_WING = 'Wing';
+    public const NAME_WARD = 'Ward';
+    public const NAME_OFFICE = 'Office';
+    public const NAME_SERVICE_PRICE = 'Service price';
+    public const NAME_BRANCH = 'Branch';
+    public const NAME_MAIN_ACCOUNT = 'Main account';
+    public const NAME_SUB_ACCOUNT = 'Sub account';
+    public const NAME_UNIT = 'Unit';
+
+    //mark up and discount calculation types
+    public const NAME_PERCENTAGE = 'Percentage';
+    public const NAME_FIXED = 'Fixed';
 
 
     // Bill and transactions statuses
@@ -76,5 +96,14 @@ class APIConstants
     public const STATUS_REVERSED_CODE = '009';
     public const STATUS_PENDING_REVERSAL = 'PENDING REVERSAL';
     public const STATUS_PENDING_REVERSAL_CODE = '0010';
+
+
+    // visit stages
+    public const DEFAULT_STAGE = 'Default';
+    public const FRONT_OFFICE_STAGE = 'Front office';
+    public const LAB_STAGE = 'Lab';
+    public const BILLING_STAGE = 'Billing';
+    public const ADMITTED_STAGE = 'Admitted';
+    public const CONSULTING_STAGE = 'Consulting';
 
 }

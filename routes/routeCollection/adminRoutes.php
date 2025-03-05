@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\LabTestTypesController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\PhysicalExaminationTypesController;
 use App\Http\Controllers\Admin\SchemesController;
+use App\Http\Controllers\Admin\ServiceRelated\ServiceController;
+use App\Http\Controllers\Admin\ServiceRelated\ServicePriceController;
 use App\Http\Controllers\Admin\SymptomsController;
 use App\Http\Controllers\BranchController;
 use App\Models\Admin\Diagnosis;
@@ -295,6 +297,40 @@ Route::group(['prefix'=>'labTestTypes'], function(){
     Route::put('softDelete/{id}', [LabTestTypesController::class, 'softDeleteLabTestType']);
     Route::put('restore/{id}', [LabTestTypesController::class, 'restoreSoftDeleted']);
     Route::delete('permanentlyDelete/{id}', [LabTestTypesController::class, 'permanentlyDelete']);
+
+
+});
+
+
+//services
+Route::group(['prefix'=>'services'], function(){
+
+    Route::post('create', [ServiceController::class, 'createService']);
+    Route::put('update', [ServiceController::class, 'updateService']);
+    Route::get('get', [ServiceController::class, 'getSingleService']);
+    Route::get('', [ServiceController::class, 'getAllServices']);
+    Route::put('approve/{id}', [ServiceController::class, 'approveService']);
+    Route::put('disable/{id}', [ServiceController::class, 'disableService']);
+    Route::put('restore/{id}', [ServiceController::class, 'restoreSoftDeleteService']);
+    Route::put('softDelete/{id}', [ServiceController::class, 'softDeleteService']);
+    Route::delete('permanentlyDelete/{id}', [ServiceController::class, 'permanentDeleteService']);
+
+
+});
+
+
+//services
+Route::group(['prefix'=>'servicePrices'], function(){
+
+    Route::post('create', [ServicePriceController::class, 'createServicePrice']);
+    Route::put('update', [ServicePriceController::class, 'updateServicePrice']);
+    Route::get('get/{id}', [ServicePriceController::class, 'getSingleServicePrice']);
+    Route::get('', [ServicePriceController::class, 'getAllServicePrices']);
+    Route::put('approve/{id}', [ServicePriceController::class, 'approveServicePrice']);
+    Route::put('disable/{id}', [ServicePriceController::class, 'disableServicePrice']);
+    Route::put('restore/{id}', [ServicePriceController::class, 'restoreSoftDeleteServicePrice']);
+    Route::put('softDelete/{id}', [ServicePriceController::class, 'softDeleteServicePrice']);
+    Route::delete('permanentlyDelete/{id}', [ServicePriceController::class, 'permanentDeleteServicePrice']);
 
 
 });

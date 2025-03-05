@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->date('dob');
-            $table->string('identification_type');
-            $table->string('id_no')->unique();
+            $table->string('identification_type')->nullable();
+            $table->string('id_no')->nullable()->unique();
             $table->string('scan_id_photo')->nullable();
-            $table->string('phonenumber1')->unique();
+            $table->string('phonenumber1')->nullable()->unique();
             $table->string('phonenumber2')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('insurance_membership')->nullable();
             $table->string('address');
             $table->string('residence');
             $table->string('next_of_kin_name');

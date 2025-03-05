@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bill_id');
-            $table->string('patient_account_no')->nullable(); 
-            $table->string('hospital_account_no')->nullable(); 
-            $table->string('scheme_name')->nullable(); 
-            $table->unsignedBigInteger('scheme_id')->nullable(); 
-            $table->dateTime('initiation_time');
-            $table->double('amount', 8, 2);
-            $table->double('fee', 8, 2);
-            $table->dateTime('receipt_date');  
+            $table->string('bill_reference_number');
+            $table->unsignedBigInteger('visit_id');
+            $table->dateTime('initiated_at');
+            $table->double('bill_amount', 8, 2);
+            $table->double('discount', 8, 2)->default(0.00);
             $table->string('status');
-            $table->boolean('is_reversed');    
-            $table->dateTime('reverse_date');     
-            $table->string('reason')->nullable();
+            $table->string('reason');
+            $table->boolean('is_reversed');
+            $table->dateTime('reversed_at')->nullable();
+            $table->unsignedBigInteger('reversed_by')->nullable();
+            $table->dateTime('expiry_time')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
@@ -36,10 +34,15 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('bill_id') // Column name
+            $table->foreign('visit_id') // Column name
                   ->references('id') // Target column in the parent table
-                  ->on('bills') // Parent table
+                  ->on('visits') // Parent table
                   ->onDelete('cascade');
+
+            $table->foreign('reversed_by') // Column name
+                    ->references('id') // Target column in the parent table
+                    ->on('users') // Parent table
+                    ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table
@@ -74,6 +77,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('bills');
     }
 };

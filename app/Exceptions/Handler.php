@@ -77,6 +77,9 @@ class Handler extends ExceptionHandler
         } elseif ($exception instanceof \App\Exceptions\InputsValidationException){
             $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_MISSING_OR_INVALID_INPUTS;
             $status = 422;
+        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus){
+            $response['message'] = $exception->getMessage();
+            $status = 422;
         } else {
             //$response['message'] = 'Server Error';
             // $response['message'] = $exception->__toString();

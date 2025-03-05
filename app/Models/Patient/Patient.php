@@ -3,6 +3,7 @@
 namespace App\Models\Patient;
 
 use App\Models\Admin\ChronicDisease;
+use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -27,6 +28,7 @@ class Patient extends Model
         'email',
         'address',
         'residence',
+        'insurance_membership',
         'next_of_kin_name',
         'next_of_kin_contact',
         'next_of_kin_relationship',
@@ -58,21 +60,29 @@ class Patient extends Model
         return $this->belongsToMany(ChronicDisease::class, 'patients_chronic_diseases_join', 'patient_id', 'chronic_disease_id');
     }
 
+    public function PaymentMethods(){
+        return $this->belongsToMany(PaymentType::class, 'patients_payment_methods_join', 'patient_id', 'payment_type_id');
+    }
+
 
     //perform selection
     public static function selectPatients($id, $email, $patient_code, $id_no){
         $patients_query = Patient::with([
             'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'insuranceDetails:id,patient_id,member_validity', 
-            'visits:id,patient_id,claim_number,amount,visit_type,stage,open',
-            'visits.clinic:id,name,description',
-            'visits.department:id,name',
-            'visits.feeType',
-            'visits.scheme:id,name',
-            'visits.vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+            'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
+            'insuranceDetails.schemes:id,name',  
+            'insuranceDetails.schemeTypes:id,name', 
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
         if($id != null){
@@ -100,12 +110,74 @@ class Patient extends Model
         }
 
 
-
         return $patients_query->get()->map(function ($patient) {
             $patient_details = Patient::mapResponse($patient);
 
             return $patient_details;
         });
+
+
+    }
+
+    //perform selection
+    public static function deepSearchPatients($value){
+
+        $patients_query = Patient::with([
+            'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email',
+            'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity',  
+            'insuranceDetails.schemes:id,name',  
+            'insuranceDetails.schemeTypes:id,name',  
+            'insuranceDetails.scheme:id,name',  
+            'insuranceDetails.schemeType:id,name', 
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->whereNull('patients.deleted_by')
+            ->where(function ($query) use ($value) {
+            $query->whereHas('insuranceDetails', function ($query) use ($value) {
+                $query->where('insurance_details.principal_member_number', 'LIKE', '%' . $value . '%');
+            })
+            ->orWhere('patients.id', 'LIKE', '%' . $value . '%')
+            ->orWhere('patients.email', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.firstname', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.lastname', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.phonenumber1', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.phonenumber2', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.next_of_kin_contact', 'LIKE', '%'.$value.'%')
+            ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%');
+        });
+
+
+
+            // ->orWhere('patients.id', 'LIKE', '%' . $value . '%')
+            // ->orWhere('patients.email', 'LIKE', '%'.$value.'%')
+            // ->orWhere('patients.firstname', 'LIKE', '%'.$value.'%')
+            // ->orWhere('patients.lastname', 'LIKE', '%'.$value.'%')
+            // ->orWhere('patients.id_no', 'LIKE', '%'.$value.'%')
+            // ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%')
+            // ->orWhereHas('insuranceDetails', function ($query) use ($value) {
+            //     $query->where('insurance_details.principal_member_number', 'LIKE', '%'.$value.'%'); 
+            // })
+
+
+        $paginated_patients = $patients_query->paginate(10);
+
+        //return $paginated_patients;
+        $paginated_patients->getCollection()->transform(function ($patient) {
+            return Patient::mapResponse($patient);
+        });
+
+        return $paginated_patients;
+
 
 
     }
@@ -123,7 +195,10 @@ class Patient extends Model
             'phonenumber2' => $patient->phonenumber2,
             'email' => $patient->email,
             'address' => $patient->address,
-            'residence' => $patient->residence,  
+            'gender' => $patient->address,
+            'occupation' => $patient->address,
+            'residence' => $patient->residence, 
+            'insurance_membership' => $patient->insurance_membership, 
             'next_of_kin_name' => $patient->next_of_kin_name,  
             'next_of_kin_contact' => $patient->next_of_kin_contact,  
             'next_of_kin_relationship' => $patient->next_of_kin_relationship,

@@ -4,8 +4,13 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Accounts\MainAccounts;
+use App\Models\Accounts\Units;
 use App\Models\Admin\Clinic;
+use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
+use App\Models\Admin\ServiceRelated\Service;
+use App\Models\Admin\VisitType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
 use App\Models\User;
@@ -39,10 +44,20 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultPaymentTypes($user[0]['id']);
 
         $this->createPaymentPaths();
+
+        $this->createInsuranceMemberShips();
+
+        $this->createVisitTypes($user[0]['id']);
+
+        $this->createDefaultServices($user[0]['id']);
+
+        $this->createDefaultMainAccounts($user[0]['id']);
+
+        $this->createDefaultUnits($user[0]['id']);
+
     }
 
-    private function defineRolesAndPermissions()
-    {
+    private function defineRolesAndPermissions(){
         // Define roles
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'doctor']);
@@ -158,6 +173,120 @@ class AuthServiceProvider extends ServiceProvider
 
         PaymentPath::firstOrCreate([
             "name" => "SLADE"
+        ]);
+
+    }
+
+    //Ensure you add all payment path during production........
+    private function createInsuranceMemberShips(){
+        InsuranceMemberShip::firstOrCreate([
+            "name" => "Principal",
+            "active" => true
+        ]);
+
+        InsuranceMemberShip::firstOrCreate([            
+            "name" => "Dependent",
+            "active" => true
+        ]);
+
+    }
+
+    private function createVisitTypes($user_id){
+        VisitType::firstOrCreate([
+            "name" => "In Patient",
+            "created_by" => $user_id
+        ]);
+
+
+        VisitType::firstOrCreate([
+            "name" => "Out Patient",
+            "created_by" => $user_id
+        ]);
+
+
+        VisitType::firstOrCreate([
+            "name" => "Follow up",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultServices($user_id){
+        Service::firstOrCreate([
+            "name" => "Test",
+            "description" => "This is a test service",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultMainAccounts($user_id){
+        MainAccounts::firstOrCreate([
+            "name" => "ASSETS",
+            "type" => "Cr",
+            "description" => "ASSETS MAIN ACCOUNT",
+            "created_by" => $user_id
+        ]);
+
+        MainAccounts::firstOrCreate([
+            "name" => "LIABILITIES",
+            "type" => "Dr",
+            "description" => "LIABILITIES MAIN ACCOUNT",
+            "created_by" => $user_id
+        ]);
+
+        MainAccounts::firstOrCreate([
+            "name" => "EXPENSES",
+            "type" => "Dr",
+            "description" => "EXPENSES MAIN ACCOUNT",
+            "created_by" => $user_id
+        ]);
+
+        MainAccounts::firstOrCreate([
+            "name" => "EQUITY",
+            "type" => "Cr",
+            "description" => "EQUITY MAIN ACCOUNT",
+            "created_by" => $user_id
+        ]);
+
+        MainAccounts::firstOrCreate([
+            "name" => "INCOME",
+            "type" => "Cr",
+            "description" => "INCOME MAIN ACCOUNT",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultUnits($user_id){
+        Units::firstOrCreate([
+            "name" => "mg",
+            "description" => "Milligrams",
+            "created_by" => $user_id
+        ]);
+
+        Units::firstOrCreate([
+            "name" => "ml",
+            "description" => "milliliters",
+            "created_by" => $user_id
+        ]);
+
+        Units::firstOrCreate([
+            "name" => "capsules",
+            "description" => "Capsules",
+            "created_by" => $user_id
+        ]);
+
+        Units::firstOrCreate([
+            "name" => "Tablets",
+            "description" => "Tablets",
+            "created_by" => $user_id
+        ]);
+
+        Units::firstOrCreate([
+            "name" => "International unit",
+            "description" => "International unit",
+            "created_by" => $user_id
         ]);
 
     }

@@ -12,6 +12,7 @@ Route::group(['prefix'=>'patients'], function(){
     Route::post('create', [PatientController::class, 'createPatient']);
     Route::post('update', [PatientController::class, 'updatePatient']);
     Route::get('get', [PatientController::class, 'getSinglePatient']);
+    Route::get('search/{value}', [PatientController::class, 'deepPatientSearch']);
     Route::get('', [PatientController::class, 'getAllPatients']);
     Route::put('approve/{id}', [PatientController::class, 'approvePatient']);
     Route::put('disable/{id}', [PatientController::class, 'disablePatient']);
@@ -39,6 +40,10 @@ Route::group(['prefix'=>'visits'], function(){
     Route::get('', [VisitController::class, 'getAllVisits']);
     Route::put('softDelete/{id}', [VisitController::class, 'softDeleteVisit']);
     Route::delete('permanentlyDelete/{id}', [VisitController::class, 'permanentlyDelete']);
+
+
+
+    Route::post('selectPrices', [VisitController::class, 'listServicePrices']);
 });
 
 

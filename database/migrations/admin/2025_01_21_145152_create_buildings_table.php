@@ -11,23 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schemes', function (Blueprint $table) {
+        Schema::create('buildings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payment_type_id');
             $table->string('name')->unique();
-            $table->string('account')->unique();
-            $table->string('initiate_url')->nullable();
-            $table->string('bill_url')->nullable();
-            $table->string('authentication_url')->nullable();
-            $table->string('validation_url')->nullable();
-            $table->string('balance_url')->nullable();
-            $table->string('bridge_balance_url')->nullable();
-            $table->string('other_url')->nullable();
-            $table->string('username')->nullable();
-            $table->string('password')->nullable();
-            $table->string('other_details')->nullable();
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('payment_path_id');
+            $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
@@ -38,9 +26,9 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('payment_type_id') // Column name
+            $table->foreign('branch_id') // Column name
                   ->references('id') // Target column in the parent table
-                  ->on('payment_types') // Parent table
+                  ->on('branches') // Parent table
                   ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
@@ -59,20 +47,10 @@ return new class extends Migration
                 ->on('users') // Parent table
                 ->onDelete('cascade');
 
-            $table->foreign('disabled_by') // Column name
-                ->references('id') // Target column in the parent table
-                ->on('users') // Parent table
-                ->onDelete('cascade');
-
             $table->foreign('deleted_by') // Column name
                 ->references('id') // Target column in the parent table
                 ->on('users') // Parent table
                 ->onDelete('cascade');
-
-            $table->foreign('payment_path_id') // Column name
-                    ->references('id') // Target column in the parent table
-                    ->on('payment_paths') // Parent table
-                    ->onDelete('cascade');
         });
     }
 
@@ -81,6 +59,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schemes');
+        Schema::dropIfExists('buildings');
     }
 };

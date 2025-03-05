@@ -11,18 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('sub_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('bill_reference_number');
-            $table->unsignedBigInteger('visit_id');
-            $table->dateTime('initiated_at');
-            $table->double('bill_amount', 8, 2);
-            $table->double('discount', 8, 2);
-            $table->string('status');
-            $table->string('reason');
-            $table->boolean('is_reversed');
-            $table->dateTime('reversed_at');
-            $table->dateTime('expiry_time')->nullable();
+            $table->unsignedBigInteger('main_account_id');
+            $table->string('name')->unique(); 
+            $table->string('description')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
@@ -33,14 +26,13 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('visit_id') // Column name
+            $table->foreign('main_account_id') // Column name
                   ->references('id') // Target column in the parent table
-                  ->on('visits') // Parent table
+                  ->on('main_accounts') // Parent table
                   ->onDelete('cascade');
 
             $table->foreign('created_by') // Column name
                   ->references('id') // Target column in the parent table
-                  ->is_null(false)
                   ->on('users') // Parent table
                   ->onDelete('cascade');
 
@@ -71,6 +63,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bills');
+        Schema::dropIfExists('sub_accounts');
     }
 };

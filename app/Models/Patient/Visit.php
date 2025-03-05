@@ -2,10 +2,11 @@
 
 namespace App\Models\Patient;
 
-use App\Models\Admin\Clinic;
-use App\Models\Admin\Department;
-use App\Models\Admin\PaymentType;
-use App\Models\Admin\Scheme;
+use App\Models\Admin\VisitType;
+use App\Models\Patient\Visits\VisitClinic;
+use App\Models\Patient\Visits\VisitDepartment;
+use App\Models\Patient\Visits\VisitInsuranceDetail;
+use App\Models\Patient\Visits\VisitPaymentType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,51 +19,53 @@ class Visit extends Model
 
     protected $fillable = [
         "patient_id",
-        "claim_number",
-        "amount",
-        "department_id",
-        "clinic_id",
-        "visit_type",
-        "scheme_id",
-        "fee_type",
+        "visit_type_id",
         "stage",
         "open",
-        "document_path",
+        'bar_code',
         "created_by",
         "updated_by",
         "deleted_by",
         "deleted_at"
     ];
 
-    //relationship with clinic
-    public function clinic()
-    {
-        return $this->belongsTo(Clinic::class, 'clinic_id');
-    }
+    
 
     //relationship with patient
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
+
+
+    public function visitClinics()
+    {
+        return $this->hasMany(VisitClinic::class, 'visit_id', 'id');
+    }
+
+    public function visitDepartments()
+    {
+        return $this->hasMany(VisitDepartment::class, 'visit_id', 'id');
+    }
+
+
+    public function visitInsuranceDetails()
+    {
+        return $this->hasMany(VisitInsuranceDetail::class, 'visit_id', 'id');
+    }
+
+
+    public function visitPaymentTypes()
+    {
+        return $this->hasMany(VisitPaymentType::class, 'visit_id', 'id');
+    }
+
     //relationship with department
-    public function department()
+    public function visitType()
     {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(VisitType::class, 'visit_type_id');
     }
 
-
-    //relationship with department
-    public function feeType()
-    {
-        return $this->belongsTo(PaymentType::class, 'fee_type');
-    }
-
-    //relationship with payment Type
-    public function scheme()
-    {
-        return $this->belongsTo(Scheme::class, 'scheme_id');
-    }
 
     public function createdBy()
     {
@@ -93,10 +96,12 @@ class Visit extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'patient:id,patient_code',
-            'clinic:id,name',
-            'department:id,name',
-            'feeType:id,name',
-            'scheme:id,name',
+            'visitType:id,name',
+            'visitClinics.clinic:id,name',
+            'visitDepartments.department:id,name',
+            'visitPaymentTypes.paymentType:id,name',
+            'visitInsuranceDetails:id,visit_id,scheme_id,claim_number,available_balance,signature',
+            'visitInsuranceDetails.scheme:id,name',
             'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
@@ -129,15 +134,14 @@ class Visit extends Model
             'id' => $visit->id,
             'patient_id' => $visit->patient_id,
             'patient_code' => $visit->patient ? $visit->patient->patient_code : null,
-            'claim_number' => $visit->claim_number,
-            'amount' => $visit->amount,
-            'department' => $visit->department->name,
-            'clinic' => $visit->clinic ? $visit->clinic->name : null,
-            'visit_type' => $visit->visit_type,
-            'scheme' => $visit->scheme->name,
-            'fee_type' => $visit->feeType ? $visit->feeType->name : null,
+            'departments' => $visit->VisitDepartments,
+            'clinics' => $visit->visitClinics,
+            'visit_type' => $visit->visitType ? $visit->visitType->name : null,
+            'schemes' => $visit->visitInsuranceDetails,
+            'payment_types' => $visit->visitPaymentTypes,
             'stage' => $visit->stage,
             'open' => $visit->open,
+            'bar_code'=>$visit->bar_code,
             'vitals' => $visit->vitals,
             'created_by' => $visit->createdBy ? $visit->createdBy->email : null,
             'created_at' => $visit->created_at,
