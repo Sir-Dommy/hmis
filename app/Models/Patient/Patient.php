@@ -170,7 +170,7 @@ class Patient extends Model
         foreach($existing_employee[0]['departments'] as $department){
             // $department->pivot->department_id
             $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
-                $query->whereNotNull('department_id');
+                $query->where('department_id', '=', 10);
             });
         }
 
