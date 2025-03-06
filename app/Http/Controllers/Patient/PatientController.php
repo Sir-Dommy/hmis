@@ -554,12 +554,14 @@ class PatientController extends Controller
         ]);
 
         //runc selection function in the model
-        Patient::patientInRelationToBilledServiceSearch($request, null, null);
+        $selected_patients = Patient::patientInRelationToBilledServiceSearch($request, null, null);
 
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched billed patients in their department(s)");
 
         return response()->json(
-            ["sir"=>1], 200
-        );
+            $selected_patients
+        ,200);
     }
 
     //function to generate employeecode
