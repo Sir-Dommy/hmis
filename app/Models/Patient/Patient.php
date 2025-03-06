@@ -175,8 +175,6 @@ class Patient extends Model
             });
         }
 
-        echo $department->pivot->department_id." ".$patients_query->toSql();
-
         // else{
         //     $paginated_patients = $patients_query->paginate(10);
         //     //return $paginated_patients;
