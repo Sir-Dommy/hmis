@@ -91,7 +91,7 @@ class Handler extends ExceptionHandler
                 //check previous errors to ensure to check if previous error can be handled differently
                 if ($exception instanceof \Illuminate\Validation\ValidationException) {
                     $response['message'] = APIConstants::VALIDATION_ERROR;
-                    $response['errors'] = $exception->getPrevious()->errors();
+                    // $response['errors'] = $exception->getPrevious()->errors();
                     $status = 422;
                 } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
                     $response['message'] = APIConstants::ROUTE_NOT_FOUND;
