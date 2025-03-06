@@ -3,11 +3,14 @@
 namespace App\Models\Patient;
 
 use App\Models\Admin\ChronicDisease;
+use App\Models\Admin\Employee;
 use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Utils\CustomUserRelations;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class Patient extends Model
 {
@@ -121,7 +124,7 @@ class Patient extends Model
     }
 
     //perform selection
-    public static function patientInRelationToBilledServiceSearch($request){
+    public static function patientInRelationToBilledServiceSearch($request, $bill_item_status, $bill_item_payment_offer_status){
         $patients_query = Patient::with([
             'chronicDiseases:id,name',
             'PaymentMethods:id,name',
@@ -141,29 +144,43 @@ class Patient extends Model
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
-        if($id != null){
-            $patients_query->where('patients.id', $id);
-        }
-        elseif($email != null){
-            $patients_query->where('patients.email', $email);
-        }
-        elseif($patient_code != null){
-            $patients_query->where('patients.patient_code', $patient_code);
-        }
-        elseif($id_no != null){
-            $patients_query->where('patients.id_no', $id_no);
+        // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
+
+        if($request->patient_id != null){
+            $patients_query->where('patients.id', $request->patient_id)
+            ->orWhere('patients.email', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.firstname', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.lastname', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.id_no', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.phonenumber1', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.phonenumber2', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.next_of_kin_contact', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.patient_code', 'LIKE', '%'.$request->patient_id.'%');;
         }
 
+        // get logged in user department from employees table
+        $existing_employee = Employee::selectEmployees(Auth::user()->id, null, null);
 
-        else{
-            $paginated_patients = $patients_query->paginate(10);
-            //return $paginated_patients;
-            $paginated_patients->getCollection()->transform(function ($patient) {
-                return Patient::mapResponse($patient);
+        count($existing_employee) < 1 ? throw new UnauthorizedHttpException("You are not granted employee status yet!") : null;
+
+        count($existing_employee[0]['departments']) < 1 ? throw new UnauthorizedHttpException("You are not assigned to any department yet!!!") : null;
+
+        foreach($existing_employee[0]['departments'] as $department){
+            $patients_query->whereHas('visit.bills.billItems.serviceItem', function ($query) use ($department) {
+                $query->where('department_id', $department->pivot->department_id);
             });
-    
-            return $paginated_patients;
         }
+
+
+        // else{
+        //     $paginated_patients = $patients_query->paginate(10);
+        //     //return $paginated_patients;
+        //     $paginated_patients->getCollection()->transform(function ($patient) {
+        //         return Patient::mapResponse($patient);
+        //     });
+    
+        //     return $paginated_patients;
+        // }
 
 
         return $patients_query->get()->map(function ($patient) {
