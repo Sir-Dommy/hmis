@@ -126,7 +126,26 @@ class Patient extends Model
 
     //perform selection
     public static function patientInRelationToBilledServiceSearch($request, $bill_item_status, $bill_item_payment_offer_status){
-        $patients_query = Patient::with([
+
+        //initialize $patients_query
+        $patients_query = Patient::where(1,'=', 1);
+
+
+        // get logged in user department from employees table
+        $existing_employee = Employee::selectEmployees(null, null, null, Auth::user()->id);
+
+        count($existing_employee) < 1 ? throw new InHouseUnauthorizedException("You are not granted employee status yet!") : null;
+
+        count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
+
+        foreach($existing_employee[0]['departments'] as $department){
+            // $department->pivot->department_id
+            $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
+                $query->where('department_id', '=', 10);
+            });
+        }
+
+        $patients_query->with([
             'chronicDiseases:id,name',
             'PaymentMethods:id,name',
             'createdBy:id,email',
@@ -158,20 +177,6 @@ class Patient extends Model
             ->orWhere('patients.phonenumber2', 'LIKE', '%'.$request->patient_id.'%')
             ->orWhere('patients.next_of_kin_contact', 'LIKE', '%'.$request->patient_id.'%')
             ->orWhere('patients.patient_code', 'LIKE', '%'.$request->patient_id.'%');;
-        }
-
-        // get logged in user department from employees table
-        $existing_employee = Employee::selectEmployees(null, null, null, Auth::user()->id);
-
-        count($existing_employee) < 1 ? throw new InHouseUnauthorizedException("You are not granted employee status yet!") : null;
-
-        count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
-
-        foreach($existing_employee[0]['departments'] as $department){
-            // $department->pivot->department_id
-            $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
-                $query->where('department_id', '=', 10);
-            })->with('visits.bills.billItems.serviceItem:id,department_id');
         }
 
         echo $patients_query->toSql();
