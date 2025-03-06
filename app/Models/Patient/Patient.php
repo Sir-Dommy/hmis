@@ -128,7 +128,7 @@ class Patient extends Model
     public static function patientInRelationToBilledServiceSearch($request, $bill_item_status, $bill_item_payment_offer_status){
 
         //initialize $patients_query
-        $patients_query = Patient::where(1,'=', 1);
+        $patients_query = Patient::whereRaw('1 = 1');
 
 
         // get logged in user department from employees table
