@@ -80,6 +80,9 @@ class Handler extends ExceptionHandler
         } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus){
             $response['message'] = $exception->getMessage();
             $status = 422;
+        } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException){
+            $response['message'] = $exception->getMessage();
+            $status = 403;
         } else {
             //$response['message'] = 'Server Error';
             // $response['message'] = $exception->__toString();

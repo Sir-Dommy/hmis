@@ -2,6 +2,7 @@
 
 namespace App\Models\Patient;
 
+use App\Exceptions\InHouseUnauthorizedException;
 use App\Models\Admin\ChronicDisease;
 use App\Models\Admin\Employee;
 use App\Models\Admin\PaymentType;
@@ -161,9 +162,9 @@ class Patient extends Model
         // get logged in user department from employees table
         $existing_employee = Employee::selectEmployees(Auth::user()->id, null, null);
 
-        count($existing_employee) < 1 ? throw new UnauthorizedHttpException("You are not granted employee status yet!") : null;
+        count($existing_employee) < 1 ? throw new InHouseUnauthorizedException("You are not granted employee status yet!") : null;
 
-        count($existing_employee[0]['departments']) < 1 ? throw new UnauthorizedHttpException("You are not assigned to any department yet!!!") : null;
+        count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
 
         foreach($existing_employee[0]['departments'] as $department){
             $patients_query->whereHas('visit.bills.billItems.serviceItem', function ($query) use ($department) {
