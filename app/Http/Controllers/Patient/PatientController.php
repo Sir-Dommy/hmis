@@ -39,7 +39,7 @@ class PatientController extends Controller
         // Decode the JSON data
         $data = json_decode($request->input('data'), true);
 
-        Validator::make($data, [ 
+        Validator::make ($data, [ 
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|date|before_or_equal:today',
@@ -63,6 +63,7 @@ class PatientController extends Controller
             'member_validity' => 'nullable|date',
             
         ])->validate();
+        
 
         //reassign $request variable
         $data = json_decode($request->input('data'));
