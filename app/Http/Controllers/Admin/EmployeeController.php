@@ -121,7 +121,8 @@ class EmployeeController extends Controller
             'dob'=> 'required|date:before:today',
             'role'=> 'required|string|min:2|max:255|exists:roles,name',
             'employee_name'=> 'string|min:1|max:255',
-            'speciality'=> 'required|string|min:1|max:255'
+            'speciality'=> 'required|string|min:1|max:255',
+            'departments' => 'required'
         ]);
 
         $existing = Employee::selectEmployees(null, $request->ipnumber, null);
