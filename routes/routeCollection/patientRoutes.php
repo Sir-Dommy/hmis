@@ -21,7 +21,7 @@ Route::group(['prefix'=>'patients'], function(){
 
     // get patient(s) in relation to bills
     Route::group(['prefix'=>'service'], function(){
-        Route::post('create', [PatientController::class, 'selectPatientsBilledForService']);
+        Route::post('billed', [PatientController::class, 'selectPatientsBilledForService']);
     });
 });
 

@@ -554,6 +554,11 @@ class PatientController extends Controller
         ]);
 
         //let the war begin
+
+
+        return response()->json(
+            ["sir"=>1], 200
+        );
     }
 
     //function to generate employeecode
