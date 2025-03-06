@@ -85,11 +85,90 @@ class Handler extends ExceptionHandler
             $status = 403;
         } else {
             
-            //$response['message'] = 'Server Error';
-            // $response['message'] = $exception->__toString();
-            // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
-            $response['message'] = $exception->getMessage();
-            $status = 500;
+            $error_instance_flag = null;
+            foreach ($exception->getTrace() as $trace) {
+                if (isset($trace['args'])) {
+                    foreach ($trace['args'] as $arg) {
+                        $exception = $arg;
+                        //check previous errors to ensure to check if previous error can be handled differently
+                        if ($exception instanceof \Illuminate\Validation\ValidationException) {
+                            $response['message'] = APIConstants::VALIDATION_ERROR;
+                            // $response['errors'] = $exception->getPrevious()->errors();
+                            $status = 422;
+                            $error_instance_flag = 1;
+                            break;
+
+                        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                            $response['message'] = APIConstants::ROUTE_NOT_FOUND;
+                            $status = 404;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
+                            $response['message'] = APIConstants::UNAUTHORIZED_ACCESS;
+                            $status = 401;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException) {
+                            $response['message'] = APIConstants::ACCESS_DENIED;
+                            $status = 403;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException){
+                            $response['message'] = APIConstants::METHOD_NOT_ALLOWED;
+                            $response['errors'] = $exception->getMessage();
+                            $status = 405;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \App\Exceptions\AlreadyExistsException){
+                            $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_ALREADY_EXISTS;
+                            $status = 422;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \App\Exceptions\NotFoundException){
+                            $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_NOT_FOUND;
+                            $status = 404;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \App\Exceptions\InputsValidationException){
+                            $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_MISSING_OR_INVALID_INPUTS;
+                            $status = 422;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus || $exception->getPrevious() instanceof \App\Exceptions\AlreadyInThisStatus){
+                            $response['message'] = $exception->getMessage();
+                            $status = 422;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException){
+                            $response['message'] = $exception->getMessage();
+                            $status = 403;
+                            $error_instance_flag = 1;
+                            break;
+                            
+                        }
+                    }
+                }
+
+            }
+
+            if($error_instance_flag == null){
+                $response['message'] = "FLAG NI NULL MAN!!!!!!!".$exception->getMessage();
+                $status = 500;
+            }
+            
+                //$response['message'] = 'Server Error';
+                // $response['message'] = $exception->__toString();
+                // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
+                // // $response['message'] = $exception->getMessage();
+                // $status = 500;
         }
 
         // Log the exception if needed
