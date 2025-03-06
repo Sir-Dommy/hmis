@@ -82,6 +82,62 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->whereNull('patients.deleted_by');
+
+        if($id != null){
+            $patients_query->where('patients.id', $id);
+        }
+        elseif($email != null){
+            $patients_query->where('patients.email', $email);
+        }
+        elseif($patient_code != null){
+            $patients_query->where('patients.patient_code', $patient_code);
+        }
+        elseif($id_no != null){
+            $patients_query->where('patients.id_no', $id_no);
+        }
+
+
+        else{
+            $paginated_patients = $patients_query->paginate(10);
+            //return $paginated_patients;
+            $paginated_patients->getCollection()->transform(function ($patient) {
+                return Patient::mapResponse($patient);
+            });
+    
+            return $paginated_patients;
+        }
+
+
+        return $patients_query->get()->map(function ($patient) {
+            $patient_details = Patient::mapResponse($patient);
+
+            return $patient_details;
+        });
+
+
+    }
+
+    //perform selection
+    public static function patientInRelationToBilledServiceSearch($request){
+        $patients_query = Patient::with([
+            'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email',
+            'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
+            'insuranceDetails.schemes:id,name',  
+            'insuranceDetails.schemeTypes:id,name', 
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
@@ -139,6 +195,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by')
             ->where(function ($query) use ($value) {
