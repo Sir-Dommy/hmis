@@ -171,7 +171,7 @@ class Patient extends Model
         foreach($existing_employee[0]['departments'] as $department){
             // $department->pivot->department_id
             $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
-                $query->where('department_id', 10);
+                $query->where('department_id', 1);
             });
         }
 
