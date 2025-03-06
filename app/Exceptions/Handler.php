@@ -136,13 +136,13 @@ class Handler extends ExceptionHandler
                 break;
             }
 
-            if($error_instance == null){
+            if($error_instance != null){
                 // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
-                $response['message'] = "HAKUNA PREVIOUS!!!!!!!!";
+                $response['message'] = "KUNA PREVIOUS!!!!!!!! ".($error_instance->getMessage());
                 $status = 500;
             }
             else{
-                $response['message'] = "KUNA PREVIOUS MANNNNN!!!!!!!!!";
+                $response['message'] = "HAKUNA PREVIOUS MANNNNN!!!!!!!!!";
                 // $response['message'] = $exception->getMessage();
                 $status = 500;
             }
