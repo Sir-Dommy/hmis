@@ -553,7 +553,8 @@ class PatientController extends Controller
             'service_offer_status'=>'nullable'
         ]);
 
-        //let the war begin
+        //runc selection function in the model
+        Patient::patientInRelationToBilledServiceSearch($request, null, null);
 
 
         return response()->json(
