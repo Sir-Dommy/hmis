@@ -137,9 +137,9 @@ class Handler extends ExceptionHandler
             
                 //$response['message'] = 'Server Error';
                 // $response['message'] = $exception->__toString();
-                $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
-                // $response['message'] = $exception->getMessage();
-                $status = 500;
+                // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
+                // // $response['message'] = $exception->getMessage();
+                // $status = 500;
         }
 
         // Log the exception if needed
