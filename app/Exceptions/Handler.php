@@ -124,9 +124,9 @@ class Handler extends ExceptionHandler
             //     }
 
             // }
-            if($exception->getPrevious() == NULL){
+            if($exception->getPrevious() == null){
                 // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
-                $response['message'] = $exception->getMessage();
+                $response['message'] = "HAKUNA PREVIOUS!!!!!!!!";
                 $status = 500;
             }
             else{
