@@ -55,7 +55,7 @@ class Employee extends Model
 
 
     //perform selection
-    public static function selectEmployees($id, $ipnumber, $employee_code){
+    public static function selectEmployees($id, $ipnumber, $employee_code, $user_id){
         $employees_query = Employee::with([
             'departments:id,name',
             'createdBy:id,email',
@@ -73,6 +73,9 @@ class Employee extends Model
 
         elseif($employee_code != null){
             $employees_query->where('employees.employee_code', $employee_code);
+        }
+        elseif($user_id != null){
+            $employees_query->where('employees.user_id', $user_id);
         }
 
         return $employees_query->get()->map(function ($employee) {

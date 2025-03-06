@@ -160,7 +160,7 @@ class Patient extends Model
         }
 
         // get logged in user department from employees table
-        $existing_employee = Employee::selectEmployees(Auth::user()->id, null, null);
+        $existing_employee = Employee::selectEmployees(null, null, null, Auth::user()->id);
 
         count($existing_employee) < 1 ? throw new InHouseUnauthorizedException("You are not granted employee status yet!") : null;
 

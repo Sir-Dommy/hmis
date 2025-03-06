@@ -89,7 +89,7 @@ class EmployeeController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created an employee with name: ". $request->employee_name);
 
         return response()->json(
-            Employee::selectEmployees(null, $request->ipnumber, null)
+            Employee::selectEmployees(null, $request->ipnumber, null, null)
         ,200);
 
     }
@@ -125,7 +125,7 @@ class EmployeeController extends Controller
             'departments' => 'required'
         ]);
 
-        $existing = Employee::selectEmployees(null, $request->ipnumber, null);
+        $existing = Employee::selectEmployees(null, $request->ipnumber, null, null);
 
         if(count($existing) > 0 && $existing[0]["id"] != $request->id){
             throw new AlreadyExistsException(APIConstants::NAME_EMPLOYEE. " ". $request->id);
@@ -183,7 +183,7 @@ class EmployeeController extends Controller
         
 
         return response()->json(
-            Employee::selectEmployees($request->id, null, null)
+            Employee::selectEmployees($request->id, null, null, null)
         ,200);
 
     }
@@ -195,7 +195,7 @@ class EmployeeController extends Controller
             throw new InputsValidationException("id or employee code or ipnumber required!");
         }
 
-        $employee = Employee::selectEmployees($request->id, $request->ipnumber, $request->employee_code);
+        $employee = Employee::selectEmployees($request->id, $request->ipnumber, $request->employee_code, $request->user_id);
 
         if(count($employee) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE);
@@ -212,7 +212,7 @@ class EmployeeController extends Controller
 
     public function getAllEmployees(){
 
-        $employees = Employee::selectEmployees(null, null, null);
+        $employees = Employee::selectEmployees(null, null, null, null);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all employees");
 
@@ -225,7 +225,7 @@ class EmployeeController extends Controller
 
     public function approveEmployee($id){
             
-        $existing = Employee::selectEmployees($id, null, null);
+        $existing = Employee::selectEmployees($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE. " with id: ". $id);
@@ -242,13 +242,13 @@ class EmployeeController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved an Employee with id: ". $id);
 
         return response()->json(
-            Employee::selectEmployees($id, null, null)
+            Employee::selectEmployees($id, null, null, null)
         ,200);
     }
 
     public function disableEmployee($id){
             
-        $existing = Employee::selectEmployees($id, null, null);
+        $existing = Employee::selectEmployees($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE. " with id: ". $id);
@@ -265,7 +265,7 @@ class EmployeeController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_DISABLE, "Disabled an employee with id: ". $id);
 
         return response()->json(
-            Employee::selectEmployees($id, null, null)
+            Employee::selectEmployees($id, null, null, null)
         ,200);
     }
 
