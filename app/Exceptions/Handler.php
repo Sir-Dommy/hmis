@@ -85,6 +85,7 @@ class Handler extends ExceptionHandler
             $status = 403;
         } else {
             if($exception->getPrevious() != null){
+                echo "KUNA ERROR>>>>>>>> ".$exception->getPrevious()->__toString();
                 $exception = $exception->getPrevious();
 
                 //check previous errors to ensure to check if previous error can be handled differently
