@@ -128,7 +128,7 @@ class Handler extends ExceptionHandler
             else{
                 //$response['message'] = 'Server Error';
                 // $response['message'] = $exception->__toString();
-                $response['message'] = $exception->getPrevious()->__toString();
+                $response['message'] = $exception->getPrevious()->__toString(). "Hizi ni ganiiii";
                 // $response['message'] = $exception->getMessage();
                 $status = 500;
             }
