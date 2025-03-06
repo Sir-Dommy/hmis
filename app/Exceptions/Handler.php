@@ -124,6 +124,16 @@ class Handler extends ExceptionHandler
             //     }
 
             // }
+            if($exception->getPrevious() == NULL){
+                // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
+                $response['message'] = $exception->getMessage();
+                $status = 500;
+            }
+            else{
+                $response['message'] = "KUNA PREVIOUS MANNNNN!!!!!!!!!";
+                // $response['message'] = $exception->getMessage();
+                $status = 500;
+            }
             
                 //$response['message'] = 'Server Error';
                 // $response['message'] = $exception->__toString();
