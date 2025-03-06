@@ -141,6 +141,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem:id,department_id',
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
