@@ -124,7 +124,19 @@ class Handler extends ExceptionHandler
             //     }
 
             // }
-            if($exception->getPrevious() == null){
+            $error_instance = null;
+            foreach ($exception->getTrace() as $trace) {
+                if (isset($trace['args'])) {
+                    foreach ($trace['args'] as $arg) {
+                        $error_instance = $arg;
+                        break;
+                    }
+                }
+
+                break;
+            }
+
+            if($error_instance == null){
                 // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
                 $response['message'] = "HAKUNA PREVIOUS!!!!!!!!";
                 $status = 500;
