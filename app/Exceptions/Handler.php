@@ -55,74 +55,38 @@ class Handler extends ExceptionHandler
             $response['message'] = APIConstants::VALIDATION_ERROR;
             $response['errors'] = $exception->errors();
             $status = 422;
-        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException || $exception->getPrevious() instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
             $response['message'] = APIConstants::ROUTE_NOT_FOUND;
             $status = 404;
-        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
+        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException || $exception->getPrevious() instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
             $response['message'] = APIConstants::UNAUTHORIZED_ACCESS;
             $status = 401;
-        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException) {
+        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException || $exception->getPrevious() instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException) {
             $response['message'] = APIConstants::ACCESS_DENIED;
             $status = 403;
-        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException){
+        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException || $exception->getPrevious() instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException){
             $response['message'] = APIConstants::METHOD_NOT_ALLOWED;
             $response['errors'] = $exception->getMessage();
             $status = 405;
-        } elseif ($exception instanceof \App\Exceptions\AlreadyExistsException){
+        } elseif ($exception instanceof \App\Exceptions\AlreadyExistsException || $exception->getPrevious() instanceof \App\Exceptions\AlreadyExistsException){
             $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_ALREADY_EXISTS;
             $status = 422;
-        } elseif ($exception instanceof \App\Exceptions\NotFoundException){
+        } elseif ($exception instanceof \App\Exceptions\NotFoundException || $exception->getPrevious() instanceof \App\Exceptions\NotFoundException){
             $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_NOT_FOUND;
             $status = 404;
-        } elseif ($exception instanceof \App\Exceptions\InputsValidationException){
+        } elseif ($exception instanceof \App\Exceptions\InputsValidationException || $exception->getPrevious() instanceof \App\Exceptions\InputsValidationException){
             $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_MISSING_OR_INVALID_INPUTS;
             $status = 422;
-        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus){
+        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus || $exception->getPrevious() instanceof \App\Exceptions\AlreadyInThisStatus){
             $response['message'] = $exception->getMessage();
             $status = 422;
-        } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException){
+        } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException || $exception->getPrevious() instanceof \App\Exceptions\InHouseUnauthorizedException){
             $response['message'] = $exception->getMessage();
             $status = 403;
         } else {
-
-            // // repeat response to avoid 500 error on e
-            // if ($exception instanceof \Illuminate\Validation\ValidationException) {
-            //     $response['message'] = APIConstants::VALIDATION_ERROR;
-            //     $response['errors'] = $exception->errors();
-            //     $status = 422;
-            // } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
-            //     $response['message'] = APIConstants::ROUTE_NOT_FOUND;
-            //     $status = 404;
-            // } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
-            //     $response['message'] = APIConstants::UNAUTHORIZED_ACCESS;
-            //     $status = 401;
-            // } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException) {
-            //     $response['message'] = APIConstants::ACCESS_DENIED;
-            //     $status = 403;
-            // } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException){
-            //     $response['message'] = APIConstants::METHOD_NOT_ALLOWED;
-            //     $response['errors'] = $exception->getMessage();
-            //     $status = 405;
-            // } elseif ($exception instanceof \App\Exceptions\AlreadyExistsException){
-            //     $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_ALREADY_EXISTS;
-            //     $status = 422;
-            // } elseif ($exception instanceof \App\Exceptions\NotFoundException){
-            //     $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_NOT_FOUND;
-            //     $status = 404;
-            // } elseif ($exception instanceof \App\Exceptions\InputsValidationException){
-            //     $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_MISSING_OR_INVALID_INPUTS;
-            //     $status = 422;
-            // } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus){
-            //     $response['message'] = $exception->getMessage();
-            //     $status = 422;
-            // } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException){
-            //     $response['message'] = $exception->getMessage();
-            //     $status = 403;
-            // }
-
             //$response['message'] = 'Server Error';
-            $response['message'] = $exception->__toString();
-            //$response['message'] = $exception->getMessage();
+            // $response['message'] = $exception->__toString();
+            $response['message'] = $exception->getMessage();
             $status = 500;
         }
 
