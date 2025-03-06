@@ -161,7 +161,7 @@ class Handler extends ExceptionHandler
             }
 
             if($error_instance_flag == null){
-                $response['message'] = $exception->getMessage();
+                $response['message'] = "FLAG NI NULL MAN!!!!!!!".$exception->getMessage();
                 $status = 500;
             }
             
