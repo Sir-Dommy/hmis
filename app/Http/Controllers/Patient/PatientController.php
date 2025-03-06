@@ -18,9 +18,7 @@ use App\Models\Patient\PatientPaymentTypesJoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PatientController extends Controller
@@ -41,7 +39,7 @@ class PatientController extends Controller
         // Decode the JSON data
         $data = json_decode($request->input('data'), true);
 
-        Validator::make($data, [ 
+        Validator::make ($data, [ 
             'firstname' => 'required|string|min:2|max:100',
             'lastname'=>'required|string|min:2|max:100',
             'dob' => 'required|date|date|before_or_equal:today',
@@ -65,6 +63,7 @@ class PatientController extends Controller
             'member_validity' => 'nullable|date',
             
         ])->validate();
+        
 
         //reassign $request variable
         $data = json_decode($request->input('data'));
@@ -544,6 +543,25 @@ class PatientController extends Controller
 
         return response()->json(
             []
+        ,200);
+    }
+
+    public function selectPatientsBilledForService(Request $request){
+        $request->validate([
+            'patient_id'=>'nullable|exists:patients,id',
+            'department'=>'nullable|exists:departments,name',
+            'payment_status'=>'nullable',
+            'service_offer_status'=>'nullable'
+        ]);
+
+        //runc selection function in the model
+        $selected_patients = Patient::patientInRelationToBilledServiceSearch($request, null, null);
+
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched billed patients in their department(s)");
+
+        return response()->json(
+            $selected_patients
         ,200);
     }
 

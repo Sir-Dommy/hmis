@@ -2,12 +2,16 @@
 
 namespace App\Models\Patient;
 
+use App\Exceptions\InHouseUnauthorizedException;
 use App\Models\Admin\ChronicDisease;
+use App\Models\Admin\Employee;
 use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Utils\CustomUserRelations;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class Patient extends Model
 {
@@ -82,6 +86,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
@@ -120,6 +125,77 @@ class Patient extends Model
     }
 
     //perform selection
+    public static function patientInRelationToBilledServiceSearch($request, $bill_item_status, $bill_item_payment_offer_status){
+
+        $patients_query = Patient::with([
+            'chronicDiseases:id,name',
+            'PaymentMethods:id,name',
+            'createdBy:id,email',
+            'updatedBy:id,email',
+            'approvedBy:id,email',
+            'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
+            'insuranceDetails.schemes:id,name',  
+            'insuranceDetails.schemeTypes:id,name', 
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem:id,department_id',
+            'visits.bills.billItems.serviceItem.service:id,name',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->whereNull('patients.deleted_by');
+
+        // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
+
+        if($request->patient_id != null){
+            $patients_query->where('patients.id', $request->patient_id)
+            ->orWhere('patients.email', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.firstname', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.lastname', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.id_no', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.phonenumber1', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.phonenumber2', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.next_of_kin_contact', 'LIKE', '%'.$request->patient_id.'%')
+            ->orWhere('patients.patient_code', 'LIKE', '%'.$request->patient_id.'%');;
+        }
+
+        // get logged in user department from employees table
+        $existing_employee = Employee::selectEmployees(null, null, null, Auth::user()->id);
+
+        count($existing_employee) < 1 ? throw new InHouseUnauthorizedException("You are not granted employee status yet!") : null;
+
+        count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
+
+        foreach($existing_employee[0]['departments'] as $department){
+            // $department->pivot->department_id
+            $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
+                $query->where('department_id', $department->pivot->department_id);
+            });
+        }
+
+        // else{
+        //     $paginated_patients = $patients_query->paginate(10);
+        //     //return $paginated_patients;
+        //     $paginated_patients->getCollection()->transform(function ($patient) {
+        //         return Patient::mapResponse($patient);
+        //     });
+    
+        //     return $paginated_patients;
+        // }
+
+
+        return $patients_query->get()->map(function ($patient) {
+            $patient_details = Patient::mapResponse($patient);
+
+            return $patient_details;
+        });
+
+
+    }
+
+    //perform selection
     public static function deepSearchPatients($value){
 
         $patients_query = Patient::with([
@@ -139,6 +215,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by')
             ->where(function ($query) use ($value) {

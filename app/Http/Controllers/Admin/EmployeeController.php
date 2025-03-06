@@ -11,8 +11,12 @@ use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
+use App\Models\Admin\Department;
+use App\Models\Admin\EmployeeDepartmentJoin;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -23,30 +27,69 @@ class EmployeeController extends Controller
             'ipnumber'=>'required|unique:employees,ipnumber',
             'age' => 'integer|min:0|max:200',
             'dob' => 'required|date|before:today',
-            'user_id' => 'required|integer|min:1|exists:users,id',
+            'user_id' => 'required|integer|min:1|exists:users,id|unique:employees,user_id',
             'speciality' => 'required|string|min:3|max:25',
-            'role' => 'required|string|min:2|max:255|exists:roles,name'
+            'role' => 'required|string|min:2|max:255|exists:roles,name',
+            'departments' => 'required'
         ]);
             
 
         $employeeCode = $this->generateEmployeeCode();
 
-        Employee::create([
-            'employee_name' => $request->employee_name, 
-            'ipnumber'=>$request->ipnumber,
-            'employee_code'=>$employeeCode, 
-            'age' => $request->age,
-            'dob' => $request->dob,
-            'role'=>$request->role,
-            'speciality' => $request->speciality,
-            'user_id' => $request->user_id,
-            'created_by' => Auth::user()->id
-        ]);
+        DB::beginTransaction();
+        try {
+            $created_employee = Employee::create([
+                'employee_name' => $request->employee_name, 
+                'ipnumber'=>$request->ipnumber,
+                'employee_code'=>$employeeCode, 
+                'age' => $request->age,
+                'dob' => $request->dob,
+                'role'=>$request->role,
+                'speciality' => $request->speciality,
+                'user_id' => $request->user_id,
+                'created_by' => Auth::user()->id
+            ]);
+
+            Auth::user()->assignRole($request->role);
+
+            foreach ($request->departments as $department) {
+
+                //use this if department will be provide as an array of json objects
+                // $validator = Validator::make((array) $department, [            
+                //     'name' => 'required|exists:department,name'
+                // ]);
+
+                // if ($validator->fails()) {
+                //     return response()->json(['errors' => $validator->errors()], 422);
+                // }
+
+                //get department name and save it to db
+                $existing_department_details = Department::selectDepartments(null, $department);
+
+                count($existing_department_details) < 1 ? throw new InputsValidationException("No Department with named: ". $department." exists!") : null;
+
+                //if user is already assigned to department continue... no need to save
+                if(count(EmployeeDepartmentJoin::where('employee_id', $created_employee->id)->where('department_id', $existing_department_details[0]['id'])->get()) > 0){
+                    continue;
+                }
+
+                EmployeeDepartmentJoin::create([
+                    'employee_id' => $created_employee->id,
+                    'department_id' => $existing_department_details[0]['id'],
+                ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created an employee with name: ". $request->employee_name);
 
         return response()->json(
-            Employee::selectEmployees(null, $request->ipnumber, null)
+            Employee::selectEmployees(null, $request->ipnumber, null, null)
         ,200);
 
     }
@@ -73,35 +116,74 @@ class EmployeeController extends Controller
     public function updateEmployee(Request $request){
         $request->validate([
             'id' => 'required|integer|min:1|exists:employees,id',
-            'ipnumber'=> 'required|integer|min:1|exists:employees,ipnumber',
+            'ipnumber'=> 'required|integer|min:1',
             'age' => 'integer|min:0|max:200',
             'dob'=> 'required|date:before:today',
             'role'=> 'required|string|min:2|max:255|exists:roles,name',
             'employee_name'=> 'string|min:1|max:255',
-            'speciality'=> 'required|string|min:1|max:255'
+            'speciality'=> 'required|string|min:1|max:255',
+            'departments' => 'required'
         ]);
 
-        $existing = Employee::selectEmployees(null, $request->ipnumber, null);
+        $existing = Employee::selectEmployees(null, $request->ipnumber, null, null);
 
         if(count($existing) > 0 && $existing[0]["id"] != $request->id){
-            throw new AlreadyExistsException(APIConstants::NAME_DEPARTMENT. " ". $request->id);
+            throw new AlreadyExistsException(APIConstants::NAME_EMPLOYEE. " ". $request->id);
+        }
+        DB::beginTransaction();
+        try {
+            Employee::where('id', $request->id)
+            ->update([
+                'employee_name'=>$request->employee_name, 
+                'age' =>$request->age,
+                'dob'=>$request->dob,
+                'role'=> $request->role,
+                'speciality'=> $request->speciality,
+                'updated_by' => User::getLoggedInUserId()
+            ]);
+
+            Auth::user()->assignRole($request->role);
+
+            foreach ($request->departments as $department) {
+
+                //use this if department will be provide as an array of json objects
+                // $validator = Validator::make((array) $department, [            
+                //     'name' => 'required|exists:department,name'
+                // ]);
+
+                // if ($validator->fails()) {
+                //     return response()->json(['errors' => $validator->errors()], 422);
+                // }
+
+                //get department name and save it to db
+                $existing_department_details = Department::selectDepartments(null, $department);
+
+                count($existing_department_details) < 1 ? throw new InputsValidationException("No Department with named: ". $department." exists!") : null;
+
+                //if user is already assigned to department continue... no need to save
+                if(count(EmployeeDepartmentJoin::where('employee_id', $request->id)->where('department_id', $existing_department_details[0]['id'])->get()) > 0){
+                    continue;
+                }
+
+                EmployeeDepartmentJoin::create([
+                    'employee_id' => $request->id,
+                    'department_id' => $existing_department_details[0]['id'],
+                ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
         }
 
-        Employee::where('id', $request->id)
-                ->update([
-                    'employee_name'=>$request->employee_name, 
-                    'age' =>$request->age,
-                    'dob'=>$request->dob,
-                    'role'=> $request->role,
-                    'speciality'=> $request->speciality,
-                    'updated_by' => User::getLoggedInUserId()
-                ]);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated an employee with id: ". $request->id);
         
 
         return response()->json(
-            Employee::selectEmployees($request->id, null, null)
+            Employee::selectEmployees($request->id, null, null, null)
         ,200);
 
     }
@@ -113,7 +195,7 @@ class EmployeeController extends Controller
             throw new InputsValidationException("id or employee code or ipnumber required!");
         }
 
-        $employee = Employee::selectEmployees($request->id, $request->ipnumber, $request->employee_code);
+        $employee = Employee::selectEmployees($request->id, $request->ipnumber, $request->employee_code, $request->user_id);
 
         if(count($employee) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE);
@@ -130,7 +212,7 @@ class EmployeeController extends Controller
 
     public function getAllEmployees(){
 
-        $employees = Employee::selectEmployees(null, null, null);
+        $employees = Employee::selectEmployees(null, null, null, null);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all employees");
 
@@ -143,7 +225,7 @@ class EmployeeController extends Controller
 
     public function approveEmployee($id){
             
-        $existing = Employee::selectEmployees($id, null, null);
+        $existing = Employee::selectEmployees($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE. " with id: ". $id);
@@ -160,13 +242,13 @@ class EmployeeController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved an Employee with id: ". $id);
 
         return response()->json(
-            Employee::selectEmployees($id, null, null)
+            Employee::selectEmployees($id, null, null, null)
         ,200);
     }
 
     public function disableEmployee($id){
             
-        $existing = Employee::selectEmployees($id, null, null);
+        $existing = Employee::selectEmployees($id, null, null, null);
 
         if(count($existing) < 1){
             throw new NotFoundException(APIConstants::NAME_EMPLOYEE. " with id: ". $id);
@@ -183,7 +265,7 @@ class EmployeeController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_DISABLE, "Disabled an employee with id: ". $id);
 
         return response()->json(
-            Employee::selectEmployees($id, null, null)
+            Employee::selectEmployees($id, null, null, null)
         ,200);
     }
 

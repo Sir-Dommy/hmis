@@ -29,6 +29,10 @@ class Employee extends Model
         'disabled_at',
     ];
 
+    public function departments(){
+        return $this->belongsToMany(Department::class, 'employee_department_join', 'employee_id', 'department_id');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -51,8 +55,9 @@ class Employee extends Model
 
 
     //perform selection
-    public static function selectEmployees($id, $ipnumber, $employee_code){
+    public static function selectEmployees($id, $ipnumber, $employee_code, $user_id){
         $employees_query = Employee::with([
+            'departments:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
@@ -69,6 +74,9 @@ class Employee extends Model
         elseif($employee_code != null){
             $employees_query->where('employees.employee_code', $employee_code);
         }
+        elseif($user_id != null){
+            $employees_query->where('employees.user_id', $user_id);
+        }
 
         return $employees_query->get()->map(function ($employee) {
             return [
@@ -76,6 +84,7 @@ class Employee extends Model
                 'employee_name' => $employee->employee_name,
                 'employee_code' => $employee->employee_code,
                 'ipnumber' => $employee->ipnumber,
+                'departments' => $employee->departments,
                 'created_by' => $employee->createdBy ? $employee->createdBy->email : null,
                 'created_at' => $employee->created_at,
                 'updated_by' => $employee->updatedBy ? $employee->updatedBy->email : null,

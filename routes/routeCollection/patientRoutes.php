@@ -18,6 +18,11 @@ Route::group(['prefix'=>'patients'], function(){
     Route::put('disable/{id}', [PatientController::class, 'disablePatient']);
     Route::put('softDelete/{id}', [PatientController::class, 'softDelete']);
     Route::put('permanentlyDelete/{id}', [PatientController::class, 'permanentlyDelete']);
+
+    // get patient(s) in relation to bills
+    Route::group(['prefix'=>'service'], function(){
+        Route::post('billed', [PatientController::class, 'selectPatientsBilledForService']);
+    });
 });
 
 

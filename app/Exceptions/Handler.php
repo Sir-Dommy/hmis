@@ -77,12 +77,17 @@ class Handler extends ExceptionHandler
         } elseif ($exception instanceof \App\Exceptions\InputsValidationException){
             $response['message'] = $exception->getMessage() ." ". APIConstants::MESSAGE_MISSING_OR_INVALID_INPUTS;
             $status = 422;
-        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus){
+        } elseif ($exception instanceof \App\Exceptions\AlreadyInThisStatus || $exception->getPrevious() instanceof \App\Exceptions\AlreadyInThisStatus){
             $response['message'] = $exception->getMessage();
             $status = 422;
+        } elseif ($exception instanceof \App\Exceptions\InHouseUnauthorizedException){
+            $response['message'] = $exception->getMessage();
+            $status = 403;
         } else {
+            
             //$response['message'] = 'Server Error';
             // $response['message'] = $exception->__toString();
+            // $response['message'] = $exception->__toString(). "Hizi ni ganiiii";
             $response['message'] = $exception->getMessage();
             $status = 500;
         }
