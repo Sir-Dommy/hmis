@@ -168,8 +168,9 @@ class Patient extends Model
         count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
 
         foreach($existing_employee[0]['departments'] as $department){
+            // $department->pivot->department_id
             $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
-                $query->where('department_id', $department->pivot->department_id);
+                $query->where('department_id', 10);
             });
         }
 
