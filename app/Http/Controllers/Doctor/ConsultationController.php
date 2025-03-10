@@ -81,6 +81,8 @@ class ConsultationController extends Controller
             }
 
             $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
+            //commit transaction if there are no errors
+            DB::commit();
             return $existing_diagnosis;
             ConsultationDiagnosisJoin::create([
                 'consultation_id' => $created->id,
@@ -89,8 +91,6 @@ class ConsultationController extends Controller
 
 
 
-            //commit transaction if there are no errors
-            DB::commit();
         }
 
         catch(Exception $e){
