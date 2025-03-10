@@ -79,6 +79,8 @@ class ConsultationController extends Controller
                 
             }
 
+            return "TUKO MTAAAA";
+
             ConsultationDiagnosisJoin::create([
                 'consultation_id' => $created->id,
                 'diagnosis_id' => Diagnosis::where('name', $request->diagnosis)->get('id')[0]['id']
