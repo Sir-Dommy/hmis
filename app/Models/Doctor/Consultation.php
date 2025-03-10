@@ -53,7 +53,7 @@ class Consultation extends Model
             'consultationType:id,name',
             'diagnosis:id,name',
             'symptoms:id,name',
-            'physicalExaminations:id,name,findings',
+            'physicalExaminations:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
