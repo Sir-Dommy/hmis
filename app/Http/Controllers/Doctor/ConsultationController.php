@@ -48,7 +48,7 @@ class ConsultationController extends Controller
                 
                 $existing_chief_complain = Symptom::where('name', $chief_complain)->get('id');
 
-                count($existing_chief_complain) < 1 ? throw new InputsValidationException("Chief complain with name: " + $chief_complain + " does not exist!!!") : null;
+                count($existing_chief_complain) < 1 ? throw new InputsValidationException("Chief complain with name: " . $chief_complain . " does not exist!!!") : null;
 
                 ConsultationSymptomsJoin::create([
                     'consultation_id' => $created->id,
@@ -62,7 +62,7 @@ class ConsultationController extends Controller
                 
                 $existing_physical_examination = PhysicalExaminationType::where('name', $physical_examination)->get('id');
 
-                count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " + $physical_examination + " does not exist!!!") : null;
+                count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $physical_examination . " does not exist!!!") : null;
 
                 ConsultationPhysicalExaminationsJoin::create([
                     'consultation_id' => $created->id,
