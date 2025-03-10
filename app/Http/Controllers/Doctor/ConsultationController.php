@@ -17,7 +17,7 @@ class ConsultationController extends Controller
             'consultation_type' => 'required|exists:consultation_types,name',
         ]);
 
-        $consultation_type_id = (ConsultationType::where('name', $request->consultation_type)->first()->id)->toSql();
+        $consultation_type_id = (ConsultationType::where('name', $request->consultation_type)->first('id'))->toSql();
 
         // DB::beginTransaction();
 
