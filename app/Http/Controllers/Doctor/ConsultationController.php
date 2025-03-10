@@ -10,6 +10,7 @@ use App\Models\Admin\Symptom;
 use App\Models\Doctor\Consultation;
 use App\Models\Doctor\ConsultationPhysicalExaminationsJoin;
 use App\Models\Doctor\ConsultationSymptomsJoin;
+use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Exception;
@@ -38,7 +39,8 @@ class ConsultationController extends Controller
             $created = Consultation::create([
                 'visit_id'=>$request->visit_id,
                 'consultation_type_id'=>$request->$consultation_type_id,
-                'clinical_history'=>$request->clinical_history
+                'clinical_history'=>$request->clinical_history,
+                'created_by'=> User::getLoggedInUserId()
             ]);
 
             // create chief complains
