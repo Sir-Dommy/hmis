@@ -14,5 +14,5 @@ class ConsultationDiagnosisJoin extends Model
     protected $fillable = [
     'consultation_id',
     'diagnosis_id',
-    ]
+    ];
 }
