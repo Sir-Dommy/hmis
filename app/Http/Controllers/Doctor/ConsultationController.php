@@ -37,7 +37,7 @@ class ConsultationController extends Controller
 
         try{
 
-            DB::beginTransaction();
+            // DB::beginTransaction();
 
             $created = Consultation::create([
                 'visit_id'=>$request->visit_id,
@@ -88,14 +88,14 @@ class ConsultationController extends Controller
 
 
             //commit transaction if there are no errors
-            DB::commit();
+            // DB::commit();
             return $existing_diagnosis[0]['id'];
 
         }
 
         catch(Exception $e){
             //rollback the transaction
-            DB::rollBack();
+            // DB::rollBack();
 
             throw new Exception($e);
         }
