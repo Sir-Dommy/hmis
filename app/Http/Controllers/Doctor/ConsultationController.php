@@ -35,7 +35,6 @@ class ConsultationController extends Controller
 
         $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'];
 
-        return "TUKO MTAAAA";
         try{
 
             DB::beginTransaction();
@@ -47,6 +46,8 @@ class ConsultationController extends Controller
                 'created_by'=> User::getLoggedInUserId()
             ]);
 
+
+            return "TUKO MTAAAA";
             // create chief complains
             foreach($request->chief_complains as $chief_complain){
                 
