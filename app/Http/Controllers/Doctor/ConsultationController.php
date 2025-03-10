@@ -59,16 +59,16 @@ class ConsultationController extends Controller
             }
             // create chief physical examinations
             foreach($request->physical_examinations as $physical_examination){
-                foreach($physical_examination as $key => $physical_examination){
+                foreach($physical_examination as $key => $examination){
 
-                    return "KEY IS " . $key ." AND EXAM TYPE IS " .$physical_examination;
-                    $existing_physical_examination = PhysicalExaminationType::where('name', $physical_examination)->get('id');
+                    $existing_physical_examination = PhysicalExaminationType::where('name', $key)->get('id');
 
-                    count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $physical_examination . " does not exist!!!") : null;
+                    count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
 
                     ConsultationPhysicalExaminationsJoin::create([
                         'consultation_id' => $created->id,
                         'physical_examination_id' => $existing_physical_examination[0]['id'],
+                        'findings' => $examination
                     ]);
 
                 }               
