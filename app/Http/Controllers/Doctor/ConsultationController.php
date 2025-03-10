@@ -47,7 +47,6 @@ class ConsultationController extends Controller
             ]);
 
 
-            return "TUKO MTAAAA";
             // create chief complains
             foreach($request->chief_complains as $chief_complain){
                 
@@ -61,6 +60,7 @@ class ConsultationController extends Controller
                 ]);
 
                 
+                return "TUKO MTAAAA";
             }
             // create chief physical examinations
             foreach($request->physical_examinations as $physical_examination){
