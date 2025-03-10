@@ -208,7 +208,7 @@ class Patient extends Model
             'insuranceDetails.schemes:id,name',  
             'insuranceDetails.schemeTypes:id,name',  
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeType:id,name', 
+            'insuranceDetails.schemeTypes:id,name', 
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
             'visits.visitClinics.clinic:id,name',
