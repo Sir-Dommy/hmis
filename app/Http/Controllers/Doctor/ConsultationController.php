@@ -80,10 +80,10 @@ class ConsultationController extends Controller
                 
             }
 
-
+            $existing_diagnosis_id = Diagnosis::where('name', $request->diagnosis)->get('id')[0]['id'];
             ConsultationDiagnosisJoin::create([
                 'consultation_id' => $created->id,
-                'diagnosis_id' => Diagnosis::where('name', $request->diagnosis)->get('id')[0]['id']
+                'diagnosis_id' => $existing_diagnosis_id
             ]);
 
 
