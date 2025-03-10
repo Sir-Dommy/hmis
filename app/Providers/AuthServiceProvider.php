@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Clinic;
+use App\Models\Admin\ConsultationType;
 use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\ServiceRelated\Service;
@@ -54,6 +55,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultMainAccounts($user[0]['id']);
 
         $this->createDefaultUnits($user[0]['id']);
+
+        $this->createDefaultConsultationTypes($user[0]['id']);
 
     }
 
@@ -289,5 +292,25 @@ class AuthServiceProvider extends ServiceProvider
             "created_by" => $user_id
         ]);
 
+    }
+
+    private function createDefaultConsultationTypes($user_id){
+        ConsultationType::firstOrCreate([
+            "name" => "General Consultation",
+            "description" => "Default",
+            "created_by" => $user_id
+        ]);
+
+        ConsultationType::firstOrCreate([
+            "name" => "Specialist Consultation",
+            "description" => "Default Specialist Consultation",
+            "created_by" => $user_id
+        ]);
+
+        ConsultationType::firstOrCreate([
+            "name" => "Follow Up",
+            "description" => "Default Follow up",
+            "created_by" => $user_id
+        ]);
     }
 }
