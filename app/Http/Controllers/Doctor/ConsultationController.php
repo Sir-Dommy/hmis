@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\ConsultationType;
 use App\Models\Doctor\Consultation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class ConsultationController extends Controller
             'consultation_type' => 'required|exists:consultation_types,name',
         ]);
 
-        $consultation_type_id = Consultation::where('name', $request->consultation_type)->first()->id;
+        $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->first()->id;
 
         // DB::beginTransaction();
 
