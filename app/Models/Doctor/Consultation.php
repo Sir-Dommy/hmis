@@ -4,6 +4,8 @@ namespace App\Models\Doctor;
 
 use App\Models\Admin\ConsultationType;
 use App\Models\Admin\Diagnosis;
+use App\Models\Admin\PhysicalExaminationType;
+use App\Models\Admin\Symptom;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,11 +38,11 @@ class Consultation extends Model
     }
 
     public function symptoms(){
-        return $this->belongsToMany(Diagnosis::class, 'consultations_symptoms_join', 'consultation_id', 'symptom_id');
+        return $this->belongsToMany(Symptom::class, 'consultations_symptoms_join', 'consultation_id', 'symptom_id');
     }
 
     public function physicalExaminations(){
-        return $this->belongsToMany(Diagnosis::class, 'consultations_physical_exam_join', 'consultation_id', 'physical_examination_id');
+        return $this->belongsToMany(PhysicalExaminationType::class, 'consultations_physical_exam_join', 'consultation_id', 'physical_examination_id');
     }
 
 

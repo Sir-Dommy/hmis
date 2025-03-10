@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Doctor;
 use App\Exceptions\InputsValidationException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\ConsultationType;
+use App\Models\Admin\Diagnosis;
 use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\Symptom;
 use App\Models\Doctor\Consultation;
+use App\Models\Doctor\ConsultationDiagnosisJoin;
 use App\Models\Doctor\ConsultationPhysicalExaminationsJoin;
 use App\Models\Doctor\ConsultationSymptomsJoin;
 use App\Models\User;
@@ -25,6 +27,7 @@ class ConsultationController extends Controller
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
             'consultation_type' => 'required|exists:consultation_types,name',
+            'diagnosis' => 'required|exists:diagnosis,name',
             'clinical_history' => 'nullable',
             'chief_complains' => 'required',
             'physical_examinations' => 'required',
@@ -75,6 +78,11 @@ class ConsultationController extends Controller
                 
                 
             }
+
+            ConsultationDiagnosisJoin::create([
+                'consultation_id' => $created->id,
+                'diagnosis_id' => Diagnosis::where('name', $request->diagnosis)->get('id')[0]['id']
+            ]);
 
 
             //commit transaction if there are no errors
