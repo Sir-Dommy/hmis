@@ -75,8 +75,7 @@ class ConsultationController extends Controller
                         'findings' => $examination
                     ]);
 
-                }  
-                return "TUKO MTAAAA";             
+                }               
                 
                 
             }
@@ -86,6 +85,9 @@ class ConsultationController extends Controller
                 'consultation_id' => $created->id,
                 'diagnosis_id' => Diagnosis::where('name', $request->diagnosis)->get('id')[0]['id']
             ]);
+
+
+            return "TUKO MTAAAA";
 
 
             //commit transaction if there are no errors
