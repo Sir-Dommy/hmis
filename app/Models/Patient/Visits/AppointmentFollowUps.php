@@ -44,7 +44,7 @@ class AppointmentFollowUps extends Model
     }
 
     //perform selection
-    public static function selectAppointmentsAndFollowUps($id, $name){
+    public static function selectAppointmentsAndFollowUps($id){
 
         $appointments_follow_ups_query = AppointmentFollowUps::with([
             'patient:id,patient_code',
@@ -52,8 +52,8 @@ class AppointmentFollowUps extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
-        ])->whereNull('main_services.deleted_by')
-          ->whereNull('main_services.deleted_at');
+        ])->whereNull('appointments_follow_ups.deleted_by')
+          ->whereNull('appointments_follow_ups.deleted_at');
 
         if($id != null){
             $appointments_follow_ups_query->where('appointments_follow_ups.id', $id);
