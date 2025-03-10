@@ -7,5 +7,11 @@ use Illuminate\Http\Request;
 
 class ConsultationController extends Controller
 {
-    //
+    //create consultation
+    public function createConsultation(Request $request){
+        $request->validate([
+            'visit_id' => 'required|exists:visits,id',
+            'consultation_type' => 'required|exists:consultation_types,name',
+        ]);
+    }
 }
