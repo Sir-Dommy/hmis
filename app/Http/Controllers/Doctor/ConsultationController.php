@@ -17,6 +17,9 @@ class ConsultationController extends Controller
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
             'consultation_type' => 'required|exists:consultation_types,name',
+            'clinical_history' => 'nullable',
+            'chief_complains' => 'required',
+            'physical_examinations' => 'required',
         ]);
 
         $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'];
