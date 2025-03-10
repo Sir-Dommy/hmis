@@ -65,6 +65,8 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->createDefaultPhysicalExaminations($user[0]['id']);
 
+        $this->createDefaultDiagnosis($user[0]['id']);
+
     }
 
     private function defineRolesAndPermissions(){
