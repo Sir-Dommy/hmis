@@ -10,7 +10,9 @@ use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
 use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
+use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\ServiceRelated\Service;
+use App\Models\Admin\Symptom;
 use App\Models\Admin\VisitType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
@@ -57,6 +59,10 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultUnits($user[0]['id']);
 
         $this->createDefaultConsultationTypes($user[0]['id']);
+
+        $this->createDefaultSymptoms($user[0]['id']);
+
+        $this->createDefaultPhysicalExaminations($user[0]['id']);
 
     }
 
@@ -310,6 +316,46 @@ class AuthServiceProvider extends ServiceProvider
         ConsultationType::firstOrCreate([
             "name" => "Follow Up",
             "description" => "Default Follow up",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultSymptoms($user_id){
+        Symptom::firstOrCreate([
+            "name" => "Headache",
+            "description" => "Default symptom",
+            "created_by" => $user_id
+        ]);
+
+        Symptom::firstOrCreate([
+            "name" => "Chest pain",
+            "description" => "Default symptom",
+            "created_by" => $user_id
+        ]);
+
+        Symptom::firstOrCreate([
+            "name" => "Fever",
+            "description" => "Default symptoms",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultPhysicalExaminations($user_id){
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "General exam",
+            "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "Central Nervous System",
+            "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "Respiratory System",
+            "description" => "Default Physical examination type",
             "created_by" => $user_id
         ]);
     }
