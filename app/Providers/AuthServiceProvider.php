@@ -19,7 +19,6 @@ use App\Models\Branch;
 use App\Models\PaymentPath;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider

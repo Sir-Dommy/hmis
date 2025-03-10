@@ -42,7 +42,7 @@ class Consultation extends Model
     }
 
     public function physicalExaminations(){
-        return $this->belongsToMany(PhysicalExaminationType::class, 'consultations_physical_exam_join', 'consultation_id', 'physical_examination_id')->withPivot('findings');;
+        return $this->belongsToMany(PhysicalExaminationType::class, 'consultations_physical_exam_join', 'consultation_id', 'physical_examination_id')->withPivot('findings');
     }
 
 
