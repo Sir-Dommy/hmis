@@ -59,6 +59,8 @@ class ConsultationController extends Controller
             }
             // create chief physical examinations
             foreach($request->physical_examinations as $physical_examination){
+
+                return $physical_examination;
                 
                 $existing_physical_examination = PhysicalExaminationType::where('name', $physical_examination)->get('id');
 
