@@ -35,6 +35,7 @@ class ConsultationController extends Controller
 
         $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'];
 
+        return "TUKO MTAAAA";
         try{
 
             DB::beginTransaction();
@@ -79,7 +80,6 @@ class ConsultationController extends Controller
                 
             }
 
-            return "TUKO MTAAAA";
 
             ConsultationDiagnosisJoin::create([
                 'consultation_id' => $created->id,
