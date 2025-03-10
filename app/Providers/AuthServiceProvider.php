@@ -8,6 +8,7 @@ use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
+use App\Models\Admin\Diagnosis;
 use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\PhysicalExaminationType;
@@ -353,6 +354,26 @@ class AuthServiceProvider extends ServiceProvider
         PhysicalExaminationType::firstOrCreate([
             "name" => "Respiratory System",
             "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultDiagnosis($user_id){
+        Diagnosis::firstOrCreate([
+            "name" => "Malaria",
+            "description" => "Malaria",
+            "created_by" => $user_id
+        ]);
+
+        Diagnosis::firstOrCreate([
+            "name" => "Asthma",
+            "description" => "Asthma",
+            "created_by" => $user_id
+        ]);
+
+        Diagnosis::firstOrCreate([
+            "name" => "Pneumonia",
+            "description" => "Pneumonia",
             "created_by" => $user_id
         ]);
     }
