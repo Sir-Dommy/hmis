@@ -323,19 +323,16 @@ class AuthServiceProvider extends ServiceProvider
     private function createDefaultSymptoms($user_id){
         Symptom::firstOrCreate([
             "name" => "Headache",
-            "description" => "Default symptom",
             "created_by" => $user_id
         ]);
 
         Symptom::firstOrCreate([
             "name" => "Chest pain",
-            "description" => "Default symptom",
             "created_by" => $user_id
         ]);
 
         Symptom::firstOrCreate([
             "name" => "Fever",
-            "description" => "Default symptoms",
             "created_by" => $user_id
         ]);
     }
