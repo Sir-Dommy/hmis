@@ -38,7 +38,7 @@ class ConsultationController extends Controller
 
             $created = Consultation::create([
                 'visit_id'=>$request->visit_id,
-                'consultation_type_id'=>$request->$consultation_type_id,
+                'consultation_type_id'=>$consultation_type_id,
                 'clinical_history'=>$request->clinical_history,
                 'created_by'=> User::getLoggedInUserId()
             ]);
