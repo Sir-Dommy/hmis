@@ -15,6 +15,7 @@ class VisitDocuments extends Model
     protected $table = "visit_documents";
 
     protected $fillable = [
+        "visit_id",
         "path",
         "description",
         "created_by",
@@ -46,6 +47,7 @@ class VisitDocuments extends Model
         return $visit_documents_query->get()->map(function ($visit_document) {
             $visit_documents_details = [
                 'id' => $visit_document->id,
+                'id' => $visit_document->visit_id,
                 'name' => end(explode($visit_document->name, "/")),
                 'description' => $visit_document->description,
                 
