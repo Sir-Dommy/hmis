@@ -60,7 +60,6 @@ class ConsultationController extends Controller
                 ]);
 
                 
-                return "TUKO MTAAAA";
             }
             // create chief physical examinations
             foreach($request->physical_examinations as $physical_examination){
@@ -76,7 +75,8 @@ class ConsultationController extends Controller
                         'findings' => $examination
                     ]);
 
-                }               
+                }  
+                return "TUKO MTAAAA";             
                 
                 
             }
