@@ -36,7 +36,7 @@ class Prescription extends Model
     }
 
      //perform selection
-     public static function selectPrescriptions($id){
+     public static function selectPrescriptions($id, $visit_id){
 
         $prescriptions_query = Prescription::with([
             'visit:id,patient_id',
@@ -48,6 +48,11 @@ class Prescription extends Model
 
         if($id != null){
             $prescriptions_query->where('prescriptions.id', $id);
+        }
+
+
+        else if($visit_id != null){
+            $prescriptions_query->where('prescriptions.visit_id', $visit_id);
         }
 
 
