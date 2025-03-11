@@ -25,11 +25,11 @@ class OrderedTestsController extends Controller
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
             'lab_test_type' => 'required|exists:lab_test_types,name',
-            'image_test_type_id' => 'required|exists:image_test_types,name',
-            'lab_test_class_id' => 'required|exists:lab_test_classes,name',
-            'image_test_class_id' => 'required|exists:image_test_classes,name',
-            'lab_test_request_id' => 'nullable|exists:lab_test_types,name',
-            'image_test_request_id' => 'nullable|exists:lab_test_types,name',
+            'image_test_type' => 'required|exists:image_test_types,name',
+            'lab_test_class' => 'required|exists:lab_test_classes,name',
+            'image_test_class' => 'required|exists:image_test_classes,name',
+            'lab_test_request' => 'nullable|exists:lab_test_types,name',
+            'image_test_request' => 'nullable|exists:lab_test_types,name',
             'service_prices' => 'required|array',
         ]);
         

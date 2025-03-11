@@ -9,7 +9,13 @@ use App\Models\Accounts\Units;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
 use App\Models\Admin\Diagnosis;
+use App\Models\Admin\ImageTestClass;
+use App\Models\Admin\ImageTestRequest;
+use App\Models\Admin\ImageTestType;
 use App\Models\Admin\InsuranceMemberShip;
+use App\Models\Admin\LabTestClass;
+use App\Models\Admin\LabTestRequest;
+use App\Models\Admin\LabTestType;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\ServiceRelated\Service;
@@ -65,6 +71,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultPhysicalExaminations($user[0]['id']);
 
         $this->createDefaultDiagnosis($user[0]['id']);
+
+        $this->createDefaultLabAndImagingDetails($user[0]['id']);
 
     }
 
@@ -375,6 +383,45 @@ class AuthServiceProvider extends ServiceProvider
         Diagnosis::firstOrCreate([
             "name" => "Pneumonia",
             "description" => "Pneumonia",
+            "created_by" => $user_id
+        ]);
+    }
+
+
+    private function createDefaultLabAndImagingDetails($user_id){
+        LabTestType::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        LabTestClass::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        LabTestRequest::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestType::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestClass::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestRequest::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
             "created_by" => $user_id
         ]);
     }
