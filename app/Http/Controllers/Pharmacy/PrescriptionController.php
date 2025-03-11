@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Pharmacy;
 
 use App\Exceptions\InputsValidationException;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Bill\Bill;
 use App\Models\Pharmacy\Prescription;
+use App\Models\User;
+use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 class PrescriptionController extends Controller
 {
     
+    // create prescription
     public function createPrescription(Request $request){
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
@@ -57,115 +61,81 @@ class PrescriptionController extends Controller
             throw new Exception($e);
         }
         DB::beginTransaction();
-
-        Vital::create([
-            'weight' => $request->weight, 
-            'blood_pressure'=>$request->blood_pressure,
-            'blood_glucose'=>$request->blood_glucose, 
-            'height' => $request->height,
-            'blood_type' => $request->blood_type,
-            'disease'=>$request->disease,
-            'allergies' => $request->allergies,
-            'nursing_remarks' => $request->nursing_remarks,
-            'visit_id'=> $request->visit_id,
-            'created_by' => Auth::user()->id
-        ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a vital for patient with visit id: ". $request->visit_id);
-
-        return response()->json(
-            Vital::selectVitals(null, $request->visit_id, null)
-        ,200);
-
-    }
-
-//updating vital details
-    public function updateVital(Request $request){
-        $request->validate([
-            'id'=>'required|exists:vitals,id',
-            'visit_id' => 'required|exists:visits,id',
-            'weight' => 'numeric|between:2,255',
-            'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
-            'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
-            'height' => 'required|numeric|min:50|max:300',
-            'blood_type' => 'required|string|min:1',
-            'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255',
-            'nursing_remarks' => 'string|min:3|max:25'
-        ]);
-
-        $existing = Vital::selectVitals($request->id,$request->visits_id);
-
-        if(!$existing){
-            throw new NotFoundException(APIConstants::NAME_VITAL);
-        }
-
-        Vital::where('id', $request->id)
-                ->update([
-                     'weight' =>$request->weight ,
-                     'blood_pressure' =>$request->blood_pressure, 
-                     'blood_glucose' => $request->blood_glucose, 
-                     'height' =>$request->height,
-                     'blood_type' => $request->blood_type,
-                     'disease' =>$request->disease ,
-                     'allergies' =>$request->allergies ,
-                     'nursing_remarks' =>$request->nursing_remarks ,
-                     'updated_by' => User::getLoggedInUserId()
-                ]);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a vital with id: ". $request->id);
         
 
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a prescription for patient with visit id: ". $request->visit_id);
+
         return response()->json(
-            Vital::selectVitals($request->id, null)
+            Prescription::selectPrescriptions(null, $request->visit_id)
         ,200);
 
     }
 
-    //getting single vital
-    public function getSingleVital(Request $request){
+    //updating prescription
+    public function updatePrescription(Request $request){
+        
 
-        ($request->vital_id == null && $request->visit_id == null) ? throw new InputsValidationException("vital id or visit id is required!") : null;
+    }
 
-        $vital = Vital::selectVitals($request->vital_id, $request->visit_id);
+    //getting single prescription by id
+    public function getSinglePrescription($prescription_id){
 
-        count($vital) < 1 ? throw new NotFoundException(APIConstants::NAME_VITAL) : null;
+        $prescription_id == null ? throw new InputsValidationException("Provide a valid prescription id!") : null;
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a vital with id: ". $vital[0]['id']);
+        $prescription = Prescription::selectPrescriptions($prescription_id, null);
+
+        count($prescription) < 1 ? throw new NotFoundException(APIConstants::NAME_PRESCRIPTION) : null;
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a prescription with id: ". $prescription[0]['id']);
 
         return response()->json(
-            $vital
+            $prescription
         ,200);
     }
 
-    public function getAllVitals(){
 
-        $vitals = Vital::selectVitals(null, null);
+    //getting prescription by visit id
+    public function getPrescriptionByVisitId($visit_id){
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all Vitals");
+        $visit_id == null ? throw new InputsValidationException("Provide a valid visit id!") : null;
+
+        $prescription = Prescription::selectPrescriptions(null, $visit_id);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched prescriptions for visit with id: ". $visit_id);
+
+        return response()->json(
+            $prescription
+        ,200);
+    }
+
+    public function getAllPrescriptions(){
+
+        $prescriptions = Prescription::selectPrescriptions(null, null);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all prescriptions");
 
 
         return response()->json(
-            $vitals
+            $prescriptions
         ,200);
     }
 
     public function softDeleteVital($id){
             
-        $existing = Vital::selectVitals($id, null);
+        $existing = Prescription::selectPrescriptions($id, null);
 
         if(count($existing) < 1){
-            throw new NotFoundException(APIConstants::NAME_VITAL. " with id: ". $id);
+            throw new NotFoundException(APIConstants::NAME_PRESCRIPTION. " with id: ". $id);
         }
         
-        Vital::where('id', $id)
+        Prescription::where('id', $id)
                 ->update([
                     'deleted_at' => now(),
                     'deleted_by' => User::getLoggedInUserId(),
                 ]);
 
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a vital with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a prescription with id: ". $id);
 
         return response()->json(
             []
@@ -174,18 +144,6 @@ class PrescriptionController extends Controller
 
     public function permanentlyDeleteVital($id){
             
-        $existing = Vital::where("id",$id)->get();
-
-        if(count($existing) < 1){
-            throw new NotFoundException(APIConstants::NAME_VITAL. " with id: ". $id);
-        }
         
-        Vital::destroy($id);
-
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Deleted a vital with id: ". $id);
-
-        return response()->json(
-            []
-        ,200);
     }
 }
