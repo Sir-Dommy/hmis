@@ -4,7 +4,6 @@ namespace App\Models\Bill;
 
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
-use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Patient\Visit;
 use App\Models\User;
