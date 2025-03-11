@@ -30,7 +30,7 @@ class OrderedTestsController extends Controller
             'image_test_class' => 'required|exists:image_test_classes,name',
             'lab_test_request' => 'nullable|exists:lab_test_types,name',
             'image_test_request' => 'nullable|exists:lab_test_types,name',
-            'service_prices' => 'required|array',
+            'service_price_details' => 'required|array',
         ]);
         
         $request->lab_test_request ? $lab_request_id = LabTestRequest::where('name', $request->lab_test_request)->get('id')[0]['id'] : $lab_request_id = null;
