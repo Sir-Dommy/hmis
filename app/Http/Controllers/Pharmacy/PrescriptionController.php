@@ -120,7 +120,7 @@ class PrescriptionController extends Controller
         ,200);
     }
 
-    public function softDeleteVital($id){
+    public function softDeletePrescription($id){
             
         $existing = Prescription::selectPrescriptions($id, null);
 
@@ -142,7 +142,7 @@ class PrescriptionController extends Controller
         ,200);
     }
 
-    public function permanentlyDeleteVital($id){
+    public function permanentlyDeletePrescription($id){
             
         
     }
