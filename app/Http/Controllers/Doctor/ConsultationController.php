@@ -26,14 +26,14 @@ class ConsultationController extends Controller
     public function createConsultation(Request $request){
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
-            'consultation_type' => 'required|exists:consultation_types,name',
-            'diagnosis' => 'required|exists:diagnosis,name',
+            'consultation_type' => 'nullable|exists:consultation_types,name',
+            'diagnosis' => 'nullable|exists:diagnosis,name',
             'clinical_history' => 'nullable',
-            'chief_complains' => 'required',
-            'physical_examinations' => 'required',
+            'chief_complains' => 'required|array',
+            'physical_examinations' => 'nullable|array',
         ]);
 
-        $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'];
+        $request->consultation_type ? $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'] : $consultation_type_id = null;
 
         try{
 
@@ -62,29 +62,33 @@ class ConsultationController extends Controller
                 
             }
             // create chief physical examinations
-            foreach($request->physical_examinations as $physical_examination){
-                foreach($physical_examination as $key => $examination){
-
-                    $existing_physical_examination = PhysicalExaminationType::where('name', $key)->get('id');
-
-                    count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
-
-                    ConsultationPhysicalExaminationsJoin::create([
-                        'consultation_id' => $created->id,
-                        'physical_examination_id' => $existing_physical_examination[0]['id'],
-                        'findings' => $examination
-                    ]);
-
-                }               
-                
-                
+            if($request->physical_examinations != null){
+                foreach($request->physical_examinations as $physical_examination){
+                    foreach($physical_examination as $key => $examination){
+    
+                        $existing_physical_examination = PhysicalExaminationType::where('name', $key)->get('id');
+    
+                        count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
+    
+                        ConsultationPhysicalExaminationsJoin::create([
+                            'consultation_id' => $created->id,
+                            'physical_examination_id' => $existing_physical_examination[0]['id'],
+                            'findings' => $examination
+                        ]);
+    
+                    }               
+                    
+                    
+                }
             }
-
-            $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
-            ConsultationDiagnosisJoin::create([
-                'consultation_id' => $created->id,
-                'diagnosis_id' => $existing_diagnosis[0]['id']
-            ]);
+            
+            if($request->diagnosis != null){
+                $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
+                ConsultationDiagnosisJoin::create([
+                    'consultation_id' => $created->id,
+                    'diagnosis_id' => $existing_diagnosis[0]['id']
+                ]);
+            }
 
 
             //commit transaction if there are no errors
