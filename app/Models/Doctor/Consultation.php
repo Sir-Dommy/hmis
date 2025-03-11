@@ -70,7 +70,7 @@ class Consultation extends Model
             $consultations_details = [
                 'id' => $consultation->id,
                 'visit_id' => $consultation->visit_id,
-                'consultation_type' => $consultation->consultationType->name,
+                'consultation_type' => $consultation->consultationType ? $consultation->consultationType->name : null,
                 'clinical_history' => $consultation->clinical_history,
                 'diagnosis' => $consultation->diagnosis,
                 'symptoms' => $consultation->symptoms,
