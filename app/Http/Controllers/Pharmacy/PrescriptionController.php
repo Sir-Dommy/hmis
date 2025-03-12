@@ -122,7 +122,7 @@ class PrescriptionController extends Controller
                                 // $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
                                 //     $query->where('name', 'like', "%$scheme_to_use%");
                                 // });
-                                return "OUR SCHEME TYPE ID IS : ". $visit_scheme->scheme->scheme_type_id;
+                                return "OUR SCHEME TYPE ID IS : ". $visit_scheme->scheme_type_id;
                                 foreach($visit_scheme->schemeTypes as $visit_scheme_type){
 
                                     $scheme_type_to_use = $visit_scheme_type['name'];
