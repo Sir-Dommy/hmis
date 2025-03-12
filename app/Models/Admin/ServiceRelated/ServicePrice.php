@@ -2,7 +2,6 @@
 
 namespace App\Models\Admin\ServiceRelated;
 
-use App\Exceptions\AlreadyExistsException;
 use App\Models\Accounts\SubAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Brand;
@@ -212,7 +211,7 @@ class ServicePrice extends Model
             'doctor:id,name',
             'labTestType:id,name',
             'imageTestType:id,name',
-            'drug:id,name',
+            'drug:id,name,amount_in_stock',
             'brand:id,name',
             'branch:id,name',
             'building:id,name',
@@ -306,7 +305,8 @@ class ServicePrice extends Model
 
             if ($drug_id) {
                 $service_prices_query->whereHas('drug', function ($query) use ($drug_id) {
-                    $query->where('name', 'like', "%$drug_id%");
+                    $query->where('name', 'like', "%$drug_id%")
+                            ->where('amount_in_stock', '>', '0');
                 });
             }
 
@@ -407,7 +407,7 @@ class ServicePrice extends Model
             'doctor:id,name',
             'labTestType:id,name',
             'imageTestType:id,name',
-            'drug:id,name',
+            'drug:id,name,amount_in_stock',
             'brand:id,name',
             'branch:id,name',
             'building:id,name',
@@ -500,7 +500,8 @@ class ServicePrice extends Model
 
             if ($drug_id) {
                 $service_prices_query->whereHas('drug', function ($query) use ($drug_id) {
-                    $query->where('name', $drug_id);
+                    $query->where('name', $drug_id)
+                            ->where('amount_in_stock', '>', '0');
                 });
             }
 
@@ -574,7 +575,8 @@ class ServicePrice extends Model
 
 
     private static function mapResponse($service_price){
-        return [
+        //$service_price_details = [
+        return array_merge( [
             'id' => $service_price->id,
             'service' => $service_price->service ? $service_price->service->name : null, // Check if service exists
             'department' => $service_price->department ? $service_price->department->name : null, // Check if department exists
@@ -608,7 +610,7 @@ class ServicePrice extends Model
             'updated_at' => $service_price->updated_at, // Updated at timestamp
             'approved_by' => $service_price->approvedBy ? $service_price->approvedBy->email : null, // Approved by user email
             'approved_at' => $service_price->approved_at, // Approved at timestamp
-        ];
+        ], $service_price->drug ? ['amount_in_stock' => $service_price->drug->amount_in_stock] : ["DOEST NOT HAVE AMOUNT IN STOCK" => "NO AMOUNT!!!"]) ;
     }
 
     private static function calculatePrice($service_price){

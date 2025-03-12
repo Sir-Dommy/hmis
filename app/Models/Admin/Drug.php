@@ -17,7 +17,7 @@ class Drug extends Model
     protected $fillable = [
         "brand_id",
         "name",
-        "in_stock",
+        "amount_in_stock",
         "price_per_item",
         "description",
         "expiry_date",

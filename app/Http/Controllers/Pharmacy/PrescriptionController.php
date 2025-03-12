@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pharmacy;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Bill\Bill;
 use App\Models\Pharmacy\Prescription;
 use App\Models\User;
@@ -22,7 +23,6 @@ class PrescriptionController extends Controller
     public function createPrescription(Request $request){
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
-            // 'drug' => 'required|exists:drugs,name',
             'service_price_details' => 'required|array',
         ]);
 
@@ -35,12 +35,14 @@ class PrescriptionController extends Controller
 
                 !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
                 $validator = Validator::make((array) $service_price_detail, [            
-                    'id' => 'required|exists:service_prices,id'
+                    'id' => 'required',
                 ]);
 
                 if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
                 }
+
+                //$existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], )
 
                 return $service_price_detail['id'];
 
