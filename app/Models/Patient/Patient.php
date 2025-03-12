@@ -91,9 +91,13 @@ class Patient extends Model
         ])->whereNull('patients.deleted_by');
 
         // adding sort by latest created visit first
-        $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_ats', 'DESC');
-        });
+        // $patients_query->whereHas('visits', function ($query) {
+        //     $query->orderBy('created_ats', 'DESC');
+        // });
+        $patients_query->with(['visits' => function ($query) {
+            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }]);
+        
 
         if($id != null){
             $patients_query->where('patients.id', $id);
