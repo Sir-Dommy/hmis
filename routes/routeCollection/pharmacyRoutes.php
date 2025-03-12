@@ -14,7 +14,7 @@ Route::group(['prefix'=>'pharmacy'], function(){
 
 
         //test route
-        Route::post('test', [PrescriptionController::class, 'test']);
+        Route::post('test/{visit_id}', [PrescriptionController::class, 'test']);
     });
 
     
