@@ -101,12 +101,12 @@ class PrescriptionController extends Controller
 
             if($existing_visit[0]['payment_types']){
                 foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
-                    return "ID NI ".$visit_payment_type->paymentType->name ." NA TYPE ID NI ".$visit_payment_type->visit_id;
-                    //.$visit_payment_type->payment_type;
-                    if($visit_payment_type['name'] == APIConstants::NAME_CASH){
+                    
+                    if($visit_payment_type->paymentType->name == APIConstants::NAME_CASH){
                         $payment_type_to_use = $visit_payment_type['name'];
 
-
+                        return "PAYMENT TYPE TO USE ". $payment_type_to_use;
+                        //.$visit_payment_type->payment_type;
                         // $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
                         //     $query->where('name', 'like', "%$payment_type_to_use%");
                         // });
