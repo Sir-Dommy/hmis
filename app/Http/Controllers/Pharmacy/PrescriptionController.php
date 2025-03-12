@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pharmacy;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\SchemeTypes;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Bill\Bill;
 use App\Models\Patient\Visit;
@@ -123,6 +124,13 @@ class PrescriptionController extends Controller
                                 //     $query->where('name', 'like', "%$scheme_to_use%");
                                 // });
                                 return "OUR SCHEME TYPE ID IS : ". $visit_scheme->scheme_type_id;
+                                $existing_scheme_type = SchemeTypes::where('id',$visit_scheme->scheme_type_id)
+                                    ->where('scheme_id', $visit_scheme->scheme->id)
+                                    ->get();
+
+                                count($existing_scheme_type) < 1 ? throw new NotFoundException("Scheme type with id: ". $visit_scheme->scheme_type_id . " of scheme with id ". $visit_scheme->scheme->id . " does not exist") : null;
+
+                                return "SCHEME TYPE NAME IS: ". $existing_scheme_type[0]['name'];
                                 foreach($visit_scheme->schemeTypes as $visit_scheme_type){
 
                                     $scheme_type_to_use = $visit_scheme_type['name'];
