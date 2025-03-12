@@ -108,7 +108,7 @@ class Visit extends Model
             'visitDepartments.department:id,name',
             'visitPaymentTypes:id,visit_id,payment_type_id',
             'visitPaymentTypes.paymentType:id,name',
-            'visitInsuranceDetails:id,visit_id,scheme_id,claim_number,available_balance,signature',
+            'visitInsuranceDetails:id,visit_id,scheme_id,scheme_type_id,claim_number,available_balance,signature',
             'visitInsuranceDetails.scheme:id,name',
             'visitInsuranceDetails.scheme.schemeTypes:id,name',
             'bills:id,visit_id,bill_reference_number',
