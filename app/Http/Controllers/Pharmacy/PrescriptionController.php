@@ -99,9 +99,9 @@ class PrescriptionController extends Controller
 
             count($existing_visit) < 1 ? throw new InputsValidationException("No visit with id ". $visit_id . " !!!") : null;
 
-            return $existing_visit;
             if($existing_visit[0]['payment_types']){
                 foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
+                    return $visit_payment_type;
                     if($visit_payment_type['name'] == APIConstants::NAME_CASH){
                         $payment_type_to_use = $visit_payment_type['name'];
 
