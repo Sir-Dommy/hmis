@@ -92,7 +92,7 @@ class Patient extends Model
 
         // adding sort by latest created visit first
         $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'ASC');
+            $query->orderBy('created_at', 'DESC');
         });
 
         if($id != null){
@@ -175,7 +175,7 @@ class Patient extends Model
 
         // adding sort by latest created visit first
         $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'ASC');
+            $query->orderBy('created_at', 'DESC');
         });
 
         foreach($existing_employee[0]['departments'] as $department){
@@ -244,7 +244,7 @@ class Patient extends Model
         });
 
         $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'ASC');
+            $query->orderBy('created_at', 'DESC');
         });
 
 
