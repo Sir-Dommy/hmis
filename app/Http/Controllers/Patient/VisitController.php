@@ -261,7 +261,7 @@ class VisitController extends Controller
 
         $count = 0;
         foreach($payment_types as $payment_type){
-
+            $payment_method = "";
             if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
                 $count += 10;
