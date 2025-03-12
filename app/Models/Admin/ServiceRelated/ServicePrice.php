@@ -528,7 +528,7 @@ class ServicePrice extends Model
                                     $scheme_to_use = $visit_scheme->scheme->name;
     
                                     // select using a scheme
-                                    $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
+                                    $service_prices_query->orWhereHas('scheme', function ($query) use ($scheme_to_use) {
                                         $query->where('name', "$scheme_to_use");
                                     });
 
