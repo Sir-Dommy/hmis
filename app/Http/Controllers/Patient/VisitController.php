@@ -86,7 +86,7 @@ class VisitController extends Controller
             ]);
 
     
-            $this->validateAndSaveVisitPaymentType( (object) $request->payment_types, $visit->id, $request->schemes);
+            $this->validateAndSaveVisitPaymentType($request->payment_types, $visit->id, $request->schemes);
     
             foreach($request->payment_types as $payment_type){
                 if($payment_type['insurance'] == 1){
