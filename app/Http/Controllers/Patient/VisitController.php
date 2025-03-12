@@ -259,7 +259,9 @@ class VisitController extends Controller
 
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
 
+        $count = 0 ;
         foreach($payment_types as $payment_type){
+            $count += 20;
             $payment_method = "";
             if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
@@ -284,6 +286,8 @@ class VisitController extends Controller
                 'payment_type_id' => $existing_method[0]['id']
             ]);
         }
+
+        throw new NotFoundException("COUNT YETU NI::::: ".$count);
 
         
     }
