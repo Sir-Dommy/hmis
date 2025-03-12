@@ -11,6 +11,7 @@ use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\SchemeTypes;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
@@ -44,7 +45,7 @@ class VisitController extends Controller
             // 'consultation_type'=>'nullable',
             // 'consultation_category'=>'nullable',
             // 'service'=>'required|string|exists:services,name',
-            'schemes' => 'nullable',
+            'schemes' => 'nullable|array',
             'payment_types'=>'required',
             'service_price_details'=>'required',
             'bar_code'=>'nullable|string',
@@ -98,6 +99,7 @@ class VisitController extends Controller
                             'claim_number' => 'required|string',
                             'available_balance' => 'required|numeric',
                             'insurer' => 'required|string|exists:schemes,name',
+                            'scheme_type' => 'required|string|exists:scheme_types,name',
                         ]);
 
                         if ($validator->fails()) {
@@ -105,14 +107,22 @@ class VisitController extends Controller
                         }
 
                         $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
-                        
+
                         count($existing_scheme) < 1  ? throw new InputsValidationException("Provide a valid insurer!!!!!!!!") : null;
 
+                        $existing_scheme_type = SchemeTypes::where('name', $scheme['scheme_type'])
+                                                ->where('scheme_id', $existing_scheme[0]['id'])
+                                                ->get("id");
+                        
+                        count($existing_scheme_type) < 1  ? throw new InputsValidationException("Scheme type: ".$scheme['scheme_type']." does not exist or is not related to scheme: ".$scheme['insurer']) : null;
+
+                        
                         VisitInsuranceDetail::create([
                             'visit_id' => $visit->id,
                             'claim_number' => $scheme['claim_number'],
                             'available_balance' => $scheme['available_balance'],
                             'scheme_id' => $existing_scheme[0]['id'],
+                            'scheme_type_id' => $existing_scheme_type[0]['id'],
                             'signature' => $request->signature,
                         ]);
                     }
