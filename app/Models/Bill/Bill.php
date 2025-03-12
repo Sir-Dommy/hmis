@@ -142,7 +142,7 @@ class Bill extends Model
                 // custom selection.......
                 $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null
+                    null, null, null, $visit_id
                 );
 
                 //test commit2
@@ -211,7 +211,7 @@ class Bill extends Model
 
             //     $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
             //         null, null, null, null, null, null, null, null, null, null, null,
-            //         null, null, null
+            //         null, null, null, $visit_id
             //     );
 
             //     count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
