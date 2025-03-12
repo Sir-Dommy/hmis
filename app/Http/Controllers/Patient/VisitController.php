@@ -259,15 +259,17 @@ class VisitController extends Controller
 
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
 
-
+        $count = 0;
         foreach($payment_types as $payment_type){
 
             if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
+                $count += 10;
             }
     
             if($payment_type['insurance'] == 1){
                 $payment_method = "Insurance";
+                $count += 5;
                 !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
             }
     
@@ -285,6 +287,8 @@ class VisitController extends Controller
                 'payment_type_id' => $existing_method[0]['id']
             ]);
         }
+
+        throw new NotFoundException("COUNT TUMEPATA NI::::::" . $count);
 
         
     }
