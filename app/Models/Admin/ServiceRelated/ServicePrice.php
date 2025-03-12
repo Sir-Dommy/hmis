@@ -503,55 +503,55 @@ class ServicePrice extends Model
             }
 
             // here we should use patient details to get payment types
-            if($visit_id){
-                $existing_visit = Visit::selectVisits($visit_id);
+            // if($visit_id){
+            //     $existing_visit = Visit::selectVisits($visit_id);
     
-                count($existing_visit) < 1 ? throw new InputsValidationException("No visit with id ". $visit_id . " !!!") : null;
+            //     count($existing_visit) < 1 ? throw new InputsValidationException("No visit with id ". $visit_id . " !!!") : null;
     
-                if($existing_visit[0]['payment_types']){
-                    foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
+            //     if($existing_visit[0]['payment_types']){
+            //         foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
                         
-                        if($visit_payment_type->paymentType->name == APIConstants::NAME_CASH){
-                            $payment_type_to_use = $visit_payment_type->paymentType->name;
+            //             if($visit_payment_type->paymentType->name == APIConstants::NAME_CASH){
+            //                 $payment_type_to_use = $visit_payment_type->paymentType->name;
     
-                            //.$visit_payment_type->payment_type;
-                            $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
-                                $query->where('name',"$payment_type_to_use");
-                            });
-                        }
+            //                 //.$visit_payment_type->payment_type;
+            //                 $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
+            //                     $query->where('name',"$payment_type_to_use");
+            //                 });
+            //             }
     
-                        if($visit_payment_type->paymentType->name == APIConstants::NAME_INSURANCE){
-                            if($existing_visit[0]['schemes']){
+            //             if($visit_payment_type->paymentType->name == APIConstants::NAME_INSURANCE){
+            //                 if($existing_visit[0]['schemes']){
     
-                                foreach($existing_visit[0]['schemes'] as $visit_scheme){
+            //                     foreach($existing_visit[0]['schemes'] as $visit_scheme){
     
-                                    $scheme_to_use = $visit_scheme->scheme->name;
+            //                         $scheme_to_use = $visit_scheme->scheme->name;
     
-                                    // select using a scheme
-                                    $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
-                                        $query->where('name', "$scheme_to_use");
-                                    });
+            //                         // select using a scheme
+            //                         $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
+            //                             $query->where('name', "$scheme_to_use");
+            //                         });
 
 
-                                    $existing_scheme_type = SchemeTypes::where('id',$visit_scheme->scheme_type_id)
-                                        ->where('scheme_id', $visit_scheme->scheme->id)
-                                        ->get();
+            //                         $existing_scheme_type = SchemeTypes::where('id',$visit_scheme->scheme_type_id)
+            //                             ->where('scheme_id', $visit_scheme->scheme->id)
+            //                             ->get();
     
-                                    count($existing_scheme_type) < 1 ? throw new NotFoundException("Scheme type with id: ". $visit_scheme->scheme_type_id . " of scheme with id ". $visit_scheme->scheme->id . " does not exist") : null;
+            //                         count($existing_scheme_type) < 1 ? throw new NotFoundException("Scheme type with id: ". $visit_scheme->scheme_type_id . " of scheme with id ". $visit_scheme->scheme->id . " does not exist") : null;
     
-                                    $scheme_type_to_use = $existing_scheme_type[0]['name'];
+            //                         $scheme_type_to_use = $existing_scheme_type[0]['name'];
     
-                                    // select using scheme type
-                                    $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type_to_use) {
-                                        $query->where('name', "$scheme_type_to_use");
-                                    });
+            //                         // select using scheme type
+            //                         $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type_to_use) {
+            //                             $query->where('name', "$scheme_type_to_use");
+            //                         });
     
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
 
             if ($payment_type) {
                 $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
