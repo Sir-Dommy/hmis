@@ -151,7 +151,7 @@ class Visit extends Model
             'clinics' => $visit->visitClinics,
             'visit_type' => $visit->visitType ? $visit->visitType->name : null,
             'schemes' => $visit->visitInsuranceDetails,
-            'payment_types' => $visit->visitPaymentTypes- ? ,
+            'payment_types' => $visit->visitPaymentTypes->paymentTypes ? $visit->visitPaymentTypes->paymentTypes : [],
             'bill' => $visit->bills,
             'stage' => $visit->stage,
             'open' => $visit->open,
