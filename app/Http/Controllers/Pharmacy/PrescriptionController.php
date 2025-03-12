@@ -13,6 +13,7 @@ use App\Utils\APIConstants;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PrescriptionController extends Controller
 {
@@ -33,6 +34,13 @@ class PrescriptionController extends Controller
             foreach($request->service_price_details as $service_price_detail){
 
                 !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
+                $validator = Validator::make((array) $service_price_detail, [            
+                    'id' => 'required|exists:service_prices,id'
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
 
                 return $service_price_detail['id'];
 
