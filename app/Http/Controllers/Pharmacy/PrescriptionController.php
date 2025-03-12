@@ -103,7 +103,7 @@ class PrescriptionController extends Controller
                 foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
                     
                     if($visit_payment_type->paymentType->name == APIConstants::NAME_CASH){
-                        $payment_type_to_use = $visit_payment_type['name'];
+                        $payment_type_to_use = $visit_payment_type->paymentType->name;
 
                         return "PAYMENT TYPE TO USE ". $payment_type_to_use;
                         //.$visit_payment_type->payment_type;
