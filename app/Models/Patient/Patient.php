@@ -92,7 +92,7 @@ class Patient extends Model
 
         // adding sort by latest created visit first
         $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'DESC');
+            $query->orderBy('created_ats', 'DESC');
         });
 
         if($id != null){
