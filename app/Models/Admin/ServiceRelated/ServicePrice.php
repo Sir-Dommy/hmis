@@ -515,7 +515,7 @@ class ServicePrice extends Model
                             $payment_type_to_use = $visit_payment_type->paymentType->name;
     
                             //.$visit_payment_type->payment_type;
-                            $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
+                            $service_prices_query->orWhereHas('paymentType', function ($query) use ($payment_type_to_use) {
                                 $query->where('name',"$payment_type_to_use");
                             });
                         }
