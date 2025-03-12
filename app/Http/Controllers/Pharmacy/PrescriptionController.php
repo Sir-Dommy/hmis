@@ -34,6 +34,8 @@ class PrescriptionController extends Controller
 
                 !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
 
+                return $service_price_detail['id'];
+
                 Prescription::create([
                     'visit_id' => $request->visit_id,
                     'drug' => $request->drug,
