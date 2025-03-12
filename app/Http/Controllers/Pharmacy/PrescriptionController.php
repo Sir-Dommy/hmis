@@ -7,6 +7,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Bill\Bill;
+use App\Models\Patient\Visit;
 use App\Models\Pharmacy\Prescription;
 use App\Models\User;
 use App\Models\UserActivityLog;
@@ -36,23 +37,31 @@ class PrescriptionController extends Controller
                 !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
                 $validator = Validator::make((array) $service_price_detail, [            
                     'id' => 'required',
+                    'quantity' => 'required|numeric|min:0',
+                    'amount_to_pay' => 'required|numeric|min:0',
+                    'discount' => 'nullable|numeric|min:0',
                 ]);
 
                 if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
                 }
 
-                //$existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], )
+                $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null
+                );
+
+                count($existing_service_price_details) < 1 ? throw new NotFoundException("Service price with id: ".$service_price_detail['id']." does not exist!") : null;
 
                 return $service_price_detail['id'];
 
                 Prescription::create([
                     'visit_id' => $request->visit_id,
-                    'drug' => $request->drug,
-                    'drug_formula' => $request->drug_formula,
-                    'brand' => $request->brand,
-                    'dosage_instruction' => $request->dosage_instruction,
-                    'prescription_instruction' => $request->prescription_instruction,
+                    'drug' => $existing_service_price_details[0]['drug'],
+                    'drug_formula' => $service_price_detail['drug_formula'],
+                    'brand' => $existing_service_price_details[0]['brand'],
+                    'dosage_instruction' => $service_price_detail['dosage_instruction'],
+                    'prescription_instruction' => $service_price_detail['prescription_instruction'],
                     'status' => APIConstants::STATUS_PENDING,
                 ]);
 
@@ -81,6 +90,50 @@ class PrescriptionController extends Controller
             Prescription::selectPrescriptions(null, $request->visit_id)
         ,200);
 
+    }
+
+    // test function for looping through visit details to get payment types and schemes
+    public function test($visit_id){
+        if($visit_id){
+            $existing_visit = Visit::selectVisits($visit_id);
+
+            count($existing_visit) < 1 ? throw new InputsValidationException("No visit with id ". $visit_id . " !!!") : null;
+
+            if($existing_visit[0]['payment_types']){
+                foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
+                    if($visit_payment_type['name'] == APIConstants::NAME_CASH){
+                        $payment_type_to_use = $visit_payment_type['name'];
+                        // $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
+                        //     $query->where('name', 'like', "%$payment_type_to_use%");
+                        // });
+                    }
+
+                    if($visit_payment_type['name'] == APIConstants::NAME_INSURANCE){
+                        if($existing_visit[0]['schemes']){
+                            foreach($existing_visit[0]['schemes'] as $visit_scheme){
+                                $scheme_to_use = $visit_scheme['name'];
+
+                                // select using a scheme
+                                // $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
+                                //     $query->where('name', 'like', "%$scheme_to_use%");
+                                // });
+
+                                foreach($visit_scheme->schemeTypes as $visit_scheme_type){
+                                    $scheme_type_to_use = $visit_scheme_type['name'];
+
+                                    // select using scheme type
+                                    // $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type_to_use) {
+                                    //     $query->where('name', 'like', "%$scheme_type_to_use%");
+                                    // });
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     //updating prescription

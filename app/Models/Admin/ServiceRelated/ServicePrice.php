@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin\ServiceRelated;
 
+use App\Exceptions\InputsValidationException;
 use App\Models\Accounts\SubAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Brand;
@@ -17,6 +18,8 @@ use App\Models\Admin\Scheme;
 use App\Models\Admin\SchemeTypes;
 use App\Models\Admin\VisitType;
 use App\Models\Branch;
+use App\Models\Patient\Visit;
+use App\Utils\APIConstants;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -195,7 +198,7 @@ class ServicePrice extends Model
     //perform selection
     public static function selectServicePrice($id, $service, $department, $consultation_category, $clinic, $payment_type, $scheme, $scheme_type,
         $consultation_type, $visit_type, $doctor, $price_applies_from, $price_applies_to, $duration, $lab_test_type, $image_test_type, $drug_id, $brand, $branch, $building,
-        $wing, $ward, $office
+        $wing, $ward, $office, $visit_id
         ){
 
         $service_prices_query = ServicePrice::with([
@@ -253,6 +256,47 @@ class ServicePrice extends Model
                 });
             }
 
+            // here we should use patient details to get payment types
+            if($visit_id){
+                $existing_visit = Visit::selectVisits($visit_id);
+
+                count($existing_visit) < 1 ? throw new InputsValidationException("No visit with id ". $visit_id . " !!!") : null;
+
+                if($existing_visit[0]['payment_types']){
+                    foreach($existing_visit[0]['payment_types'] as $visit_payment_type){
+                        if($visit_payment_type['name'] == APIConstants::NAME_CASH){
+                            $payment_type_to_use = $visit_payment_type['name'];
+                            $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
+                                $query->where('name', 'like', "%$payment_type_to_use%");
+                            });
+                        }
+
+                        if($visit_payment_type['name'] == APIConstants::NAME_INSURANCE){
+                            if($existing_visit[0]['schemes']){
+                                foreach($existing_visit[0]['schemes'] as $visit_scheme){
+                                    $scheme_to_use = $visit_scheme['name'];
+
+                                    // select using a scheme
+                                    $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
+                                        $query->where('name', 'like', "%$scheme_to_use%");
+                                    });
+
+                                    foreach($visit_scheme->schemeTypes as $visit_scheme_type){
+                                        $scheme_type_to_use = $visit_scheme_type['name'];
+
+                                        // select using scheme type
+                                        $service_prices_query->whereHas('schemeType', function ($query) use ($scheme_type_to_use) {
+                                            $query->where('name', 'like', "%$scheme_type_to_use%");
+                                        });
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if ($payment_type) {
                 $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type) {
                     $query->where('name', 'like', "%$payment_type%");

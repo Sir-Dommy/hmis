@@ -11,6 +11,10 @@ Route::group(['prefix'=>'pharmacy'], function(){
         Route::post('/', [PrescriptionController::class, 'getAllPrescriptions']);
         Route::post('softDelete', [PrescriptionController::class, 'softDeletePrescription']);
         Route::post('permanentlyDelete', [PrescriptionController::class, 'permanentlyDeletePrescription']);
+
+
+        //test route
+        Route::post('test', [PrescriptionController::class, 'test']);
     });
 
     
