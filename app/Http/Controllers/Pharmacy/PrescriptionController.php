@@ -123,7 +123,6 @@ class PrescriptionController extends Controller
                                 // $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
                                 //     $query->where('name', 'like', "%$scheme_to_use%");
                                 // });
-                                return "OUR SCHEME TYPE ID IS : ". $visit_scheme->scheme_type_id;
                                 $existing_scheme_type = SchemeTypes::where('id',$visit_scheme->scheme_type_id)
                                     ->where('scheme_id', $visit_scheme->scheme->id)
                                     ->get();
