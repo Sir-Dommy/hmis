@@ -116,7 +116,7 @@ class PrescriptionController extends Controller
 
                             foreach($existing_visit[0]['schemes'] as $visit_scheme){
 
-                                return "SINGLE VISIT SCHEME ". $visit_scheme;
+                                return "SINGLE VISIT SCHEME NAME ". $visit_scheme->scheme->name;
                                 $scheme_to_use = $visit_scheme['name'];
 
                                 // select using a scheme
