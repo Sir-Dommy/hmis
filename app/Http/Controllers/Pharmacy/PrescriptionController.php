@@ -19,11 +19,11 @@ class PrescriptionController extends Controller
     
     // create prescription
     public function createPrescription(Request $request){
-        $request->validate([
-            'visit_id' => 'required|exists:visits,id',
-            'drug' => 'required|exists:drugs,name',
-            'service_price_details' => 'required|array',
-        ]);
+        // $request->validate([
+        //     'visit_id' => 'required|exists:visits,id',
+        //     'drug' => 'required|exists:drugs,name',
+        //     'service_price_details' => 'required|array',
+        // ]);
 
         try{
             DB::beginTransaction();
