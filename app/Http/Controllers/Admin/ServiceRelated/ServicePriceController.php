@@ -319,7 +319,7 @@ class ServicePriceController extends Controller
             'department' => 'nullable|exists:departments,name',
             'consultation_category' => 'nullable|exists:consultation_categories,name',
             'clinic' => 'nullable|exists:clinics,name',
-            'payment_type' => 'nullable|exists:payment_types,name',
+            'payment_type' => 'required|exists:payment_types,name',
             'scheme' => 'nullable|exists:schemes,name',
             'scheme_type' => 'nullable|exists:scheme_types,name',
             'consultation_type' => 'nullable|exists:consultation_types,name',
