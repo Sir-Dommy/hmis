@@ -90,10 +90,7 @@ class Patient extends Model
             'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->whereNull('patients.deleted_by');
 
-        // adding sort by latest created visit first
-        // $patients_query->whereHas('visits', function ($query) {
-        //     $query->orderBy('created_ats', 'DESC');
-        // });
+        
         $patients_query->with(['visits' => function ($query) {
             $query->orderBy('created_at', 'DESC'); // Order visits by latest first
         }]);
@@ -177,10 +174,10 @@ class Patient extends Model
 
         count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
 
-        // adding sort by latest created visit first
-        $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'DESC');
-        });
+        // adding sort by latest created visit first        
+        $patients_query->with(['visits' => function ($query) {
+            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }]);
 
         foreach($existing_employee[0]['departments'] as $department){
             // $department->pivot->department_id
@@ -247,9 +244,10 @@ class Patient extends Model
             ->orWhere('patients.patient_code', 'LIKE', '%'.$value.'%');
         });
 
-        $patients_query->whereHas('visits', function ($query) {
-            $query->orderBy('created_at', 'DESC');
-        });
+        
+        $patients_query->with(['visits' => function ($query) {
+            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }]);
 
 
 
