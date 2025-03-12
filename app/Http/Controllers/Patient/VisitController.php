@@ -268,7 +268,7 @@ class VisitController extends Controller
     
             else if($payment_type['insurance'] == 1){
                 $payment_method = "Insurance";
-                
+                throw new InputsValidationException("INSURANCE IKOOOO!!!!!");
                 !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
             }
     
