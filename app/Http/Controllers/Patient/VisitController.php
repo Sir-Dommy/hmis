@@ -259,35 +259,46 @@ class VisitController extends Controller
 
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
 
-        $count = 0 ;
         foreach($payment_types as $payment_type){
-            $count += 20;
             $payment_method = "";
             if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
+    
+                $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+        
+                if(count($existing_method) < 1){
+                    DB::rollBack();
+                    
+                    throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
+        
+                }
+        
+                VisitPaymentType::create([
+                    'visit_id' => $visit_id,
+                    'payment_type_id' => $existing_method[0]['id']
+                ]);
             }
     
             if($payment_type['insurance'] == 1){
                 $payment_method = "Insurance";
                 !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
+    
+                $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+        
+                if(count($existing_method) < 1){
+                    DB::rollBack();
+                    
+                    throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
+        
+                }
+        
+                VisitPaymentType::create([
+                    'visit_id' => $visit_id,
+                    'payment_type_id' => $existing_method[0]['id']
+                ]);
             }
-    
-            $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
-    
-            if(count($existing_method) < 1){
-                DB::rollBack();
-                
-                throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
-    
-            }
-    
-            VisitPaymentType::create([
-                'visit_id' => $visit_id,
-                'payment_type_id' => $existing_method[0]['id']
-            ]);
         }
 
-        throw new NotFoundException("COUNT YETU NI::::: ".$count);
 
         
     }
