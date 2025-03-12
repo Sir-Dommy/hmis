@@ -116,7 +116,7 @@ class PrescriptionController extends Controller
 
                             foreach($existing_visit[0]['schemes'] as $visit_scheme){
 
-                                $scheme_to_use = $$visit_scheme->scheme->name;
+                                $scheme_to_use = $visit_scheme->scheme->name;
 
                                 // select using a scheme
                                 // $service_prices_query->whereHas('scheme', function ($query) use ($scheme_to_use) {
