@@ -105,15 +105,16 @@ class PrescriptionController extends Controller
                     if($visit_payment_type->paymentType->name == APIConstants::NAME_CASH){
                         $payment_type_to_use = $visit_payment_type->paymentType->name;
 
-                        return "PAYMENT TYPE TO USE ". $payment_type_to_use;
                         //.$visit_payment_type->payment_type;
                         // $service_prices_query->whereHas('paymentType', function ($query) use ($payment_type_to_use) {
                         //     $query->where('name', 'like', "%$payment_type_to_use%");
                         // });
                     }
 
-                    if($visit_payment_type['name'] == APIConstants::NAME_INSURANCE){
+                    if($visit_payment_type->paymentType->name == APIConstants::NAME_INSURANCE){
                         if($existing_visit[0]['schemes']){
+
+                            return "EXISTING SCHEMES ". $existing_visit[0]['schemes'];
                             foreach($existing_visit[0]['schemes'] as $visit_scheme){
                                 $scheme_to_use = $visit_scheme['name'];
 
