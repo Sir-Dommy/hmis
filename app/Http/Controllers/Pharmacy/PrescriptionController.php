@@ -114,8 +114,9 @@ class PrescriptionController extends Controller
                     if($visit_payment_type->paymentType->name == APIConstants::NAME_INSURANCE){
                         if($existing_visit[0]['schemes']){
 
-                            return "EXISTING SCHEMES ". $existing_visit[0]['schemes'];
                             foreach($existing_visit[0]['schemes'] as $visit_scheme){
+
+                                return "SINGLE VISIT SCHEME ". $visit_scheme;
                                 $scheme_to_use = $visit_scheme['name'];
 
                                 // select using a scheme
