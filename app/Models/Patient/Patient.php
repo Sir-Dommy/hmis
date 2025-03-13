@@ -245,9 +245,9 @@ class Patient extends Model
         });
 
         
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }]);
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        // }]);
 
 
 
