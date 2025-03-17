@@ -68,7 +68,7 @@ class Scheme extends Model
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email',
-            'schemeTypes:id,scheme_id,name',
+            'schemeTypes:id,scheme_id,name,max_visits_per_year,max_amount_per_visit',
             'paymentTypes:id,name',
             'paymentPath:id,name'
         ])->whereNull('schemes.deleted_by')
