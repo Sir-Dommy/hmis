@@ -4,7 +4,6 @@ namespace App\Models\Bill;
 
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
-use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Patient\Visit;
 use App\Models\User;
@@ -138,10 +137,12 @@ class Bill extends Model
     
             foreach($request->service_price_details as $service_price_detail){
 
+                !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
+
                 // custom selection.......
                 $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null
+                    null, null, null, $visit_id
                 );
 
                 //test commit2
@@ -210,7 +211,7 @@ class Bill extends Model
 
             //     $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
             //         null, null, null, null, null, null, null, null, null, null, null,
-            //         null, null, null
+            //         null, null, null, $visit_id
             //     );
 
             //     count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;

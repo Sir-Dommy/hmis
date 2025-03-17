@@ -43,7 +43,7 @@ class ServicePriceController extends Controller
 
         $all = ServicePrice::selectServicePrice(null, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null
+        null, null, null, null
         );
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all Service Prices");
@@ -57,7 +57,7 @@ class ServicePriceController extends Controller
         
         $all = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
         null, null, null, null, null, null,  null, null, null, null, null, null,
-        null, null, null
+        null, null, null, null
         );
 
         count($all) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
@@ -148,7 +148,7 @@ class ServicePriceController extends Controller
         return response()->json(
                 ServicePrice::selectServicePrice($created->id, null, null, null, null, null, null, null,
                 null, null, null, null,  null, null, null, null, null, null, null, null,
-                null, null, null)
+                null, null, null, null)
             ,200);
     }
 
@@ -167,7 +167,7 @@ class ServicePriceController extends Controller
         return response()->json(
             ServicePrice::selectServicePrice($request->id, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null)
+                null, null, null, null)
             ,200);
 
     }
@@ -178,7 +178,7 @@ class ServicePriceController extends Controller
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
             null, null, null, null, null, null,  null, null, null, null, null, null,
-            null, null, null
+            null, null, null, null
         );
         
         if(count($existing) == 0){
@@ -199,7 +199,7 @@ class ServicePriceController extends Controller
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null
+                null, null, null, null
             )
             ,200);
     }
@@ -210,7 +210,7 @@ class ServicePriceController extends Controller
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
             null, null, null, null,  null, null, null, null, null, null, null, null,
-            null, null, null
+            null, null, null, null
         );
         
         if(count($existing) == 0){
@@ -231,7 +231,7 @@ class ServicePriceController extends Controller
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null
+                null, null, null, null
             )
             ,200);
     }
@@ -242,7 +242,7 @@ class ServicePriceController extends Controller
 
         $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null
+            null, null, null, null
         );
         
         if(count($existing) == 0){
@@ -259,10 +259,7 @@ class ServicePriceController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Soft deleted a service price with id: ". $id);
 
         return response()->json(
-            ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null
-            )
+            []
             ,200);
     }
 
@@ -290,7 +287,7 @@ class ServicePriceController extends Controller
         return response()->json(
             ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null
+                null, null, null, null
             ) 
             ,200);
     }
@@ -299,10 +296,7 @@ class ServicePriceController extends Controller
     public function permanentDeleteServicePrice($id){
         
 
-        $existing = ServicePrice::selectServicePrice($id, null, null, null, null, null, null, null,
-            null, null, null, null, null,  null, null, null, null, null, null, null,
-            null, null, null
-        );
+        $existing = $existing = ServicePrice::where('id', $id)->get();
             
         if(count($existing) == 0){
             throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE);
@@ -325,7 +319,7 @@ class ServicePriceController extends Controller
             'department' => 'nullable|exists:departments,name',
             'consultation_category' => 'nullable|exists:consultation_categories,name',
             'clinic' => 'nullable|exists:clinics,name',
-            'payment_type' => 'nullable|exists:payment_types,name',
+            'payment_type' => 'required|exists:payment_types,name',
             'scheme' => 'nullable|exists:schemes,name',
             'scheme_type' => 'nullable|exists:scheme_types,name',
             'consultation_type' => 'nullable|exists:consultation_types,name',
@@ -459,7 +453,7 @@ class ServicePriceController extends Controller
         // check if service price exists
         $existing_price = ServicePrice::selectServicePrice(null, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $request->scheme, $request->scheme_type,
             $request->consultation_type, $request->visit_type, $request->doctor, $request->price_applies_from, $request->price_applies_to, $request->duration, $request->lab_test_type, $request->image_test_type, $request->drug_id, $request->brand, $request->branch, $request->building,
-            $request->wing, $request->ward, $request->office
+            $request->wing, $request->ward, $request->office, null
          );
 
         //  $existing_price = json_decode($existing_price); // Decode the JSON response into an associative array

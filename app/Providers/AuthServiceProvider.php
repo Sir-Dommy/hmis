@@ -7,15 +7,24 @@ namespace App\Providers;
 use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\Units;
 use App\Models\Admin\Clinic;
+use App\Models\Admin\ConsultationType;
+use App\Models\Admin\Diagnosis;
+use App\Models\Admin\ImageTestClass;
+use App\Models\Admin\ImageTestRequest;
+use App\Models\Admin\ImageTestType;
 use App\Models\Admin\InsuranceMemberShip;
+use App\Models\Admin\LabTestClass;
+use App\Models\Admin\LabTestRequest;
+use App\Models\Admin\LabTestType;
 use App\Models\Admin\PaymentType;
+use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\ServiceRelated\Service;
+use App\Models\Admin\Symptom;
 use App\Models\Admin\VisitType;
 use App\Models\Branch;
 use App\Models\PaymentPath;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider
@@ -54,6 +63,16 @@ class AuthServiceProvider extends ServiceProvider
         $this->createDefaultMainAccounts($user[0]['id']);
 
         $this->createDefaultUnits($user[0]['id']);
+
+        $this->createDefaultConsultationTypes($user[0]['id']);
+
+        $this->createDefaultSymptoms($user[0]['id']);
+
+        $this->createDefaultPhysicalExaminations($user[0]['id']);
+
+        $this->createDefaultDiagnosis($user[0]['id']);
+
+        $this->createDefaultLabAndImagingDetails($user[0]['id']);
 
     }
 
@@ -289,5 +308,121 @@ class AuthServiceProvider extends ServiceProvider
             "created_by" => $user_id
         ]);
 
+    }
+
+    private function createDefaultConsultationTypes($user_id){
+        ConsultationType::firstOrCreate([
+            "name" => "General Consultation",
+            "description" => "Default",
+            "created_by" => $user_id
+        ]);
+
+        ConsultationType::firstOrCreate([
+            "name" => "Specialist Consultation",
+            "description" => "Default Specialist Consultation",
+            "created_by" => $user_id
+        ]);
+
+        ConsultationType::firstOrCreate([
+            "name" => "Follow Up",
+            "description" => "Default Follow up",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultSymptoms($user_id){
+        Symptom::firstOrCreate([
+            "name" => "Headache",
+            "created_by" => $user_id
+        ]);
+
+        Symptom::firstOrCreate([
+            "name" => "Chest pain",
+            "created_by" => $user_id
+        ]);
+
+        Symptom::firstOrCreate([
+            "name" => "Fever",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultPhysicalExaminations($user_id){
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "General exam",
+            "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "Central Nervous System",
+            "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+
+        PhysicalExaminationType::firstOrCreate([
+            "name" => "Respiratory System",
+            "description" => "Default Physical examination type",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultDiagnosis($user_id){
+        Diagnosis::firstOrCreate([
+            "name" => "Malaria",
+            "description" => "Malaria",
+            "created_by" => $user_id
+        ]);
+
+        Diagnosis::firstOrCreate([
+            "name" => "Asthma",
+            "description" => "Asthma",
+            "created_by" => $user_id
+        ]);
+
+        Diagnosis::firstOrCreate([
+            "name" => "Pneumonia",
+            "description" => "Pneumonia",
+            "created_by" => $user_id
+        ]);
+    }
+
+
+    private function createDefaultLabAndImagingDetails($user_id){
+        LabTestType::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        LabTestClass::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        LabTestRequest::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestType::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestClass::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
+
+        ImageTestRequest::firstOrCreate([
+            "name" => "Test",
+            "description" => "Created by default",
+            "created_by" => $user_id
+        ]);
     }
 }

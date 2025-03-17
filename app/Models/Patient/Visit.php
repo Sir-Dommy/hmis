@@ -4,10 +4,15 @@ namespace App\Models\Patient;
 
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
+use App\Models\Doctor\Consultation;
+use App\Models\Laboratory\OrderedTests;
+use App\Models\Nurse\NurseInstruction;
+use App\Models\Patient\Visits\AppointmentFollowUps;
 use App\Models\Patient\Visits\VisitClinic;
 use App\Models\Patient\Visits\VisitDepartment;
 use App\Models\Patient\Visits\VisitInsuranceDetail;
 use App\Models\Patient\Visits\VisitPaymentType;
+use App\Models\Pharmacy\Prescription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,12 +72,43 @@ class Visit extends Model
         return $this->hasMany(Bill::class, 'visit_id', 'id');
     }
 
-    //relationship with department
+    //relationship with visit types
     public function visitType()
     {
         return $this->belongsTo(VisitType::class, 'visit_type_id');
     }
 
+
+    public function consultation()
+    {
+        return $this->hasMany(Consultation::class, 'visit_id', 'id');
+    }
+
+
+    public function orderTests()
+    {
+        return $this->hasMany(OrderedTests::class, 'visit_id', 'id');
+    }
+
+
+    public function prescription()
+    {
+        return $this->hasMany(Prescription::class, 'visit_id', 'id');
+    }
+
+
+    public function nurseOrders()
+    {
+        return $this->hasMany(NurseInstruction::class, 'visit_id', 'id');
+    }
+
+
+    public function followUps()
+    {
+        return $this->hasMany(AppointmentFollowUps::class, 'visit_id', 'id');
+    }
+
+    
 
     public function createdBy()
     {
@@ -106,9 +142,11 @@ class Visit extends Model
             'visitType:id,name',
             'visitClinics.clinic:id,name',
             'visitDepartments.department:id,name',
+            'visitPaymentTypes:id,visit_id,payment_type_id',
             'visitPaymentTypes.paymentType:id,name',
-            'visitInsuranceDetails:id,visit_id,scheme_id,claim_number,available_balance,signature',
+            'visitInsuranceDetails:id,visit_id,scheme_id,scheme_type_id,claim_number,available_balance,signature',
             'visitInsuranceDetails.scheme:id,name',
+            'visitInsuranceDetails.scheme.schemeTypes:id,name',
             'bills:id,visit_id,bill_reference_number',
             'bills.billItems:id,bill_id,status,offer_status,service_item_id',
             'bills.billItems.serviceItem:id,service_id',

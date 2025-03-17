@@ -17,4 +17,6 @@ class SchemeTypes extends Model
         "scheme_id"
     ];
 
+    
+
 }

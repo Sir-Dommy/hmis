@@ -13,6 +13,7 @@ class ConsultationPhysicalExaminationsJoin extends Model
 
     protected $fillable = [
         'consultation_id',
-        'physical_examination_id'
+        'physical_examination_id',
+        'findings'
     ];
 }

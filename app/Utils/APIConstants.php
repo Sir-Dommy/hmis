@@ -77,6 +77,9 @@ class APIConstants
     public const NAME_MAIN_ACCOUNT = 'Main account';
     public const NAME_SUB_ACCOUNT = 'Sub account';
     public const NAME_UNIT = 'Unit';
+    public const NAME_PRESCRIPTION = 'Prescription';
+    public const NAME_CASH = 'Cash';
+    public const NAME_INSURANCE = 'Insurance';
 
     //mark up and discount calculation types
     public const NAME_PERCENTAGE = 'Percentage';
