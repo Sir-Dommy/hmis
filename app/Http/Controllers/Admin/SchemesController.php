@@ -103,7 +103,6 @@ class SchemesController extends Controller
                 foreach ($request->scheme_types as $type){
                     $validator = Validator::make((array) $type, [
                         'name' => 'required|unique:scheme_types,name',
-                        'scheme_id' => 'required|exists:schemes,id',
                         'max_visits_per_visit' => 'nullable|numeric|min:0',
                         'max_amount_per_visit' => 'nullable|numeric|min:0',
                     ]);
@@ -206,7 +205,6 @@ class SchemesController extends Controller
                     $validator = Validator::make((array) $type, [
                         'id' => 'nullable:exists:scheme_types,id',
                         'name' => 'required',
-                        'scheme_id' => 'required|exists:schemes,id',
                         'max_visits_per_visit' => 'nullable|numeric|min:0',
                         'max_amount_per_visit' => 'nullable|numeric|min:0',
                     ]);
