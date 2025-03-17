@@ -14,6 +14,7 @@ use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SchemesController extends Controller
 {
@@ -95,11 +96,24 @@ class SchemesController extends Controller
 
         else{
             foreach ($request->scheme_types as $type){
-                $this->schemeTypeExits($type->name) ? null :
+                $validator = Validator::make((array) $type, [
+                    'name' => 'required|unique:scheme_types,name',
+                    'scheme_id' => 'required|exists:schemes,id',
+                    'max_visits_per_visit' => 'nullable|numeric|min:0',
+                    'max_amount_per_visit' => 'nullable|numeric|min:0',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                count(SchemeTypes::where('name', $type->name)->where('scheme_id', $request->id)->get('id')) > 0 ? null :
                     SchemeTypes::create([
                         "name" => $type->name,
                         "Description" => $type->description,
-                        "scheme_id" => $created->id
+                        "scheme_id" => $created->id,
+                        'max_visits_per_visit' => $type->max_visits_per_visit,
+                        'max_amount_per_visit' => $type->max_amount_per_visit,
                     ]);
             }
         }
@@ -167,12 +181,40 @@ class SchemesController extends Controller
             // add related scheme types
         if($request->scheme_types){
             foreach ($request->scheme_types as $type){
-                $this->schemeTypeExits($type->name) ? null :
-                    SchemeTypes::create([
-                        "name" => $type->name,
-                        "Description" => $type->description,
-                        "scheme_id" => $existing[0]['id']
-                    ]);
+                $validator = Validator::make((array) $type, [
+                    'id' => 'nullable:exists:scheme_types,id',
+                    'name' => 'required',
+                    'scheme_id' => 'required|exists:schemes,id',
+                    'max_visits_per_visit' => 'nullable|numeric|min:0',
+                    'max_amount_per_visit' => 'nullable|numeric|min:0',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                $existing_scheme_type = SchemeTypes::where('name', $type->name)->where('scheme_id', $request->id)->get('id');
+
+                if(count($existing_scheme_type) > 0 && $existing_scheme_type[0]['id'] != $type->id){
+                    throw new InputsValidationException("Scheme type with name ".$type->name." Already exists");
+                }
+
+                $type->id ? SchemeTypes::where('id', $type->id)
+                                ->update([
+                                    "name" => $type->name,
+                                    "Description" => $type->description,
+                                    "scheme_id" => $request->id,
+                                    'max_visits_per_visit' => $type->max_visits_per_visit,
+                                    'max_amount_per_visit' => $type->max_amount_per_visit,
+                                ])
+                            : 
+                            SchemeTypes::create([
+                                "name" => $type->name,
+                                "Description" => $type->description,
+                                "scheme_id" => $request->id,
+                                'max_visits_per_visit' => $type->max_visits_per_visit,
+                                'max_amount_per_visit' => $type->max_amount_per_visit,
+                            ]);
             }
         }
 
