@@ -79,16 +79,20 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeTypes:id,name', 
-            'visits:id,patient_id,stage,open',
-            'visits.visitType:id,name',
-            'visits.visitClinics.clinic:id,name',
-            'visits.visitDepartments.department:id,name',
-            'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by');
+            'insuranceDetails.schemeTypes:id,name',  
+            // 'visits:id,patient_id,stage,open',
+            // 'visits.visitType:id,name',
+            // 'visits.visitClinics.clinic:id,name',
+            // 'visits.visitDepartments.department:id,name',
+            // 'visits.visitPaymentTypes.paymentType:id,name',
+            // 'visits.visitInsuranceDetails.scheme:id,name',
+            // 'visits.bills.billItems.serviceItem.service:id,name',
+            // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }])
+        ->whereNull('patients.deleted_by');
 
         
         $patients_query->with(['visits' => function ($query) {
@@ -141,17 +145,20 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeTypes:id,name', 
-            'visits:id,patient_id,stage,open',
-            'visits.visitType:id,name',
-            'visits.visitClinics.clinic:id,name',
-            'visits.visitDepartments.department:id,name',
-            'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems.serviceItem:id,department_id',
-            'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by');
+            'insuranceDetails.schemeTypes:id,name',  
+            // 'visits:id,patient_id,stage,open',
+            // 'visits.visitType:id,name',
+            // 'visits.visitClinics.clinic:id,name',
+            // 'visits.visitDepartments.department:id,name',
+            // 'visits.visitPaymentTypes.paymentType:id,name',
+            // 'visits.visitInsuranceDetails.scheme:id,name',
+            // 'visits.bills.billItems.serviceItem.service:id,name',
+            // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }])
+        ->whereNull('patients.deleted_by');
 
         // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
 
