@@ -64,6 +64,7 @@ class SchemesController extends Controller
             'username' => 'string|min:3|max:255',
             'password' => 'string|min:3|max:255',
             'description' => 'string|max:1000',
+            'scheme_types' => 'nullable|array',
         ]);
 
     
@@ -143,6 +144,7 @@ class SchemesController extends Controller
             'username' => 'string|min:3|max:255',
             'password' => 'string|min:3|max:255',
             'description' => 'string|max:1000',
+            'scheme_types' => 'nullable|array',
         ]);
 
         $existing = Scheme::where('name', $request->name)
