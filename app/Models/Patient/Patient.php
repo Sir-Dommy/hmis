@@ -220,15 +220,19 @@ class Patient extends Model
             'insuranceDetails.schemeTypes:id,name',  
             'insuranceDetails.schemes:id,name',  
             'insuranceDetails.schemeTypes:id,name', 
-            'visits:id,patient_id,stage,open',
-            'visits.visitType:id,name',
-            'visits.visitClinics.clinic:id,name',
-            'visits.visitDepartments.department:id,name',
-            'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by')
+            // 'visits:id,patient_id,stage,open',
+            // 'visits.visitType:id,name',
+            // 'visits.visitClinics.clinic:id,name',
+            // 'visits.visitDepartments.department:id,name',
+            // 'visits.visitPaymentTypes.paymentType:id,name',
+            // 'visits.visitInsuranceDetails.scheme:id,name',
+            // 'visits.bills.billItems.serviceItem.service:id,name',
+            // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }])
+        ->whereNull('patients.deleted_by')
             ->where(function ($query) use ($value) {
             $query->whereHas('insuranceDetails', function ($query) use ($value) {
                 $query->where('insurance_details.principal_member_number', 'LIKE', '%' . $value . '%');
@@ -245,9 +249,9 @@ class Patient extends Model
         });
 
         
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }])->whereHas('visits');
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        // }])->whereHas('visits');
 
 
 
