@@ -111,9 +111,9 @@ class SchemesController extends Controller
                         return response()->json(['errors' => $validator->errors()], 422);
                     }
     
-                    count(SchemeTypes::where('name', $type->name)->where('scheme_id', $request->id)->get('id')) > 0 ? null :
+                    count(SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id')) > 0 ? null :
                         SchemeTypes::create([
-                            "name" => $type->name,
+                            "name" => $type['name'],
                             "Description" => $type->description,
                             "scheme_id" => $created->id,
                             'max_visits_per_visit' => $type->max_visits_per_visit,
