@@ -73,7 +73,7 @@ class ServicePriceController extends Controller
         $request->validate([
             'service' => 'required|exists:services,name',
             'category' => 'required|string|in:Drug,Non-Drug,Others',
-            'unit' => 'required|exists:units,name',
+            'unit' => 'nullable|exists:units,name',
             'smallest_sellable_quantity' => 'required|numeric|min:0',
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
