@@ -63,6 +63,7 @@ class DrugsController extends Controller
             $request->merge([            
                 'category' => 'Drug',
                 'drug' => $request->name,
+                'cost_price' => $request->price_per_item,
             ]);
     
             $service_price_controller->createServicePrice($request);
