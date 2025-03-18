@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\Units;
+use App\Models\Admin\Brand;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
 use App\Models\Admin\Diagnosis;
@@ -50,6 +51,8 @@ class AuthServiceProvider extends ServiceProvider
         $user = User::where('email', 'maimoon@maimoon.com')->get();
 
         $this->createDefaultClinics($user[0]['id']);
+
+        $this->createDefaultBrand($user[0]['id']);
 
         $this->createDefaultPaymentTypes($user[0]['id']);
 
@@ -182,6 +185,14 @@ class AuthServiceProvider extends ServiceProvider
         Clinic::firstOrCreate([
             "name" => "Other",
             "description" => "Any other not yet listed",
+            "created_by" => $user_id
+        ]);
+    }
+
+    private function createDefaultBrand($user_id){
+        Brand::firstOrCreate([
+            "name" => "Test",
+            "description" => "This is a test brand",
             "created_by" => $user_id
         ]);
     }
