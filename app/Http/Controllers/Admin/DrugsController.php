@@ -29,15 +29,15 @@ class DrugsController extends Controller
 
         $brand = Brand::selectBrands(null, $request->brand);
 
-        Drug::create([
-            'name' => $request->name, 
-            "brand_id" => $brand[0]['id'],
-            "amount_in_stock" => $request->amount_in_stock,
-            "price_per_item" => $request->price_per_item,
-            "description" => $request->description,
-            "expiry_date" => $request->expiry_date,
-            'created_by' => User::getLoggedInUserId()
-        ]);
+        // Drug::create([
+        //     'name' => $request->name, 
+        //     "brand_id" => $brand[0]['id'],
+        //     "amount_in_stock" => $request->amount_in_stock,
+        //     "price_per_item" => $request->price_per_item,
+        //     "description" => $request->description,
+        //     "expiry_date" => $request->expiry_date,
+        //     'created_by' => User::getLoggedInUserId()
+        // ]);
 
         $service_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServiceController::class);
 
@@ -49,7 +49,7 @@ class DrugsController extends Controller
 
         $this->createService($service_controller, $request);
 
-        return "TEST 1";
+        return $service_controller->testFunction();
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 

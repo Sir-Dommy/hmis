@@ -38,11 +38,14 @@ class ServiceController extends Controller
         return response()->json(
                 $all ,200);
     }
+
+    public function testFunction(){
+        return "SENOR";
+    }
     
     //create a service
     public function createService(Request $request){
 
-        return "WE ARE HERE!!!!!!!";
         $request->validate([
             'name' => 'required|string|unique:services,name',
             'service_price_affected_by_time' => 'boolean', //boolean'
