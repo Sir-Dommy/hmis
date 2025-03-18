@@ -41,6 +41,8 @@ class ServiceController extends Controller
     
     //create a service
     public function createService(Request $request){
+
+        return "WE ARE HERE!!!!!!!";
         $request->validate([
             'name' => 'required|string|unique:services,name',
             'service_price_affected_by_time' => 'boolean', //boolean'
