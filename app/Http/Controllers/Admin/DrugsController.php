@@ -20,10 +20,10 @@ class DrugsController extends Controller
         $request->validate([
             "brand" => 'string|min:1|max:255|exists:brands,name',
             "name" => 'required|string|min:1|max:255|unique:drugs,name',
-            "in_stock" => 'required|integer|min:0',
+            "amount_in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "description" =>'string|min:1|max:255',
-            "expiry_date" =>'required|date',
+            "expiry_date" =>'required|date|after_or_equal:today',
         ]);
 
         $brand = Brand::selectBrands(null, $request->brand);
@@ -31,7 +31,7 @@ class DrugsController extends Controller
         Drug::create([
             'name' => $request->name, 
             "brand_id" => $brand[0]['id'],
-            "in_stock" => $request->in_stock,
+            "amount_in_stock" => $request->in_stock,
             "price_per_item" => $request->price_per_item,
             "description" => $request->description,
             "expiry_date" => $request->expiry_date,
