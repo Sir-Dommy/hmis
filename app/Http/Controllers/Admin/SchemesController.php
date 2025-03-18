@@ -114,10 +114,10 @@ class SchemesController extends Controller
                     count(SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id')) > 0 ? null :
                         SchemeTypes::create([
                             "name" => $type['name'],
-                            "Description" => $type->description,
+                            "Description" => $type['description'],
                             "scheme_id" => $created->id,
-                            'max_visits_per_visit' => $type->max_visits_per_visit,
-                            'max_amount_per_visit' => $type->max_amount_per_visit,
+                            'max_visits_per_visit' => $type['max_visits_per_visit'],
+                            'max_amount_per_visit' => $type['max_amount_per_visit'],
                         ]);
                 }
             }
