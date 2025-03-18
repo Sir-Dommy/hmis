@@ -115,8 +115,8 @@ class SchemesController extends Controller
                         SchemeTypes::create([
                             "name" => $type['name'],
                             "scheme_id" => $created->id,
-                            'max_visits_per_year' => $type['max_visits_per_year'],
-                            'max_amount_per_visit' => $type['max_amount_per_visit'],
+                            'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                            'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
                         ]);
                 }
             }
@@ -224,15 +224,15 @@ class SchemesController extends Controller
                                     ->update([
                                         "name" => $type['name'],
                                         "scheme_id" => $request->id,
-                                        'max_visits_per_year' => $type['max_visits_per_year'],
-                                        'max_amount_per_visit' => $type['max_amount_per_visit'],
+                                        'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                                        'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
                                     ])
                                 : 
                                 SchemeTypes::create([
                                     "name" => $type['name'],
                                     "scheme_id" => $request->id,
-                                    'max_visits_per_year' => $type['max_visits_per_year'],
-                                    'max_amount_per_visit' => $type['max_amount_per_visit'],
+                                    'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                                    'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
                                 ]);
                 }
             }
