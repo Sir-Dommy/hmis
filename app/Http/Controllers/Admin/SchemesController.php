@@ -220,7 +220,7 @@ class SchemesController extends Controller
                         throw new InputsValidationException("Scheme type with name ".$type['name']." Already exists");
                     }
 
-                    $type['id'] ? SchemeTypes::where('id', $type['id'])
+                    isset($type['id']) ? SchemeTypes::where('id', $type['id'])
                                     ->update([
                                         "name" => $type['name'],
                                         "scheme_id" => $request->id,
