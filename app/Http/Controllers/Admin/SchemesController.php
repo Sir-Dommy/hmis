@@ -114,7 +114,6 @@ class SchemesController extends Controller
                     count(SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id')) > 0 ? null :
                         SchemeTypes::create([
                             "name" => $type['name'],
-                            "Description" => isset($type['description']) ? $type['description'] : null,
                             "scheme_id" => $created->id,
                             'max_visits_per_visit' => $type['max_visits_per_visit'],
                             'max_amount_per_visit' => $type['max_amount_per_visit'],
@@ -213,27 +212,25 @@ class SchemesController extends Controller
                         return response()->json(['errors' => $validator->errors()], 422);
                     }
 
-                    $existing_scheme_type = SchemeTypes::where('name', $type->name)->where('scheme_id', $request->id)->get('id');
+                    $existing_scheme_type = SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id');
 
-                    if(count($existing_scheme_type) > 0 && $existing_scheme_type[0]['id'] != $type->id){
-                        throw new InputsValidationException("Scheme type with name ".$type->name." Already exists");
+                    if(count($existing_scheme_type) > 0 && $existing_scheme_type[0]['id'] != $type['id']){
+                        throw new InputsValidationException("Scheme type with name ".$type['name']." Already exists");
                     }
 
-                    $type->id ? SchemeTypes::where('id', $type->id)
+                    $type['id'] ? SchemeTypes::where('id', $type['id'])
                                     ->update([
-                                        "name" => $type->name,
-                                        "Description" => $type->description,
+                                        "name" => $type['name'],
                                         "scheme_id" => $request->id,
-                                        'max_visits_per_visit' => $type->max_visits_per_visit,
-                                        'max_amount_per_visit' => $type->max_amount_per_visit,
+                                        'max_visits_per_visit' => $type['max_visits_per_visit'],
+                                        'max_amount_per_visit' => $type['max_amount_per_visit'],
                                     ])
                                 : 
                                 SchemeTypes::create([
-                                    "name" => $type->name,
-                                    "Description" => $type->description,
+                                    "name" => $type['name'],
                                     "scheme_id" => $request->id,
-                                    'max_visits_per_visit' => $type->max_visits_per_visit,
-                                    'max_amount_per_visit' => $type->max_amount_per_visit,
+                                    'max_visits_per_visit' => $type['max_visits_per_visit'],
+                                    'max_amount_per_visit' => $type['max_amount_per_visit'],
                                 ]);
                 }
             }
