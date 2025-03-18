@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\NotFoundException;
+use App\Http\Controllers\Admin\ServiceRelated\ServiceController;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Drug;
@@ -37,6 +38,15 @@ class DrugsController extends Controller
             "expiry_date" => $request->expiry_date,
             'created_by' => User::getLoggedInUserId()
         ]);
+
+        $service_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServiceController::class);
+
+        $request->merge([
+            "service" => $request->name,
+            // "brand" => $request->brand,
+            "service_price_affected_by_time" => false
+        ]);
+        $service_controller->createService($request);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 
