@@ -49,6 +49,8 @@ class DrugsController extends Controller
 
         $this->createService($service_controller, $request);
 
+        return "TEST 1";
+
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 
         return response()->json(
