@@ -12,7 +12,10 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Mockery\CountValidator\Exact;
 
 class DrugsController extends Controller
 {
@@ -29,28 +32,54 @@ class DrugsController extends Controller
 
         $brand = Brand::selectBrands(null, $request->brand);
 
-        Drug::create([
-            'name' => $request->name, 
-            "brand_id" => $brand[0]['id'],
-            "amount_in_stock" => $request->amount_in_stock,
-            "price_per_item" => $request->price_per_item,
-            "description" => $request->description,
-            "expiry_date" => $request->expiry_date,
-            'created_by' => User::getLoggedInUserId()
-        ]);
+        try{
+            //begin transaction
+            DB::beginTransaction();
 
-        $service_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServiceController::class);
+            Drug::create([
+                'name' => $request->name, 
+                "brand_id" => $brand[0]['id'],
+                "amount_in_stock" => $request->amount_in_stock,
+                "price_per_item" => $request->price_per_item,
+                "description" => $request->description,
+                "expiry_date" => $request->expiry_date,
+                'created_by' => User::getLoggedInUserId()
+            ]);
+    
+            $service_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServiceController::class);
+    
+            $request->merge([
+                "service" => $request->name,
+                // "brand" => $request->brand,
+                "service_price_affected_by_time" => false
+            ]);
+    
+            $this->createService($service_controller, $request);
+    
+    
+            // create service prices
+            $service_price_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServicePriceController::class);
+    
+            $request->merge([            
+                'category' => 'Drug',
+                'drug' => $request->name,
+            ]);
+    
+            $service_price_controller->createService($request);
 
-        $request->merge([
-            "service" => $request->name,
-            // "brand" => $request->brand,
-            "service_price_affected_by_time" => false
-        ]);
+            
+            // commit transaction
+            DB::commit();
 
-        $this->createService($service_controller, $request);
+        }
 
-        // return $service_controller->testFunction();
+        catch(Exception $e){
+            // rollback transaction
+            DB::rollback();
 
+            throw new Exception($e);
+        }
+        
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 
         return response()->json(

@@ -85,7 +85,7 @@ class ServicePriceController extends Controller
             'asset_account' => 'required|exists:sub_accounts,name',
             'expense_account' => 'required|exists:sub_accounts,name',
             'expiry_date' => 'nullable|string',
-            'bar_code' => 'nullable|string',
+            'bar_code' => 'nullable|string'
         ]);
         
 
