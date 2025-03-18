@@ -31,7 +31,7 @@ class DrugsController extends Controller
         Drug::create([
             'name' => $request->name, 
             "brand_id" => $brand[0]['id'],
-            "amount_in_stock" => $request->in_stock,
+            "amount_in_stock" => $request->amount_in_stock,
             "price_per_item" => $request->price_per_item,
             "description" => $request->description,
             "expiry_date" => $request->expiry_date,
