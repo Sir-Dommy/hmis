@@ -16,6 +16,7 @@ use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\LabTestClass;
 use App\Models\Admin\LabTestRequest;
 use App\Models\Admin\LabTestType;
+use App\Models\Admin\MainServices;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\ServiceRelated\Service;
@@ -58,7 +59,9 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->createVisitTypes($user[0]['id']);
 
-        $this->createDefaultServices($user[0]['id']);
+        $this->createDefaultMainServices($user[0]['id']);
+
+        $this->createDefaultSubServices($user[0]['id']);
 
         $this->createDefaultMainAccounts($user[0]['id']);
 
@@ -230,10 +233,26 @@ class AuthServiceProvider extends ServiceProvider
 
     }
 
-    private function createDefaultServices($user_id){
+    private function createDefaultMainServices($user_id){
+        MainServices::firstOrCreate([
+            "name" => "Drug",
+            "description" => "This is a Drug main service",
+            "created_by" => $user_id
+        ]);
+
+        MainServices::firstOrCreate([
+            "name" => "Non Drug",
+            "description" => "This is a Non Drug main service",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultSubServices($user_id){
         Service::firstOrCreate([
             "name" => "Test",
             "description" => "This is a test service",
+            "main_service_id" => MainServices::where('name', 'Non Drug')->get('id')[0]['id'],
             "created_by" => $user_id
         ]);
 
