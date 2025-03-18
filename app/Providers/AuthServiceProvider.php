@@ -192,6 +192,7 @@ class AuthServiceProvider extends ServiceProvider
     private function createDefaultBrand($user_id){
         Brand::firstOrCreate([
             "name" => "Test",
+            "name" => "Test Company",
             "description" => "This is a test brand",
             "created_by" => $user_id
         ]);
