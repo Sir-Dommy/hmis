@@ -214,6 +214,8 @@ class SchemesController extends Controller
 
                     $existing_scheme_type = SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id');
 
+                    count($existing_scheme_type) > 0 && !isset($type['id']) ? throw new InputsValidationException("Provide id for scheme type ". $type['name'] ." if you want to update it ") : null;
+
                     if(count($existing_scheme_type) > 0 && $existing_scheme_type[0]['id'] != $type['id']){
                         throw new InputsValidationException("Scheme type with name ".$type['name']." Already exists");
                     }
