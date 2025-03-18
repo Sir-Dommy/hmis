@@ -46,7 +46,8 @@ class DrugsController extends Controller
             // "brand" => $request->brand,
             "service_price_affected_by_time" => false
         ]);
-        $service_controller->createService($request);
+
+        $this->createService($service_controller, $request);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 
@@ -197,5 +198,10 @@ class DrugsController extends Controller
         return response()->json(
             []
         ,200);
+    }
+
+    private function createService(ServiceController $service_controller, Request $request){
+        
+        $service_controller->createService($request);
     }
 }
