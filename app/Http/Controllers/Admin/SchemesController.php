@@ -103,7 +103,7 @@ class SchemesController extends Controller
                 foreach ($request->scheme_types as $type){
                     $validator = Validator::make((array) $type, [
                         'name' => 'required|unique:scheme_types,name',
-                        'max_visits_per_visit' => 'nullable|numeric|min:0',
+                        'max_visits_per_year' => 'nullable|numeric|min:0',
                         'max_amount_per_visit' => 'nullable|numeric|min:0',
                     ]);
     
@@ -115,7 +115,7 @@ class SchemesController extends Controller
                         SchemeTypes::create([
                             "name" => $type['name'],
                             "scheme_id" => $created->id,
-                            'max_visits_per_visit' => $type['max_visits_per_visit'],
+                            'max_visits_per_year' => $type['max_visits_per_year'],
                             'max_amount_per_visit' => $type['max_amount_per_visit'],
                         ]);
                 }
@@ -204,7 +204,7 @@ class SchemesController extends Controller
                     $validator = Validator::make((array) $type, [
                         'id' => 'nullable:exists:scheme_types,id',
                         'name' => 'required',
-                        'max_visits_per_visit' => 'nullable|numeric|min:0',
+                        'max_visits_per_year' => 'nullable|numeric|min:0',
                         'max_amount_per_visit' => 'nullable|numeric|min:0',
                     ]);
 
@@ -224,14 +224,14 @@ class SchemesController extends Controller
                                     ->update([
                                         "name" => $type['name'],
                                         "scheme_id" => $request->id,
-                                        'max_visits_per_visit' => $type['max_visits_per_visit'],
+                                        'max_visits_per_year' => $type['max_visits_per_year'],
                                         'max_amount_per_visit' => $type['max_amount_per_visit'],
                                     ])
                                 : 
                                 SchemeTypes::create([
                                     "name" => $type['name'],
                                     "scheme_id" => $request->id,
-                                    'max_visits_per_visit' => $type['max_visits_per_visit'],
+                                    'max_visits_per_year' => $type['max_visits_per_year'],
                                     'max_amount_per_visit' => $type['max_amount_per_visit'],
                                 ]);
                 }
