@@ -65,7 +65,7 @@ class DrugsController extends Controller
                 'drug' => $request->name,
             ]);
     
-            $service_price_controller->createService($request);
+            $service_price_controller->createServicePrice($request);
 
             
             // commit transaction
