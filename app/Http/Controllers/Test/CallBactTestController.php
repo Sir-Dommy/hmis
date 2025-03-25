@@ -7,5 +7,15 @@ use Illuminate\Http\Request;
 
 class CallBactTestController extends Controller
 {
-    //
+    //receive data from url
+    public function collect(Request $request)
+    {
+        $data = $request->all();
+        //write to file in storage folder
+        ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
+        $file = storage_path('callback/test/g_pay_collect.txt');
+        file_put_contents($file, json_encode($data));
+
+        return response()->json($data);
+    }
 }

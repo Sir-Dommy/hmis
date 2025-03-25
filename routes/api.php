@@ -26,6 +26,10 @@ Route::get('test', [AuthController::class, 'test']);
 Route::post('login', [AuthController::class, 'login']);
 
 
+//test callback routes for g_pay
+require_once __DIR__.'/routeCollection/callbackRoutes.php';
+
+
 // authenticated routes to require jwt validation
 Route::middleware('jwt.auth')->group(function(){
 
