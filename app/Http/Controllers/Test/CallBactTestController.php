@@ -12,6 +12,12 @@ class CallBactTestController extends Controller
     {
         $data = $request->all();
 
+        //get ip from request
+        $ip = $request->ip();
+
+        //add ip to data
+        $data['ip'] = $ip;
+
         //write to file in storage folder
         ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
         $file = storage_path('callback/test/g_pay_collect.txt');
@@ -25,9 +31,16 @@ class CallBactTestController extends Controller
     {
         $data = $request->all();
 
+        //get ip from request
+        $ip = $request->ip();
+
+        //add ip to data
+        $data['ip'] = $ip;
+
         //write to file in storage folder
         ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
         $file = storage_path('callback/test/g_pay_disburse.txt');
+        
         file_put_contents($file, json_encode($data));
 
         return response()->json($data);
