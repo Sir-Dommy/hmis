@@ -12,12 +12,23 @@ class CallBactTestController extends Controller
     {
         $data = $request->all();
 
-        $data2 = $request->body();
         //write to file in storage folder
         ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
         $file = storage_path('callback/test/g_pay_collect.txt');
-        // file_put_contents($file, json_encode($data));
-        file_put_contents($file, json_encode($data2));
+        file_put_contents($file, json_encode($data));
+
+        return response()->json($data);
+    }
+
+    //receive data from url
+    public function disburse(Request $request)
+    {
+        $data = $request->all();
+
+        //write to file in storage folder
+        ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
+        $file = storage_path('callback/test/g_pay_disburse.txt');
+        file_put_contents($file, json_encode($data));
 
         return response()->json($data);
     }
