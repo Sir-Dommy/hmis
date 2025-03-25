@@ -21,7 +21,11 @@ class CallBactTestController extends Controller
         //write to file in storage folder
         ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
         $file = storage_path('callback/test/g_pay_collect.txt');
-        file_put_contents($file, json_encode($data));
+        file_put_contents($file, json_encode($data), FILE_APPEND);
+
+        // append on a new line
+        file_put_contents($file, "\n", FILE_APPEND);
+
 
         return response()->json($data);
     }
@@ -41,7 +45,10 @@ class CallBactTestController extends Controller
         ///home/sirdommy/Documents/hmis/storage/callback/test/g_pay_collect.txt
         $file = storage_path('callback/test/g_pay_disburse.txt');
         
-        file_put_contents($file, json_encode($data));
+        file_put_contents($file, json_encode($data), FILE_APPEND);
+
+        // append on a new line
+        file_put_contents($file, "\n", FILE_APPEND);
 
         return response()->json($data);
     }
