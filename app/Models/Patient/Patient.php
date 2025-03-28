@@ -146,14 +146,14 @@ class Patient extends Model
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
             'insuranceDetails.schemeTypes:id,name',  
-            // 'visits:id,patient_id,stage,open',
-            // 'visits.visitType:id,name',
-            // 'visits.visitClinics.clinic:id,name',
-            // 'visits.visitDepartments.department:id,name',
-            // 'visits.visitPaymentTypes.paymentType:id,name',
-            // 'visits.visitInsuranceDetails.scheme:id,name',
-            // 'visits.bills.billItems.serviceItem.service:id,name',
-            // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
+            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->with(['visits' => function ($query) {
             $query->select('id', 'patient_id', 'stage', 'open')
                   ->orderBy('created_at', 'DESC'); // Order visits by latest first
