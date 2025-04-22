@@ -151,7 +151,7 @@ class Visit extends Model
             'bills.billItems:id,bill_id,status,offer_status,service_item_id',
             'bills.billItems.serviceItem:id,service_id',
             'bills.billItems.serviceItem.service:id,name',
-            'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+            'vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,disease,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 
