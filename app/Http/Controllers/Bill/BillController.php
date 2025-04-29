@@ -52,7 +52,7 @@ class BillController extends Controller
         //     # M-PESA endpoint urls
         // $access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
         // $initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
-        $access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate';
+        $access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
         $initiate_url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
         # callback url
@@ -71,7 +71,7 @@ class BillController extends Controller
         if (!isset($result->access_token)) {
             return response()->json([
                 'error' => 'Unable to get access token',
-                "error" => $result
+                "result" => $result
             ], 500);
         }
         $access_token = $result->access_token; 
