@@ -54,7 +54,7 @@ class BillController extends Controller
         $initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
         # callback url
-        $CallBackURL = 'https://sir2.000webhostapp.com/callback_url.php';  
+        $CallBackURL = $request->callback_url; // This is the url that will be called by safaricom once the payment is done
 
         $curl = curl_init($access_token_url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
