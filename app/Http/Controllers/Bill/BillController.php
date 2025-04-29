@@ -69,7 +69,10 @@ class BillController extends Controller
 
         //check if result has access_token
         if (!isset($result->access_token)) {
-            return response()->json(['error' => 'Unable to get access token'], 500);
+            return response()->json([
+                'error' => 'Unable to get access token',
+                "error" => $result
+            ], 500);
         }
         $access_token = $result->access_token; 
         
