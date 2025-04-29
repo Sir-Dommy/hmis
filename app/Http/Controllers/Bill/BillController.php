@@ -15,13 +15,13 @@ class BillController extends Controller
             'amount' => 'required|numeric'
         ]);
         # access token from Sir Dommy app in daraja
-        $consumerKey = 'rHQpmKWmwC5Sa49lsBP1HC8pr5PsFzsKWw7y9xh905G48Vqk'; //confidential consumer key from sandbox app (daraja)
-        $consumerSecret = 'JDyEWccCouf85iYtm2mjveGG1z1jbkYC2YTUfLbsauiz9PQ2TzFAgzuKZCKRpvxG'; // confidential consumer secret from sandbox app (daraja)
+        $consumerKey = 'qqfQd3AkvZ8lUpraxEAvevhoVVCGwb9ko65bAiGFEzbtQjoz'; //confidential consumer key from sandbox app (daraja)
+        $consumerSecret = 'PWUjS9eRXqomPOTtuiCkqntqxTcAMpPB9T2DkU0Gx2fHvWOPoOOp1L7WfrtUkXDG'; // confidential consumer secret from sandbox app (daraja)
 
         # define the variales
         # provide the following details, found on test credentials on the developer account -- daraja
-        $BusinessShortCode = '174379'; //This is the sandbox business short code
-        $Passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';  
+        $BusinessShortCode = '4149729'; //This is the sandbox business short code
+        $Passkey = ' b1f55c61396f830bf978bf7e6484f3870d9e0fe255a0fdc5fc282a33ba28adb3';  
         
         /*
             This are your info, for
@@ -34,7 +34,7 @@ class BillController extends Controller
         */
         
         $PartyA = $request->phone_number; // This is your phone number, 
-        $AccountReference = '2255';
+        $AccountReference = $request->reference;
         $TransactionDesc = 'Sir Dommy';
         $Amount = $request->amount;
 
@@ -49,9 +49,11 @@ class BillController extends Controller
         # header for access token
         $headers = ['Content-Type:application/json; charset=utf8'];
 
-            # M-PESA endpoint urls
-        $access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
-        $initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+        //     # M-PESA endpoint urls
+        // $access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        // $initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+        $access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate';
+        $initiate_url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
         # callback url
         $CallBackURL = $request->callback_url; // This is the url that will be called by safaricom once the payment is done
@@ -67,6 +69,8 @@ class BillController extends Controller
         $access_token = $result->access_token; 
         
         curl_close($curl);
+
+        return response()->json($access_token, 200);
 
 
         # header for stk push
