@@ -66,11 +66,11 @@ class BillController extends Controller
         $result = curl_exec($curl);
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $result = json_decode($result);
-        $access_token = $result->access_token; 
+        // $access_token = $result->access_token; 
         
         curl_close($curl);
 
-        return response()->json($access_token, 200);
+        return response()->json($result, 200);
 
 
         # header for stk push
