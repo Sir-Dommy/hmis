@@ -78,7 +78,7 @@ class BillController extends Controller
         
         curl_close($curl);
 
-        return response()->json($access_token, 200);
+        // return response()->json($access_token, 200);
 
 
         # header for stk push
