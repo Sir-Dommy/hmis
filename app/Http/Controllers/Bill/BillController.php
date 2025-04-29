@@ -68,7 +68,6 @@ class BillController extends Controller
         
         curl_close($curl);
 
-        return response()->json($access_token, 200);
 
         # header for stk push
         $stkheader = ['Content-Type:application/json','Authorization:Bearer '.$access_token];
