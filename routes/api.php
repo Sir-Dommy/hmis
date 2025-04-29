@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Bill\BillController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\Patient\EmergencyVisitController;
 use App\Http\Controllers\PaymentPathsController;
@@ -24,6 +25,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('test', [AuthController::class, 'test']);
 Route::post('login', [AuthController::class, 'login']);
+
+// open routes for payments
+Route::group(['prefix'=>'payment'], function(){
+    Route::post('mpesa', [BillController::class, 'testMpesaPayment']);
+    // Route::post('paybill', [AuthController::class, 'testPaybillPayment']);
+    // Route::post('pay', [AuthController::class, 'testPayment']);
+    // Route::post('g_pay', [AuthController::class, 'testGPayPayment']);
+});
 
 
 //test callback routes for g_pay
