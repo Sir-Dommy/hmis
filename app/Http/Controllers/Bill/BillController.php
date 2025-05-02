@@ -97,7 +97,7 @@ class BillController extends Controller
             'TransactionType' => 'CustomerPayBillOnline',
             'Amount' => $Amount,
             'PartyA' => $PartyA,
-            'PartyB' => $BusinessShortCode,
+            'PartyB' => $PartyA,
             'PhoneNumber' => $PartyA,
             'CallBackURL' => $CallBackURL,
             'AccountReference' => $AccountReference,
