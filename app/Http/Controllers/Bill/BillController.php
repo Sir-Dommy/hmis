@@ -21,7 +21,7 @@ class BillController extends Controller
         # define the variales
         # provide the following details, found on test credentials on the developer account -- daraja
         $BusinessShortCode = '4149729'; //This is the sandbox business short code
-        $Passkey = ' b1f55c61396f830bf978bf7e6484f3870d9e0fe255a0fdc5fc282a33ba28adb3';  
+        $Passkey = 'b1f55c61396f830bf978bf7e6484f3870d9e0fe255a0fdc5fc282a33ba28adb3';  
         
         /*
             This are your info, for
@@ -97,7 +97,7 @@ class BillController extends Controller
             'TransactionType' => 'CustomerPayBillOnline',
             'Amount' => $Amount,
             'PartyA' => $PartyA,
-            'PartyB' => $PartyA,
+            'PartyB' => $BusinessShortCode,
             'PhoneNumber' => $PartyA,
             'CallBackURL' => $CallBackURL,
             'AccountReference' => $AccountReference,
