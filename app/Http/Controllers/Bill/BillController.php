@@ -104,6 +104,7 @@ class BillController extends Controller
             'TransactionDesc' => $TransactionDesc
         );
 
+
         $data_string = json_encode($curl_post_data);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
@@ -111,6 +112,9 @@ class BillController extends Controller
         $curl_response = curl_exec($curl);
 
         $response = json_decode($curl_response, true);
+
+
+        return $curl_post_data;
     
 
         return response()->json($response, 200);
