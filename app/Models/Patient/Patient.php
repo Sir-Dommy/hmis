@@ -156,7 +156,8 @@ class Patient extends Model
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->with(['visits' => function ($query) {
             $query->select('id', 'patient_id', 'stage', 'open')
-                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+                  ->orderBy('created_at', 'DESC') // Order visits by latest first
+                  ->limit(10);
         }])
         ->whereNull('patients.deleted_by');
 
@@ -183,7 +184,8 @@ class Patient extends Model
 
         // adding sort by latest created visit first        
         $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+            $query->orderBy('created_at', 'DESC')
+            ->limit(10);; // Order visits by latest first
         }]);
 
         foreach($existing_employee[0]['departments'] as $department){
