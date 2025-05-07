@@ -147,14 +147,14 @@ class Patient extends Model
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
             'insuranceDetails.schemeTypes:id,name',  
-            // 'visits:id,patient_id,stage,open',
-            // 'visits.visitType:id,name',
-            // 'visits.visitClinics.clinic:id,name',
-            // 'visits.visitDepartments.department:id,name',
-            // 'visits.visitPaymentTypes.paymentType:id,name',
-            // 'visits.visitInsuranceDetails.scheme:id,name',
-            // 'visits.bills.billItems.serviceItem.service:id,name',
-            // 'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
+            'visits:id,patient_id,stage,open',
+            'visits.visitType:id,name',
+            'visits.visitClinics.clinic:id,name',
+            'visits.visitDepartments.department:id,name',
+            'visits.visitPaymentTypes.paymentType:id,name',
+            'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems.serviceItem.service:id,name',
+            'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->with(['visits' => function ($query) {
             $query->select('id', 'patient_id', 'stage', 'open', 'created_at')
                   ->orderBy('id', 'DESC') // Order visits by latest first
