@@ -158,7 +158,7 @@ class Patient extends Model
         ])->with(['visits' => function ($query) {
             $query->select('id', 'patient_id', 'stage', 'open')
                   ->orderBy('created_at', 'DESC') // Order visits by latest first
-                  ->limit(2);
+                  ->limit(10);
         }])
         ->whereNull('patients.deleted_by');
 
