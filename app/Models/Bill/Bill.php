@@ -298,6 +298,9 @@ class Bill extends Model
             $bill_amount_and_discount_details['bill_discount'] += $bill_item->discount * $bill_item->quantity;
         }
 
+        $bill_amount_and_discount_details['bill_amount'] = round($bill_amount_and_discount_details['bill_amount'], 2);
+        $bill_amount_and_discount_details['bill_discount'] = round($bill_amount_and_discount_details['bill_discount'], 2);
+
         return $bill_amount_and_discount_details;
     }
 
