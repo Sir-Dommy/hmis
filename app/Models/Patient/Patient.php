@@ -156,8 +156,8 @@ class Patient extends Model
             // 'visits.bills.billItems.serviceItem.service:id,name',
             // 'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->with(['visits' => function ($query) {
-            $query->select('id', 'patient_id', 'stage', 'open')
-                  ->orderBy('id', 'DESC') // Order visits by latest first
+            $query->select('id', 'patient_id', 'stage', 'open', 'created_at')
+                  ->orderBy('created_at', 'DESC') // Order visits by latest first
                   ->limit(10);
         }])
         ->whereNull('patients.deleted_by');
