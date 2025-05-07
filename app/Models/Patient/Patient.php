@@ -95,9 +95,9 @@ class Patient extends Model
         ->whereNull('patients.deleted_by');
 
         
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }]);
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        // }]);
         
 
         if($id != null){
