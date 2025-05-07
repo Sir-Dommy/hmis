@@ -297,6 +297,7 @@ class Patient extends Model
             'patient_firstname' => $patient->firstname,
             'patient_lastname' => $patient->lastname,
             'dob' => $patient->dob,
+            'age' => $patient->dob ? now()->diffInYears($patient->dob) : null,
             'identification_type' => $patient->identification_type,
             'id_no' => $patient->id_no,
             'phonenumber1' => $patient->phonenumber1,
