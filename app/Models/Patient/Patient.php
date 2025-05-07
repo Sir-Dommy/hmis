@@ -181,10 +181,10 @@ class Patient extends Model
 
         count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
 
-        // // adding sort by latest created visit first        
-        // $patients_query->with(['visits' => function ($query) {
-        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        // }]);
+        // adding sort by latest created visit first        
+        $patients_query->with(['visits' => function ($query) {
+            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }]);
 
         foreach($existing_employee[0]['departments'] as $department){
             // $department->pivot->department_id
@@ -203,7 +203,6 @@ class Patient extends Model
         //     return $paginated_patients;
         // }
 
-        return $patients_query;
 
 
         return $patients_query->get()->map(function ($patient) {
