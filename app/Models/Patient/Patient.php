@@ -90,7 +90,8 @@ class Patient extends Model
             // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
         ])->with(['visits' => function ($query) {
             $query->select('id', 'patient_id', 'stage', 'open')
-                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+                  ->orderBy('created_at', 'DESC')
+                  ->limit(2); // Order visits by latest first
         }])
         ->whereNull('patients.deleted_by');
 
