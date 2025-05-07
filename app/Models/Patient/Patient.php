@@ -197,22 +197,22 @@ class Patient extends Model
         }
 
         // else{
-        //     $paginated_patients = $patients_query->paginate(10);
-        //     //return $paginated_patients;
-        //     $paginated_patients->getCollection()->transform(function ($patient) {
-        //         return Patient::mapResponse($patient);
-        //     });
+            $paginated_patients = $patients_query->paginate(10);
+            //return $paginated_patients;
+            $paginated_patients->getCollection()->transform(function ($patient) {
+                return Patient::mapResponse($patient);
+            });
     
-        //     return $paginated_patients;
+            return $paginated_patients;
         // }
 
 
 
-        return $patients_query->get()->map(function ($patient) {
-            $patient_details = Patient::mapResponse($patient);
+        // return $patients_query->get()->map(function ($patient) {
+        //     $patient_details = Patient::mapResponse($patient);
 
-            return $patient_details;
-        });
+        //     return $patient_details;
+        // });
 
 
     }
