@@ -155,8 +155,8 @@ class Patient extends Model
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
             'visits.bills.billItems' => function ($query) {
-                $query->where('status', '!=', 'pending')
-                ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED); // Only load non-pending OR non cancelledbill items
+                $query->where('status', '!=', 'pending');
+                // ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED); // Only load non-pending OR non cancelledbill items
             },
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
@@ -169,8 +169,8 @@ class Patient extends Model
                   // $query->where('visits.open', 1);
         }])
         ->whereHas('visits.bills.billItems', function ($query) {
-            $query->where('status', '!=', APIConstants::STATUS_PENDING) // Filter patients with at least one non-pending bill item
-                ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED);      
+            $query->where('status', '!=', APIConstants::STATUS_PENDING); // Filter patients with at least one non-pending bill item
+                // ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED);      
         })
         ->whereNull('patients.deleted_by');
 
