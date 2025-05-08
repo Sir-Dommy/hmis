@@ -154,7 +154,13 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems',
+            // Eager load only bills that have non-pending bill items
+            'visits.bills' => function ($query) {
+                $query->whereHas('billItems', function ($q) {
+                    $q->where('status', '!=', 'pending');
+                });
+            },
+            
             'visits.bills.billItems' => function ($query) {
                 $query->where('status', '!=', 'pending')
                 ->where('status', '!=', APIConstants::STATUS_CANCELLED); // Only load non-pending OR non cancelledbill items
