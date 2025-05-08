@@ -154,6 +154,9 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.bills.billItems' => function ($query) {
+                $query->where('status', '!=', 'pending'); // Only load non-pending bill items
+            },
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->with(['visits' => function ($query) {
@@ -164,6 +167,9 @@ class Patient extends Model
                   // for the first visit, check if the visit is open
                   // $query->where('visits.open', 1);
         }])
+        ->whereHas('visits.bills.billItems', function ($query) {
+            $query->where('status', '!=', 'pending'); // Filter patients with at least one non-pending bill item
+        })
         ->whereNull('patients.deleted_by');
 
         // CHECK IF PATIENT IS EXPECTED AT TRIAGE
@@ -201,11 +207,7 @@ class Patient extends Model
             $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
                 $query->where('department_id', $department->pivot->department_id);
             });
-
-            $patients_query->whereHas('visits.bills.billItems', function ($query) {
-                $query->where('status', '!=', APIConstants::STATUS_PENDING)
-                      ->where('status', '!=', APIConstants::STATUS_CANCELLED);
-            });
+            
         }
 
         // else{
