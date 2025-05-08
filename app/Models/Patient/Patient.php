@@ -202,10 +202,10 @@ class Patient extends Model
                 $query->where('department_id', $department->pivot->department_id);
             });
 
-            $patients_query->whereHas('visits.bills.billItems', function ($query) {
-                $query->where('status', '!=', APIConstants::STATUS_PENDING)
-                      ->where('status', '!=', APIConstants::STATUS_CANCELLED);
-            });
+            // $patients_query->whereHas('visits.bills.billItems', function ($query) {
+            //     $query->where('status', '!=', APIConstants::STATUS_PENDING)
+            //           ->where('status', '!=', APIConstants::STATUS_CANCELLED);
+            // });
         }
 
         // else{
