@@ -307,7 +307,7 @@ class Patient extends Model
     // private function to check if patient is expected at triage (ensure that visit does not have vitals
     private static function checkIfPatientIsExpectedAtTriage($patient_query, $stage){
         if($stage == APIConstants::TRIAGE_STAGE){
-            $patient_query->whereDoesntHave('visits.vitals');
+            $patient_query->whereDoesntHave('vitals');
         }
     }
 
