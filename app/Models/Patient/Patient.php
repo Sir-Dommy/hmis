@@ -80,7 +80,7 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeTypes:id,name',  
+            'insuranceDetails.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',  
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
             'visits.visitClinics.clinic:id,name',
