@@ -14,6 +14,6 @@ Route::group(['prefix'=>'payments'], function(){
 });
 
 Route::group(['prefix'=>'bills'], function(){
-    Route::post('get', [BillController::class, 'selectBills']); 
+    Route::get('get', [BillController::class, 'selectBills']); 
     
 });
