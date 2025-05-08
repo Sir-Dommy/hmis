@@ -3,10 +3,23 @@
 namespace App\Http\Controllers\Bill;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bill\Bill;
+use App\Models\UserActivityLog;
+use App\Utils\APIConstants;
 use Illuminate\Http\Request;
 
 class BillController extends Controller
 {
+
+    public function selectBills(Request $request)
+    {
+        $bills = Bill::selectBills($request->id, $request->bill_reference, $request->status);
+        
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched bills with id: " . $request->id . " and bill_reference: " . $request->bill_reference);
+
+        return response()->json($bills, 200);
+    }
+
     //test mpesa payments
     public function testMpesaPayment(Request $request)
     {
