@@ -169,8 +169,8 @@ class Patient extends Model
                   // $query->where('visits.open', 1);
         }])
         ->whereHas('visits.bills.billItems', function ($query) {
-            $query->where('status', '!=', APIConstants::STATUS_PENDING); // Filter patients with at least one non-pending bill item
-                // ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED);      
+            $query->where('status', '!=', APIConstants::STATUS_PENDING) // Filter patients with at least one non-pending bill item
+                ->where('status', '!=', APIConstants::STATUS_CANCELLED);      
         })
         ->whereNull('patients.deleted_by');
 
