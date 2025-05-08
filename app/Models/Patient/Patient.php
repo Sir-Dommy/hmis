@@ -87,6 +87,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'            
         ])->with(['visits' => function ($query) {
@@ -154,6 +155,7 @@ class Patient extends Model
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
             // Eager load only bills that have non-pending bill items
             'visits.bills' => function ($query) {
                 $query->whereHas('billItems', function ($q) {
