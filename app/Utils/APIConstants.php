@@ -108,5 +108,6 @@ class APIConstants
     public const BILLING_STAGE = 'Billing';
     public const ADMITTED_STAGE = 'Admitted';
     public const CONSULTING_STAGE = 'Consulting';
+    public const TRIAGE_STAGE = 'Triage';
 
 }

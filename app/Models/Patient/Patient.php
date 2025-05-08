@@ -9,6 +9,7 @@ use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Utils\APIConstants;
 use App\Utils\CustomUserRelations;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -159,8 +160,14 @@ class Patient extends Model
             $query->select('id', 'patient_id', 'stage', 'open', 'created_at')
                   ->orderBy('id', 'DESC') // Order visits by latest first
                   ->limit(10);
+
+                  // for the first visit, check if the visit is open
+                  // $query->where('visits.open', 1);
         }])
         ->whereNull('patients.deleted_by');
+
+        // CHECK IF PATIENT IS EXPECTED AT TRIAGE
+        Patient::checkIfPatientIsExpectedAtTriage($patients_query, $request->stage);
 
         // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
 
@@ -288,6 +295,13 @@ class Patient extends Model
 
 
 
+    }
+
+    // private function to check if patient is expected at triage (ensure that visit does not have vitals
+    private static function checkIfPatientIsExpectedAtTriage($patient_query, $stage){
+        if($stage == APIConstants::TRIAGE_STAGE){
+            $patient_query->whereDoesntHave('visits.vitals');
+        }
     }
 
     private static function mapResponse($patient){
