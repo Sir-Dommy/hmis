@@ -169,8 +169,6 @@ class Patient extends Model
         // CHECK IF PATIENT IS EXPECTED AT TRIAGE
         Patient::checkIfPatientIsExpectedAtTriage($patients_query, $request->stage);
 
-        return $patients_query->tosql();
-
         // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
 
         if($request->patient_id != null){
@@ -307,7 +305,7 @@ class Patient extends Model
     // private function to check if patient is expected at triage (ensure that visit does not have vitals
     private static function checkIfPatientIsExpectedAtTriage($patient_query, $stage){
         if($stage == APIConstants::TRIAGE_STAGE){
-            $patient_query->whereDoesntHave('vitals');
+            $patient_query->whereDoesntHave('visits.vitals');
         }
     }
 
