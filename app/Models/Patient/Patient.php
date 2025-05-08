@@ -156,7 +156,7 @@ class Patient extends Model
             'visits.visitInsuranceDetails.scheme:id,name',
             'visits.bills.billItems' => function ($query) {
                 $query->where('status', '!=', 'pending')
-                ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED);; // Only load non-pending OR non cancelledbill items
+                ->orWhere('status', '!=', APIConstants::STATUS_CANCELLED); // Only load non-pending OR non cancelledbill items
             },
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
