@@ -80,7 +80,7 @@ class Bill extends Model
         if($status != null){
             $bills_query->where('bills.status', $status);
         }
-        
+
 
         if($id != null){
             $bills_query->where('bills.id', $id);
@@ -90,23 +90,22 @@ class Bill extends Model
         }
 
 
-        else{
-            $paginated_bills = $bills_query->paginate(10);
+        $paginated_bills = $bills_query->paginate(10);
 
-            //return $bills;
-            $paginated_bills->getCollection()->transform(function ($bill) {
-                return Bill::mapResponse($bill);
-            });
-    
-            return $paginated_bills;
-        }
-
-
-        return $bills_query->get()->map(function ($bill) {
-            $bill_details = Bill::mapResponse($bill);
-
-            return $bill_details;
+        //return $bills;
+        $paginated_bills->getCollection()->transform(function ($bill) {
+            return Bill::mapResponse($bill);
         });
+
+        return $paginated_bills;
+      
+
+
+        // return $bills_query->get()->map(function ($bill) {
+        //     $bill_details = Bill::mapResponse($bill);
+
+        //     return $bill_details;
+        // });
 
 
     }
