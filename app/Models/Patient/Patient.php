@@ -203,8 +203,8 @@ class Patient extends Model
             });
 
             $patients_query->whereHas('visits.bills.billItems', function ($query) {
-                $query->where('status', '!=', APIConstants::STATUS_PENDING)
-                      ->where('status', '!=', APIConstants::STATUS_CANCELLED);
+                $query->where('status', '==', APIConstants::STATUS_PENDING);
+                    //   ->where('status', '!=', APIConstants::STATUS_CANCELLED);
             });
         }
 
