@@ -169,6 +169,8 @@ class Patient extends Model
         // CHECK IF PATIENT IS EXPECTED AT TRIAGE
         Patient::checkIfPatientIsExpectedAtTriage($patients_query, $request->stage);
 
+        return $patients_query->tosql();
+
         // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
 
         if($request->patient_id != null){
