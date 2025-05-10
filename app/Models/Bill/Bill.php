@@ -70,6 +70,7 @@ class Bill extends Model
     public static function selectBills($id, $bill_reference, $status){
         $bills_query = Bill::with([
             'visit:id,patient_id,stage,open',
+            'visit.patient:id,firstname,lastname,patient_code',
             'visit.visitType:id,name',
             'visit.visitClinics.clinic:id,name',
             'reversedBy:id,email',
