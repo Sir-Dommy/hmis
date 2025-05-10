@@ -72,7 +72,7 @@ class Bill extends Model
             'visit:id,patient_id,stage,open,created_at',
             'visit.patient:id,firstname,lastname,patient_code',
             'visit.visitType:id,name',
-            'visit.consultation:id,visit_id,consultation_type_id,visit_type_id',
+            'visit.consultation:id,visit_id,consultation_type_id',
             'visit.consultation.consultationDiagnosis:id,consultation_id,diagnosis_id',
             'visit.consultation.consultationDiagnosis.diagnosis:id,name',
             'visit.visitClinics.clinic:id,name',
