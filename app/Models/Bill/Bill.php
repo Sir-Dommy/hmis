@@ -420,6 +420,10 @@ class Bill extends Model
         return [
             'id' => $bill->id,
             'bill_reference_number'=>$bill->bill_reference_number,
+            'patient_id' => $bill->visit ? $bill->visit->patient_id : null,
+            'patient_first_name' => $bill->visit->patient ? $bill->visit->patient->firstname : null,
+            'patient_last_name' => $bill->visit->patient ? $bill->visit->patient->lastname : null,
+            'patient_code' => $bill->visit->patient ? $bill->visit->patient->patient_code : null, 
             'initiated_at' => $bill->initiated_at,
             'bill_amount' => $bill->bill_amount,
             'discount' => round($bill->discount, 2),
