@@ -74,7 +74,7 @@ class Bill extends Model
             'visit.visitClinics.clinic:id,name',
             'reversedBy:id,email',
             'billItems:id,bill_id,one_item_selling_price,discount,quantity,unit,amount_paid,status,offer_status,description',
-            'billItems.serviceItem:id,service_item_id,expiry_date,price_applies_from,price_applies_to,duration',
+            'billItems.serviceItem:id,expiry_date,price_applies_from,price_applies_to,duration',
             'billItems.serviceItem.department:id,name',
             'billItems.serviceItem.consultationCategory:id,name',
             'billItems.serviceItem.clinic:id,name',
