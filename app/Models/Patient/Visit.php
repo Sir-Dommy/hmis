@@ -2,6 +2,7 @@
 
 namespace App\Models\Patient;
 
+use App\Models\Admin\Diagnosis;
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
 use App\Models\Doctor\Consultation;
@@ -107,6 +108,7 @@ class Visit extends Model
     {
         return $this->hasMany(AppointmentFollowUps::class, 'visit_id', 'id');
     }
+
 
     
 
