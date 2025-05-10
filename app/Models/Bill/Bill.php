@@ -427,6 +427,8 @@ class Bill extends Model
             'patient_first_name' => $bill->visit->patient ? $bill->visit->patient->firstname : null,
             'patient_last_name' => $bill->visit->patient ? $bill->visit->patient->lastname : null,
             'patient_code' => $bill->visit->patient ? $bill->visit->patient->patient_code : null, 
+            'patient_gender' => $bill->visit->patient ? $bill->visit->patient->gender : null,
+            'patient_age' => $bill->visit->patient ? now()->diffInYears($bill->visit->patient->age)  : null,
             'initiated_at' => $bill->initiated_at,
             'bill_amount' => $bill->bill_amount,
             'discount' => round($bill->discount, 2),
