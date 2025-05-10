@@ -94,7 +94,7 @@ class Bill extends Model
             'billItems.serviceItem.ward:id,name',
             'billItems.serviceItem.office:id,name',
             'billItems.serviceItem.unit:id,name',
-            'billItems.serviceItem.service:id,name',
+            'billItems.serviceItem.service:id,service_id,name',
             'transactions:id,transaction_reference,third_party_reference,patient_account_no,hospital_account_no,scheme_name,initiation_time,amount,status,reverse_date'
         ])->whereNull('bills.deleted_by')
             ->orderBy('bills.id', 'desc');
