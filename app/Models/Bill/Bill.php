@@ -75,7 +75,8 @@ class Bill extends Model
             'reversedBy:id,email',
             'billItems:id,one_item_selling_price,discount,description',
             'transactions:id,transaction_reference,third_party_reference,patient_account_no,hospital_account_no,scheme_name,initiation_time,amount,status,reverse_date'
-        ])->whereNull('bills.deleted_by');
+        ])->whereNull('bills.deleted_by')
+            ->orderBy('bills.id', 'desc');
 
         if($status != null){
             $bills_query->where('bills.status', $status);
