@@ -259,13 +259,13 @@ class ConsultationController extends Controller
 
         count($consultation) < 1 ? throw new InputsValidationException("Consultation not found!!!") : null;
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a consultation with id: ". $request->id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a consultation with details id: ". $request->id. " visit_id: ". $request->visit_id);
 
         return response()->json(
             $consultation
         ,200);
     }
-    public function getAllConsultations(Request $request){
+    public function getAllConsultations(){
         $consultation = Consultation::selectConsultations(null, null, null);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all consultations");
@@ -291,8 +291,26 @@ class ConsultationController extends Controller
             []
         ,200);  
     }
+
+    public function restoreConsultation($id){
+        $existing = Consultation::where('id', $id)->get();
+
+        if(count($existing) < 1){
+            throw new InputsValidationException("Consultation with id: ". $id . " not found!!!");
+        }
+        
+        Consultation::where('id', $id)
+                ->update([
+                    'deleted_at' => null,
+                    'deleted_by' => null
+                ]);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restore a consultation with id: ". $id);
+        return response()->json(
+            []
+        ,200);  
+    }
     public function permanentlyDelete($id){
-        $existing = Consultation::selectConsultations($id, null, null);
+        $existing = Consultation::where('id', $id)->get();
 
         if(count($existing) < 1){
             throw new InputsValidationException("Consultation with id: ". $id . " not found!!!");
