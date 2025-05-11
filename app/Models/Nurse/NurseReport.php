@@ -32,7 +32,7 @@ class NurseReport extends Model
     }
 
     public static function selectNurseReports($id, $visit_id){
-        $nurse_reports_query = Patient::with([
+        $nurse_reports_query = NurseReport::with([
             'visit:id,patient_id,visit_type_id,stage,open',
             'visit.patient:id,firstname,lastname,patient_code',
             'createdBy:id,email',
@@ -56,8 +56,8 @@ class NurseReport extends Model
 
         $paginated_nurse_reports = $nurse_reports_query->paginate(10);
         //return $paginated_patients;
-        $paginated_nurse_reports->getCollection()->transform(function ($patient) {
-            return Patient::mapResponse($patient);
+        $paginated_nurse_reports->getCollection()->transform(function ($nurse_report) {
+            return NurseReport::mapResponse($nurse_report);
         });
 
         return $paginated_nurse_reports;
