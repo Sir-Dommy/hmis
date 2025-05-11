@@ -56,10 +56,18 @@ class ConsultationController extends Controller
 
                 count($existing_chief_complain) < 1 ? throw new InputsValidationException("Chief complain with name: " . $chief_complain . " does not exist!!!") : null;
 
-                ConsultationSymptomsJoin::create([
-                    'consultation_id' => $created->id,
-                    'symptom_id' => $existing_chief_complain[0]['id'],
-                ]);
+                $existing_chief_complain_in_join = ConsultationSymptomsJoin::where('symptom_id', $existing_chief_complain[0]['id'])->get('id');
+                count($existing_chief_complain_in_join) < 1 ?
+                    ConsultationSymptomsJoin::create([
+                        'consultation_id' => $created->id,
+                        'symptom_id' => $existing_chief_complain[0]['id'],
+                    ]) 
+                    :
+                null;
+                // ConsultationSymptomsJoin::create([
+                //     'consultation_id' => $created->id,
+                //     'symptom_id' => $existing_chief_complain[0]['id'],
+                // ]);
 
                 
             }
@@ -72,11 +80,20 @@ class ConsultationController extends Controller
     
                         count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
     
-                        ConsultationPhysicalExaminationsJoin::create([
-                            'consultation_id' => $created->id,
-                            'physical_examination_id' => $existing_physical_examination[0]['id'],
-                            'findings' => $examination
-                        ]);
+                        $existing_physical_examination_in_join = ConsultationPhysicalExaminationsJoin::where('physical_examination_id', $existing_physical_examination[0]['id'])->get('id');
+                        count($existing_physical_examination_in_join) < 1 ?
+                            ConsultationPhysicalExaminationsJoin::create([
+                                'consultation_id' => $created->id,
+                                'physical_examination_id' => $existing_physical_examination[0]['id'],
+                                'findings' => $examination
+                            ]) 
+                            :
+                        null;
+                        // ConsultationPhysicalExaminationsJoin::create([
+                        //     'consultation_id' => $created->id,
+                        //     'physical_examination_id' => $existing_physical_examination[0]['id'],
+                        //     'findings' => $examination
+                        // ]);
     
                     }               
                     
