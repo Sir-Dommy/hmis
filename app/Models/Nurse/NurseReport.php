@@ -70,6 +70,8 @@ class NurseReport extends Model
             'id' => $nurse_instruction->id,
             'visit' => $nurse_instruction->visit,
             'report' => $nurse_instruction->report,
+            'created_at' => $nurse_instruction->created_at,
+            'updated_at' => $nurse_instruction->updated_at,
             'created_by' => $nurse_instruction->createdBy,
             'updated_by' => $nurse_instruction->updatedBy,
             'deleted_by' => $nurse_instruction->deletedBy,
