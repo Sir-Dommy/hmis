@@ -64,7 +64,7 @@ class NurseReportController extends Controller
 
         count($nurse_report) < 1 ? throw new NotFoundException(APIConstants::NAME_NURSE_REPORT) : null;
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Nurse report using details: ". str($request));
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Nurse report using details: id: ". $request->id ." visit_id: ". $request->visit_id);
 
         return response()->json(
             $nurse_report
