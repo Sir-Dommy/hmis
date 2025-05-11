@@ -47,7 +47,7 @@ class Consultation extends Model
 
 
     //perform selection
-    public static function selectConsultations($id){
+    public static function selectConsultations($id, $visit_id, $consultation_type_id){
 
         $consultations_query = Consultation::with([
             'consultationType:id,name',
@@ -62,6 +62,10 @@ class Consultation extends Model
 
         if($id != null){
             $consultations_query->where('consultations.id', $id);
+        }
+
+        if($visit_id != null){
+            $consultations_query->where('consultations.visit_id', $visit_id);
         }
 
 
