@@ -317,7 +317,7 @@ class ConsultationController extends Controller
     }
 
     public function restoreConsultation($id){
-        $existing = Consultation::where('id', $id)->get();
+        $existing = Consultation::where('id', $id)->whereNotNull('deleted_by')->get();
 
         if(count($existing) < 1){
             throw new InputsValidationException("Consultation with id: ". $id . " not found!!!");
