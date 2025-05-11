@@ -14,7 +14,7 @@ Route::group(['prefix'=>'doctor'], function(){
         Route::get('/', [ConsultationController::class, 'getAllConsultations']);
         Route::put('softDelete/{id}', [ConsultationController::class, 'softDeleteConsultation']);
         Route::put('restore/{id}', [ConsultationController::class, 'restoreConsultation']);
-        Route::post('permanentlyDelete/{id}', [ConsultationController::class, 'permanentlyDelete']);
+        Route::delete('permanentlyDelete/{id}', [ConsultationController::class, 'permanentlyDelete']);
 
     });
 });
