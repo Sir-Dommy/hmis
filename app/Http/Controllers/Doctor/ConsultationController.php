@@ -253,4 +253,55 @@ class ConsultationController extends Controller
             Consultation::selectConsultations($created->id)
         ,200);
     }
+
+    public function getConsultation(Request $request){
+        $consultation = Consultation::selectConsultations($request->id, $request->visit_id, null);
+
+        count($consultation) < 1 ? throw new InputsValidationException("Consultation not found!!!") : null;
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a consultation with id: ". $request->id);
+
+        return response()->json(
+            $consultation
+        ,200);
+    }
+    public function getAllConsultations(Request $request){
+        $consultation = Consultation::selectConsultations(null, null, null);
+
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all consultations");
+
+        return response()->json(
+            $consultation
+        ,200);
+    }
+    public function softDeleteConsultation($id){
+        $existing = Consultation::selectConsultations($id, null, null);
+
+        if(count($existing) < 1){
+            throw new InputsValidationException("Consultation with id: ". $id . " not found!!!");
+        }
+        
+        Consultation::where('id', $id)
+                ->update([
+                    'deleted_at' => now(),
+                    'deleted_by' => User::getLoggedInUserId(),
+                ]);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a consultation with id: ". $id);
+        return response()->json(
+            []
+        ,200);  
+    }
+    public function permanentlyDelete($id){
+        $existing = Consultation::selectConsultations($id, null, null);
+
+        if(count($existing) < 1){
+            throw new InputsValidationException("Consultation with id: ". $id . " not found!!!");
+        }
+        
+        Consultation::destroy($id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Permanently deleted a consultation with id: ". $id);
+        return response()->json(
+            []
+        ,200);
+    }
 }
