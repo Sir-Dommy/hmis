@@ -330,7 +330,7 @@ class ConsultationController extends Controller
                 ]);
         UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restore a consultation with id: ". $id);
         return response()->json(
-            []
+            $existing
         ,200);  
     }
     public function permanentlyDelete($id){
