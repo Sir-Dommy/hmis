@@ -33,6 +33,7 @@ class VitalController extends Controller
             'bmi' => 'nullable|string|min:1|max:10',
             'food_allergy' => 'nullable|string|min:1|max:10',
             'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
+            'temperature' => 'nullable|numeric|between:25,50',
             // 'weight' => 'required|numeric|between:0,2550',
             // 'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
             // 'height' => 'required|numeric|min:50|max:300',
@@ -55,6 +56,7 @@ class VitalController extends Controller
             'height_cm'=>$request->height_cm,
             'weight_kg'=>$request->weight_kg,
             'blood_glucose'=>round($request->blood_glucose, 2),
+            'temperature'=>$request->temperature,
             'waist_circumference_cm'=>$request->waist_circumference_cm,
             'initial_medication_at_triage'=>$request->initial_medication_at_triage,
             'bmi'=>$request->bmi,
@@ -85,6 +87,7 @@ class VitalController extends Controller
             'head_circumference_cm' => 'nullable|string|min:1|max:10',
             'height_cm' => 'nullable|string|min:1|max:10',
             'weight_kg' => 'nullable|string|min:1|max:10',
+            'temperature' => 'nullable|numeric|between:25,50',
             'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
             'waist_circumference_cm' => 'nullable|string|min:1|max:10',
             'initial_medication_at_triage' => 'nullable|string|min:1|max:10',
@@ -108,6 +111,7 @@ class VitalController extends Controller
                     'height_cm'=>$request->height_cm,
                     'weight_kg'=>$request->weight_kg,
                     'blood_glucose'=>round($request->blood_glucose, 2),
+                    'temperature'=>$request->temperature,
                     'waist_circumference_cm'=>$request->waist_circumference_cm,
                     'initial_medication_at_triage'=>$request->initial_medication_at_triage,
                     'bmi'=>$request->bmi,
