@@ -29,10 +29,10 @@ class VitalController extends Controller
             'height_cm' => 'nullable|string|min:1|max:10',
             'weight_kg' => 'nullable|string|min:1|max:10',
             'waist_circumference_cm' => 'nullable|string|min:1|max:10',
-            'initial_medication_at_triage' => 'nullable|string|min:1|max:10',
+            'initial_medication_at_triage' => 'nullable|string|min:1|max:255',
             'bmi' => 'nullable|string|min:1|max:10',
             'food_allergy' => 'nullable|string|min:1|max:10',
-            'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
+            'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/', // allow value up to 2 decimal places between 70 and 500
             'temperature' => 'nullable|numeric|between:25,50',
             // 'weight' => 'required|numeric|between:0,2550',
             // 'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
