@@ -93,7 +93,11 @@ class Patient extends Model
             'visits.visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
             'visits.bills.billItems.serviceItem.service:id,name',
             'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'            
-        ])
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('id', 'DESC')
+                  ->limit(10); // Order visits by latest first
+        }])
         ->whereNull('patients.deleted_by');
 
         
@@ -338,8 +342,8 @@ class Patient extends Model
             'phonenumber2' => $patient->phonenumber2,
             'email' => $patient->email,
             'address' => $patient->address,
-            'gender' => $patient->address,
-            'occupation' => $patient->address,
+            // 'gender' => $patient->address,
+            // 'occupation' => $patient->address,
             'residence' => $patient->residence, 
             'insurance_membership' => $patient->insurance_membership, 
             'next_of_kin_name' => $patient->next_of_kin_name,  
