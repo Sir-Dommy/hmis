@@ -110,8 +110,6 @@ class NurseReportController extends Controller
         
         NurseReport::where('id', $id)
                 ->update([
-                    'approved_at' => null,
-                    'approved_by' => null,
                     'deleted_at' => null,
                     'deleted_by' => null,
                 ]);
