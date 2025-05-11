@@ -12,9 +12,9 @@ Route::group(['prefix'=>'doctor'], function(){
         Route::put('update', [ConsultationController::class, 'updateConsultation']);
         Route::get('get', [ConsultationController::class, 'getConsultation']);
         Route::get('/', [ConsultationController::class, 'getAllConsultations']);
-        Route::put('softDelete', [ConsultationController::class, 'softDeleteConsultation']);
-        Route::put('restore', [ConsultationController::class, 'restoreConsultation']);
-        Route::post('permanentlyDelete', [ConsultationController::class, 'permanentlyDelete']);
-        
+        Route::put('softDelete/{id}', [ConsultationController::class, 'softDeleteConsultation']);
+        Route::put('restore/{id}', [ConsultationController::class, 'restoreConsultation']);
+        Route::post('permanentlyDelete/{id}', [ConsultationController::class, 'permanentlyDelete']);
+
     });
 });
