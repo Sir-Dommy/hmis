@@ -33,6 +33,8 @@ class ConsultationController extends Controller
             'physical_examinations' => 'nullable|array',
         ]);
 
+        count(Consultation::selectConsultations(null, $request->visit_id, null)) > 0 ? throw new InputsValidationException("Consultation already exists!!! kindly update instead...") : null;
+
         $request->consultation_type ? $consultation_type_id = ConsultationType::where('name', $request->consultation_type)->get('id')[0]['id'] : $consultation_type_id = null;
 
         try{
@@ -188,6 +190,20 @@ class ConsultationController extends Controller
             }
             
             if($request->diagnosis != null){
+                foreach($request->diagnosis as $diagnosis){
+                    $existing_diagnosis = Diagnosis::where('name', $diagnosis)->get('id');
+
+                    count($existing_diagnosis) < 1 ? throw new InputsValidationException("Diagnosis with name: " . $diagnosis . " does not exist!!!") : null;
+
+                    $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id');
+                    count($existing_diagnosis_in_join) < 1 ?
+                        ConsultationDiagnosisJoin::create([
+                            'consultation_id' => $created->id,
+                            'diagnosis_id' => $existing_diagnosis[0]['id']
+                        ]) 
+                        :
+                    null;
+                }
                 $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
 
                 $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id');
