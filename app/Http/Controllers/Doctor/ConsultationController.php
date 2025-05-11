@@ -139,7 +139,7 @@ class ConsultationController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $created->id);
 
         return response()->json(
-            Consultation::selectConsultations($created->id)
+            Consultation::selectConsultations($created->id, null, null)
         ,200);
     }
 
@@ -267,7 +267,7 @@ class ConsultationController extends Controller
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $created->id);
 
         return response()->json(
-            Consultation::selectConsultations($created->id)
+            Consultation::selectConsultations($created->id, null, null)
         ,200);
     }
 
