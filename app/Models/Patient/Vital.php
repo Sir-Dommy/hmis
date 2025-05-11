@@ -87,7 +87,7 @@ class Vital extends Model
             'head_circumference_cm'=>$vital->head_circumference_cm,
             'height_cm'=>$vital->height_cm,
             'weight_kg'=>$vital->weight_kg,
-            'blood_glucose'=>$vital->blood_glucose,
+            'blood_glucose'=>round($vital->blood_glucose, 2),
             'temperature'=>round($vital->temperature, 2),
             'waist_circumference_cm'=>$vital->waist_circumference_cm,
             'initial_medication_at_triage'=>$vital->initial_medication_at_triage,
