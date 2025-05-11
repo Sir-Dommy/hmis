@@ -56,7 +56,8 @@ class ConsultationController extends Controller
 
                 count($existing_chief_complain) < 1 ? throw new InputsValidationException("Chief complain with name: " . $chief_complain . " does not exist!!!") : null;
 
-                $existing_chief_complain_in_join = ConsultationSymptomsJoin::where('symptom_id', $existing_chief_complain[0]['id'])->get('id');
+                $existing_chief_complain_in_join = ConsultationSymptomsJoin::where('symptom_id', $existing_chief_complain[0]['id'])
+                    ->where('consultation_id', $created->id)->get('id');
                 count($existing_chief_complain_in_join) < 1 ?
                     ConsultationSymptomsJoin::create([
                         'consultation_id' => $created->id,
@@ -80,7 +81,8 @@ class ConsultationController extends Controller
     
                         count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
     
-                        $existing_physical_examination_in_join = ConsultationPhysicalExaminationsJoin::where('physical_examination_id', $existing_physical_examination[0]['id'])->get('id');
+                        $existing_physical_examination_in_join = ConsultationPhysicalExaminationsJoin::where('physical_examination_id', $existing_physical_examination[0]['id'])
+                            ->where('consultation_id', $created->id)->get('id');
                         count($existing_physical_examination_in_join) < 1 ?
                             ConsultationPhysicalExaminationsJoin::create([
                                 'consultation_id' => $created->id,
@@ -107,7 +109,8 @@ class ConsultationController extends Controller
 
                     count($existing_diagnosis) < 1 ? throw new InputsValidationException("Diagnosis with name: " . $diagnosis . " does not exist!!!") : null;
 
-                    count(ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id')) < 1 ?
+                    count(ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])
+                        ->where('consultation_id', $created->id)->get('id')) < 1 ?
                         ConsultationDiagnosisJoin::create([
                             'consultation_id' => $created->id,
                             'diagnosis_id' => $existing_diagnosis[0]['id']
@@ -161,7 +164,7 @@ class ConsultationController extends Controller
 
             DB::beginTransaction();
 
-            $created = Consultation::where('id', $request->id)
+            Consultation::where('id', $request->id)
             ->update([
                 'visit_id'=>$request->visit_id,
                 'consultation_type_id'=>$consultation_type_id,
@@ -177,10 +180,11 @@ class ConsultationController extends Controller
 
                 count($existing_chief_complain) < 1 ? throw new InputsValidationException("Chief complain with name: " . $chief_complain . " does not exist!!!") : null;
 
-                $existing_chief_complain_in_join = ConsultationSymptomsJoin::where('symptom_id', $existing_chief_complain[0]['id'])->get('id');
+                $existing_chief_complain_in_join = ConsultationSymptomsJoin::where('symptom_id', $existing_chief_complain[0]['id'])
+                ->where('consultation_id', $request->id)->get('id');
                 count($existing_chief_complain_in_join) < 1 ?
                     ConsultationSymptomsJoin::create([
-                        'consultation_id' => $created->id,
+                        'consultation_id' => $request->id,
                         'symptom_id' => $existing_chief_complain[0]['id'],
                     ]) 
                     :
@@ -197,10 +201,11 @@ class ConsultationController extends Controller
     
                         count($existing_physical_examination) < 1 ? throw new InputsValidationException("Physical examination with name: " . $key . " does not exist!!!") : null;
     
-                        $existing_physical_examination_in_join = ConsultationPhysicalExaminationsJoin::where('physical_examination_id', $existing_physical_examination[0]['id'])->get('id');
+                        $existing_physical_examination_in_join = ConsultationPhysicalExaminationsJoin::where('physical_examination_id', $existing_physical_examination[0]['id'])
+                            ->where('consultation_id', $request->id)->get('id');
                         count($existing_physical_examination_in_join) < 1 ?
                             ConsultationPhysicalExaminationsJoin::create([
-                                'consultation_id' => $created->id,
+                                'consultation_id' => $request->id,
                                 'physical_examination_id' => $existing_physical_examination[0]['id'],
                                 'findings' => $examination
                             ]) 
@@ -226,10 +231,11 @@ class ConsultationController extends Controller
 
                     count($existing_diagnosis) < 1 ? throw new InputsValidationException("Diagnosis with name: " . $diagnosis . " does not exist!!!") : null;
 
-                    $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id');
+                    $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])
+                        ->where('consultation_id', $request->id)->get('id');
                     count($existing_diagnosis_in_join) < 1 ?
                         ConsultationDiagnosisJoin::create([
-                            'consultation_id' => $created->id,
+                            'consultation_id' => $request->id,
                             'diagnosis_id' => $existing_diagnosis[0]['id']
                         ]) 
                         :
@@ -237,10 +243,11 @@ class ConsultationController extends Controller
                 }
                 $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
 
-                $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id');
+                $existing_diagnosis_in_join = ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])
+                    ->where('consultation_id', $request->id)->get('id');
                 count($existing_diagnosis_in_join) < 1 ?
                     ConsultationDiagnosisJoin::create([
-                        'consultation_id' => $created->id,
+                        'consultation_id' => $request->id,
                         'diagnosis_id' => $existing_diagnosis[0]['id']
                     ]) 
                     :
@@ -264,10 +271,10 @@ class ConsultationController extends Controller
             throw new Exception($e);
         }
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $created->id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $request->id);
 
         return response()->json(
-            Consultation::selectConsultations($created->id, null, null)
+            Consultation::selectConsultations($request->id, null, null)
         ,200);
     }
 
