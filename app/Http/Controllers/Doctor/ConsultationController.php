@@ -27,7 +27,7 @@ class ConsultationController extends Controller
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
             'consultation_type' => 'nullable|exists:consultation_types,name',
-            'diagnosis' => 'nullable|exists:diagnosis,name',
+            'diagnosis' => 'nullable|array',
             'clinical_history' => 'nullable',
             'chief_complains' => 'required|array',
             'physical_examinations' => 'nullable|array',
@@ -85,11 +85,25 @@ class ConsultationController extends Controller
             }
             
             if($request->diagnosis != null){
-                $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
-                ConsultationDiagnosisJoin::create([
-                    'consultation_id' => $created->id,
-                    'diagnosis_id' => $existing_diagnosis[0]['id']
-                ]);
+                foreach($request->diagnosis as $diagnosis){
+                    $existing_diagnosis = Diagnosis::where('name', $diagnosis)->get('id');
+
+                    count($existing_diagnosis) < 1 ? throw new InputsValidationException("Diagnosis with name: " . $diagnosis . " does not exist!!!") : null;
+
+                    count(ConsultationDiagnosisJoin::where('diagnosis_id', $existing_diagnosis[0]['id'])->get('id')) < 1 ?
+                        ConsultationDiagnosisJoin::create([
+                            'consultation_id' => $created->id,
+                            'diagnosis_id' => $existing_diagnosis[0]['id']
+                        ]) 
+                        :
+                    null;
+                    
+                }
+                // $existing_diagnosis = Diagnosis::where('name', $request->diagnosis)->get('id');
+                // ConsultationDiagnosisJoin::create([
+                //     'consultation_id' => $created->id,
+                //     'diagnosis_id' => $existing_diagnosis[0]['id']
+                // ]);
             }
 
 
@@ -118,7 +132,7 @@ class ConsultationController extends Controller
             'id' => 'required|exists:consultations,id',
             'visit_id' => 'required|exists:visits,id',
             'consultation_type' => 'nullable|exists:consultation_types,name',
-            'diagnosis' => 'nullable|exists:diagnosis,name',
+            'diagnosis' => 'nullable|array',
             'clinical_history' => 'nullable',
             'chief_complains' => 'required|array',
             'physical_examinations' => 'nullable|array',
