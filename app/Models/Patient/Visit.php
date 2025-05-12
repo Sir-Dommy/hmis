@@ -2,6 +2,7 @@
 
 namespace App\Models\Patient;
 
+use App\Models\Admin\Diagnosis;
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
 use App\Models\Doctor\Consultation;
@@ -108,6 +109,7 @@ class Visit extends Model
         return $this->hasMany(AppointmentFollowUps::class, 'visit_id', 'id');
     }
 
+
     
 
     public function createdBy()
@@ -146,12 +148,12 @@ class Visit extends Model
             'visitPaymentTypes.paymentType:id,name',
             'visitInsuranceDetails:id,visit_id,scheme_id,scheme_type_id,claim_number,available_balance,signature',
             'visitInsuranceDetails.scheme:id,name',
-            'visitInsuranceDetails.scheme.schemeTypes:id,name',
+            'visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
             'bills:id,visit_id,bill_reference_number',
             'bills.billItems:id,bill_id,status,offer_status,service_item_id',
             'bills.billItems.serviceItem:id,service_id',
             'bills.billItems.serviceItem.service:id,name',
-            'vitals:id,visit_id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+            'vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
         ])->whereNull('visits.deleted_by')
           ->whereNull('visits.deleted_at');
 

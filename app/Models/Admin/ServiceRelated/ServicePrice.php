@@ -737,7 +737,7 @@ class ServicePrice extends Model
 
         //subtract promotions
         if($promotion_type == "Percentage"){
-            $return_price -=  $return_price * $promotion_type/100;
+            $return_price -=  $return_price * $promotion_value/100;
         }
 
         else if($promotion_type == "Fixed"){

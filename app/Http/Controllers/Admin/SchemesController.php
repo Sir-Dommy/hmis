@@ -13,7 +13,10 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SchemesController extends Controller
 {
@@ -63,46 +66,72 @@ class SchemesController extends Controller
             'username' => 'string|min:3|max:255',
             'password' => 'string|min:3|max:255',
             'description' => 'string|max:1000',
+            'scheme_types' => 'nullable|array',
         ]);
 
-    
-        $created = Scheme::create([
-            'payment_type_id' => $request->payment_type_id,
-            'name' => $request->name,
-            'account' => $request->account,
-            'initiate_url' => $request->initiate_url,
-            'bill_url' => $request->bill_url,
-            'authentication_url' => $request->authentication_url,
-            'validation_url' => $request->validation_url,
-            'balance_url' => $request->balance_url,
-            'bridge_balance_url' => $request->bridge_balance_url,
-            'other_url' => $request->other_url,
-            'username' => $request->username,
-            'password' => $request->password,
-            'description' => $request->description,
-            'payment_path_id' => $this->getPaymentPathId($request->payment_path),
-            'created_by' => User::getLoggedInUserId()
-        ]);
+        try{
+            DB::beginTransaction();
 
-        // add related scheme types
-        if(!$request->scheme_types){
-            SchemeTypes::create([
-                "name" => "Default",
-                "Description" => "This is a default scheme type",
-                "scheme_id" => $created->id
+            $created = Scheme::create([
+                'payment_type_id' => $request->payment_type_id,
+                'name' => $request->name,
+                'account' => $request->account,
+                'initiate_url' => $request->initiate_url,
+                'bill_url' => $request->bill_url,
+                'authentication_url' => $request->authentication_url,
+                'validation_url' => $request->validation_url,
+                'balance_url' => $request->balance_url,
+                'bridge_balance_url' => $request->bridge_balance_url,
+                'other_url' => $request->other_url,
+                'username' => $request->username,
+                'password' => $request->password,
+                'description' => $request->description,
+                'payment_path_id' => $this->getPaymentPathId($request->payment_path),
+                'created_by' => User::getLoggedInUserId()
             ]);
+    
+            // add related scheme types
+            if(!$request->scheme_types){
+                SchemeTypes::create([
+                    "name" => "Default",
+                    "Description" => "This is a default scheme type",
+                    "scheme_id" => $created->id
+                ]);
+            }
+    
+            else{
+                foreach ($request->scheme_types as $type){
+                    $validator = Validator::make((array) $type, [
+                        'name' => 'required|unique:scheme_types,name',
+                        'max_visits_per_year' => 'nullable|numeric|min:0',
+                        'max_amount_per_visit' => 'nullable|numeric|min:0',
+                    ]);
+    
+                    if ($validator->fails()) {
+                        return response()->json(['errors' => $validator->errors()], 422);
+                    }
+    
+                    count(SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id')) > 0 ? null :
+                        SchemeTypes::create([
+                            "name" => $type['name'],
+                            "scheme_id" => $created->id,
+                            'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                            'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
+                        ]);
+                }
+            }
+
+            //commit transaction
+            DB::commit();
         }
 
-        else{
-            foreach ($request->scheme_types as $type){
-                $this->schemeTypeExits($type->name) ? null :
-                    SchemeTypes::create([
-                        "name" => $type->name,
-                        "Description" => $type->description,
-                        "scheme_id" => $created->id
-                    ]);
-            }
+        catch(Exception $e){
+            //rollback transaction
+            DB::rollBack();
+
+            throw new Exception($e);
         }
+        
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Scheme with name: ". $request->name);
 
@@ -129,6 +158,7 @@ class SchemesController extends Controller
             'username' => 'string|min:3|max:255',
             'password' => 'string|min:3|max:255',
             'description' => 'string|max:1000',
+            'scheme_types' => 'nullable|array',
         ]);
 
         $existing = Scheme::where('name', $request->name)
@@ -140,12 +170,16 @@ class SchemesController extends Controller
         //     throw new NotFoundException(APIConstants::NAME_SCHEME);
         // }
 
-        if(count($existing) > 1 ||  (count($existing) > 1 && $existing[0]['id'] != $request->id)){
+        if((count($existing) > 0 && $existing[0]['id'] != $request->id)){
             throw new AlreadyExistsException(APIConstants::NAME_SCHEME);
         }
 
-    
-        Scheme::where('id', $request->id)
+        try{
+
+            //begin transaction
+            DB::beginTransaction();
+
+            Scheme::where('id', $request->id)
             ->update([
                 'payment_type_id' => $request->payment_type_id,
                 'name' => $request->name,
@@ -165,15 +199,53 @@ class SchemesController extends Controller
             ]);
 
             // add related scheme types
-        if($request->scheme_types){
-            foreach ($request->scheme_types as $type){
-                $this->schemeTypeExits($type->name) ? null :
-                    SchemeTypes::create([
-                        "name" => $type->name,
-                        "Description" => $type->description,
-                        "scheme_id" => $existing[0]['id']
+            if($request->scheme_types){
+                foreach ($request->scheme_types as $type){
+                    $validator = Validator::make((array) $type, [
+                        'id' => 'nullable:exists:scheme_types,id',
+                        'name' => 'required',
+                        'max_visits_per_year' => 'nullable|numeric|min:0',
+                        'max_amount_per_visit' => 'nullable|numeric|min:0',
                     ]);
+
+                    if ($validator->fails()) {
+                        return response()->json(['errors' => $validator->errors()], 422);
+                    }
+
+                    $existing_scheme_type = SchemeTypes::where('name', $type['name'])->where('scheme_id', $request->id)->get('id');
+
+                    count($existing_scheme_type) > 0 && !isset($type['id']) ? throw new InputsValidationException("Provide id for scheme type ". $type['name'] ." if you want to update it ") : null;
+
+                    if(count($existing_scheme_type) > 0 && $existing_scheme_type[0]['id'] != $type['id']){
+                        throw new InputsValidationException("Scheme type with name ".$type['name']." Already exists");
+                    }
+
+                    isset($type['id']) ? SchemeTypes::where('id', $type['id'])
+                                    ->update([
+                                        "name" => $type['name'],
+                                        "scheme_id" => $request->id,
+                                        'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                                        'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
+                                    ])
+                                : 
+                                SchemeTypes::create([
+                                    "name" => $type['name'],
+                                    "scheme_id" => $request->id,
+                                    'max_visits_per_year' => isset($type['max_visits_per_year']) ? $type['max_visits_per_year'] : null,
+                                    'max_amount_per_visit' => isset($type['max_amount_per_visit']) ? $type['max_amount_per_visit'] : null,
+                                ]);
+                }
             }
+
+            //commit transaction
+            DB::commit();
+        }
+        catch(Exception $e){
+            //rollback transaction
+            DB::rollBack();
+
+            // throw exception
+            throw new Exception($e);
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Scheme with name: ". $request->name);

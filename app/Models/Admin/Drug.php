@@ -58,7 +58,7 @@ class Drug extends Model
                 'id' => $drug->id,
                 'name' => $drug->name,
                 'brand' => $drug->brand->name,
-                'in_stock' => $drug->in_stock,
+                'amount_in_stock' => $drug->amount_in_stock,
                 'expiry_date' => $drug->expiry_date,
                 'description' => $drug->description,
                 

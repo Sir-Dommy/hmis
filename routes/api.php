@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Bill\BillController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\Patient\EmergencyVisitController;
 use App\Http\Controllers\PaymentPathsController;
@@ -25,12 +26,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('test', [AuthController::class, 'test']);
 Route::post('login', [AuthController::class, 'login']);
 
+// open routes for payments
+Route::group(['prefix'=>'payment'], function(){
+    Route::post('mpesa', [BillController::class, 'testMpesaPayment']);
+    // Route::post('paybill', [AuthController::class, 'testPaybillPayment']);
+    // Route::post('pay', [AuthController::class, 'testPayment']);
+    // Route::post('g_pay', [AuthController::class, 'testGPayPayment']);
+});
+
+
+//test callback routes for g_pay
+require_once __DIR__.'/routeCollection/callbackRoutes.php';
+
 
 // authenticated routes to require jwt validation
 Route::middleware('jwt.auth')->group(function(){
 
     //admin routes only
-    Route::group(['middleware' => ['roles.check:hod,admin']], function(){
+    Route::group(['middleware' => ['roles.check:admin']], function(){
         Route::get('branches', [BranchController::class, 'index']);
         Route::post('branches', [BranchController::class, 'store']);
         Route::put('branches', [BranchController::class, 'update']);
@@ -51,7 +64,6 @@ Route::middleware('jwt.auth')->group(function(){
 
         require_once __DIR__.'/routeCollection/logRoutes.php';
         require_once __DIR__.'/routeCollection/adminRoutes.php';
-        require_once __DIR__.'/routeCollection/patientRoutes.php';
         require_once __DIR__.'/routeCollection/doctorRoutes.php';
         require_once __DIR__.'/routeCollection/labRoutes.php';
         require_once __DIR__.'/routeCollection/pharmacyRoutes.php';
@@ -59,6 +71,10 @@ Route::middleware('jwt.auth')->group(function(){
         require_once __DIR__.'/routeCollection/accountRoutes.php';
 
     });
+
+
+    require_once __DIR__.'/routeCollection/patientRoutes.php';
+    require_once __DIR__.'/routeCollection/nurseRoutes.php';
 
 
     Route::post('logout', [AuthController::class, 'logout']);

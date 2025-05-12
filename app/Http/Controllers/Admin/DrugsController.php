@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\NotFoundException;
+use App\Http\Controllers\Admin\ServiceRelated\ServiceController;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Drug;
@@ -11,7 +12,10 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Mockery\CountValidator\Exact;
 
 class DrugsController extends Controller
 {
@@ -20,24 +24,63 @@ class DrugsController extends Controller
         $request->validate([
             "brand" => 'string|min:1|max:255|exists:brands,name',
             "name" => 'required|string|min:1|max:255|unique:drugs,name',
-            "in_stock" => 'required|integer|min:0',
+            "amount_in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "description" =>'string|min:1|max:255',
-            "expiry_date" =>'required|date',
+            "expiry_date" =>'required|date|after_or_equal:today',
         ]);
 
         $brand = Brand::selectBrands(null, $request->brand);
 
-        Drug::create([
-            'name' => $request->name, 
-            "brand_id" => $brand[0]['id'],
-            "in_stock" => $request->in_stock,
-            "price_per_item" => $request->price_per_item,
-            "description" => $request->description,
-            "expiry_date" => $request->expiry_date,
-            'created_by' => User::getLoggedInUserId()
-        ]);
+        try{
+            //begin transaction
+            DB::beginTransaction();
 
+            Drug::create([
+                'name' => $request->name, 
+                "brand_id" => $brand[0]['id'],
+                "amount_in_stock" => $request->amount_in_stock,
+                "price_per_item" => $request->price_per_item,
+                "description" => $request->description,
+                "expiry_date" => $request->expiry_date,
+                'created_by' => User::getLoggedInUserId()
+            ]);
+    
+            $service_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServiceController::class);
+    
+            $request->merge([
+                "service" => $request->name,
+                // "brand" => $request->brand,
+                "service_price_affected_by_time" => false
+            ]);
+    
+            $this->createService($service_controller, $request);
+    
+    
+            // create service prices
+            $service_price_controller = app()->make(\App\Http\Controllers\Admin\ServiceRelated\ServicePriceController::class);
+    
+            $request->merge([            
+                'category' => 'Drug',
+                'drug' => $request->name,
+                'cost_price' => $request->price_per_item,
+            ]);
+    
+            $service_price_controller->createServicePrice($request);
+
+            
+            // commit transaction
+            DB::commit();
+
+        }
+
+        catch(Exception $e){
+            // rollback transaction
+            DB::rollback();
+
+            throw new Exception($e);
+        }
+        
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);
 
         return response()->json(
@@ -187,5 +230,10 @@ class DrugsController extends Controller
         return response()->json(
             []
         ,200);
+    }
+
+    private function createService(ServiceController $service_controller, Request $request){
+        
+        $service_controller->createService($request);
     }
 }

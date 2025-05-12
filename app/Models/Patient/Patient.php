@@ -9,6 +9,7 @@ use App\Models\Admin\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Utils\APIConstants;
 use App\Utils\CustomUserRelations;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -23,6 +24,9 @@ class Patient extends Model
         'patient_code',
         'firstname',
         'lastname',
+        'gender',
+        'occupation',
+        'marital_status',
         'dob',
         'identification_type',
         'id_no',
@@ -79,21 +83,27 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeTypes:id,name', 
+            'insuranceDetails.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',  
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
             'visits.visitClinics.clinic:id,name',
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
+            'visits.visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
             'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by');
+            'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'            
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('id', 'DESC')
+                  ->limit(10); // Order visits by latest first
+        }])
+        ->whereNull('patients.deleted_by');
 
         
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }]);
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        // }]);
         
 
         if($id != null){
@@ -141,17 +151,43 @@ class Patient extends Model
             'approvedBy:id,email',
             'insuranceDetails:id,patient_id,insurer_id,scheme_type_id,member_validity', 
             'insuranceDetails.schemes:id,name',  
-            'insuranceDetails.schemeTypes:id,name', 
+            'insuranceDetails.schemeTypes:id,name',  
             'visits:id,patient_id,stage,open',
             'visits.visitType:id,name',
             'visits.visitClinics.clinic:id,name',
             'visits.visitDepartments.department:id,name',
             'visits.visitPaymentTypes.paymentType:id,name',
             'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems.serviceItem:id,department_id',
+            'visits.visitInsuranceDetails.scheme.schemeTypes:id,name,max_visits_per_year,max_amount_per_visit',
+            // Eager load only bills that have non-pending bill items
+            'visits.bills' => function ($query) {
+                $query->whereHas('billItems', function ($q) {
+                    $q->where('status', '!=', 'pending');
+                });
+            },
+            
+            'visits.bills.billItems' => function ($query) {
+                $query->where('status', '!=', 'pending')
+                ->where('status', '!=', APIConstants::STATUS_CANCELLED); // Only load non-pending OR non cancelledbill items
+            },
             'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by');
+            'visits.vitals:id,visit_id,systole_bp,diastole_bp,cap_refill_pressure,respiratory_rate,spo2_percentage,head_circumference_cm,height_cm,weight_kg,waist_circumference_cm,initial_medication_at_triage,bmi,food_allergy,drug_allergy,nursing_remarks'
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open', 'created_at')
+                  ->orderBy('id', 'DESC') // Order visits by latest first
+                  ->limit(10);
+
+                  // for the first visit, check if the visit is open
+                  // $query->where('visits.open', 1);
+        }])
+        ->whereHas('visits.bills.billItems', function ($query) {
+            $query->where('status', '!=', APIConstants::STATUS_PENDING) // Filter patients with at least one non-pending bill item
+                ->where('status', '!=', APIConstants::STATUS_CANCELLED);      
+        })
+        ->whereNull('patients.deleted_by');
+
+        // CHECK IF PATIENT IS EXPECTED AT TRIAGE
+        Patient::checkIfPatientIsExpectedAtTriage($patients_query, $request->stage);
 
         // using this relationship 'visits.bills.billItems.serviceItem.service:id,name', create a query to select where serviceItem.department = 1
 
@@ -174,34 +210,37 @@ class Patient extends Model
 
         count($existing_employee[0]['departments']) < 1 ? throw new InHouseUnauthorizedException("You are not assigned to any department yet!!!") : null;
 
-        // adding sort by latest created visit first        
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }]);
+        // // adding sort by latest created visit first        
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC')
+        //     ->limit(10);; // Order visits by latest first
+        // }]);
 
         foreach($existing_employee[0]['departments'] as $department){
             // $department->pivot->department_id
             $patients_query->whereHas('visits.bills.billItems.serviceItem', function ($query) use ($department) {
                 $query->where('department_id', $department->pivot->department_id);
             });
+            
         }
 
         // else{
-        //     $paginated_patients = $patients_query->paginate(10);
-        //     //return $paginated_patients;
-        //     $paginated_patients->getCollection()->transform(function ($patient) {
-        //         return Patient::mapResponse($patient);
-        //     });
+            $paginated_patients = $patients_query->paginate(10);
+            //return $paginated_patients;
+            $paginated_patients->getCollection()->transform(function ($patient) {
+                return Patient::mapResponse($patient);
+            });
     
-        //     return $paginated_patients;
+            return $paginated_patients;
         // }
 
 
-        return $patients_query->get()->map(function ($patient) {
-            $patient_details = Patient::mapResponse($patient);
 
-            return $patient_details;
-        });
+        // return $patients_query->get()->map(function ($patient) {
+        //     $patient_details = Patient::mapResponse($patient);
+
+        //     return $patient_details;
+        // });
 
 
     }
@@ -220,15 +259,19 @@ class Patient extends Model
             'insuranceDetails.schemeTypes:id,name',  
             'insuranceDetails.schemes:id,name',  
             'insuranceDetails.schemeTypes:id,name', 
-            'visits:id,patient_id,stage,open',
-            'visits.visitType:id,name',
-            'visits.visitClinics.clinic:id,name',
-            'visits.visitDepartments.department:id,name',
-            'visits.visitPaymentTypes.paymentType:id,name',
-            'visits.visitInsuranceDetails.scheme:id,name',
-            'visits.bills.billItems.serviceItem.service:id,name',
-            'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
-        ])->whereNull('patients.deleted_by')
+            // 'visits:id,patient_id,stage,open',
+            // 'visits.visitType:id,name',
+            // 'visits.visitClinics.clinic:id,name',
+            // 'visits.visitDepartments.department:id,name',
+            // 'visits.visitPaymentTypes.paymentType:id,name',
+            // 'visits.visitInsuranceDetails.scheme:id,name',
+            // 'visits.bills.billItems.serviceItem.service:id,name',
+            // 'visits.vitals:id,weight,blood_pressure,blood_glucose,height,blood_type,disease,allergies,nursing_remarks'
+        ])->with(['visits' => function ($query) {
+            $query->select('id', 'patient_id', 'stage', 'open')
+                  ->orderBy('created_at', 'DESC'); // Order visits by latest first
+        }])
+        ->whereNull('patients.deleted_by')
             ->where(function ($query) use ($value) {
             $query->whereHas('insuranceDetails', function ($query) use ($value) {
                 $query->where('insurance_details.principal_member_number', 'LIKE', '%' . $value . '%');
@@ -245,9 +288,9 @@ class Patient extends Model
         });
 
         
-        $patients_query->with(['visits' => function ($query) {
-            $query->orderBy('created_at', 'DESC'); // Order visits by latest first
-        }])->whereHas('visits');
+        // $patients_query->with(['visits' => function ($query) {
+        //     $query->orderBy('created_at', 'DESC'); // Order visits by latest first
+        // }])->whereHas('visits');
 
 
 
@@ -275,21 +318,32 @@ class Patient extends Model
 
     }
 
+    // private function to check if patient is expected at triage (ensure that visit does not have vitals
+    private static function checkIfPatientIsExpectedAtTriage($patient_query, $stage){
+        if($stage == APIConstants::TRIAGE_STAGE){
+            $patient_query->whereDoesntHave('visits.vitals');
+        }
+    }
+
     private static function mapResponse($patient){
         return [
             'id' => $patient->id,
             'patient_code'=>$patient->patient_code,
             'patient_firstname' => $patient->firstname,
             'patient_lastname' => $patient->lastname,
+            'gender' => $patient->gender,
+            'marital_status' => $patient->marital_status,
+            'occupation' => $patient->occupation,
             'dob' => $patient->dob,
+            'age' => $patient->dob ? now()->diffInYears($patient->dob) : null,
             'identification_type' => $patient->identification_type,
             'id_no' => $patient->id_no,
             'phonenumber1' => $patient->phonenumber1,
             'phonenumber2' => $patient->phonenumber2,
             'email' => $patient->email,
             'address' => $patient->address,
-            'gender' => $patient->address,
-            'occupation' => $patient->address,
+            // 'gender' => $patient->address,
+            // 'occupation' => $patient->address,
             'residence' => $patient->residence, 
             'insurance_membership' => $patient->insurance_membership, 
             'next_of_kin_name' => $patient->next_of_kin_name,  

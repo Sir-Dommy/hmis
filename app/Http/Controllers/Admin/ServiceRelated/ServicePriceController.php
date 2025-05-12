@@ -73,7 +73,7 @@ class ServicePriceController extends Controller
         $request->validate([
             'service' => 'required|exists:services,name',
             'category' => 'required|string|in:Drug,Non-Drug,Others',
-            'unit' => 'required|exists:units,name',
+            'unit' => 'nullable|exists:units,name',
             'smallest_sellable_quantity' => 'required|numeric|min:0',
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
@@ -85,7 +85,7 @@ class ServicePriceController extends Controller
             'asset_account' => 'required|exists:sub_accounts,name',
             'expense_account' => 'required|exists:sub_accounts,name',
             'expiry_date' => 'nullable|string',
-            'bar_code' => 'nullable|string',
+            'bar_code' => 'nullable|string'
         ]);
         
 

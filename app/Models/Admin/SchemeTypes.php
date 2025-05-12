@@ -14,7 +14,9 @@ class SchemeTypes extends Model
     protected $fillable = [
         "name", 
         "description",
-        "scheme_id"
+        "scheme_id",
+        "max_visits_per_year",
+        "max_amount_per_visit"
     ];
 
     

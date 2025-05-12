@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\Accounts\MainAccounts;
 use App\Models\Accounts\Units;
+use App\Models\Admin\Brand;
 use App\Models\Admin\Clinic;
 use App\Models\Admin\ConsultationType;
 use App\Models\Admin\Diagnosis;
@@ -16,6 +17,7 @@ use App\Models\Admin\InsuranceMemberShip;
 use App\Models\Admin\LabTestClass;
 use App\Models\Admin\LabTestRequest;
 use App\Models\Admin\LabTestType;
+use App\Models\Admin\MainServices;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\PhysicalExaminationType;
 use App\Models\Admin\ServiceRelated\Service;
@@ -50,6 +52,8 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->createDefaultClinics($user[0]['id']);
 
+        $this->createDefaultBrand($user[0]['id']);
+
         $this->createDefaultPaymentTypes($user[0]['id']);
 
         $this->createPaymentPaths();
@@ -58,7 +62,9 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->createVisitTypes($user[0]['id']);
 
-        $this->createDefaultServices($user[0]['id']);
+        $this->createDefaultMainServices($user[0]['id']);
+
+        $this->createDefaultSubServices($user[0]['id']);
 
         $this->createDefaultMainAccounts($user[0]['id']);
 
@@ -182,6 +188,15 @@ class AuthServiceProvider extends ServiceProvider
             "created_by" => $user_id
         ]);
     }
+
+    private function createDefaultBrand($user_id){
+        Brand::firstOrCreate([
+            "name" => "Test",
+            "company" => "Test Company",
+            "description" => "This is a test brand",
+            "created_by" => $user_id
+        ]);
+    }
     
 
     //Ensure you add all payment path during production........
@@ -230,10 +245,26 @@ class AuthServiceProvider extends ServiceProvider
 
     }
 
-    private function createDefaultServices($user_id){
+    private function createDefaultMainServices($user_id){
+        MainServices::firstOrCreate([
+            "name" => "Drug",
+            "description" => "This is a Drug main service",
+            "created_by" => $user_id
+        ]);
+
+        MainServices::firstOrCreate([
+            "name" => "Non Drug",
+            "description" => "This is a Non Drug main service",
+            "created_by" => $user_id
+        ]);
+
+    }
+
+    private function createDefaultSubServices($user_id){
         Service::firstOrCreate([
             "name" => "Test",
             "description" => "This is a test service",
+            "main_service_id" => MainServices::where('name', 'Non Drug')->get('id')[0]['id'],
             "created_by" => $user_id
         ]);
 
