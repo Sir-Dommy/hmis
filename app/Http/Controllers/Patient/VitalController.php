@@ -20,28 +20,49 @@ class VitalController extends Controller
     public function createVital(Request $request){
         $request->validate([
             'visit_id' => 'required|exists:visits,id',
-            'weight' => 'required|numeric|between:0,2550',
-            'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
-            'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
-            'height' => 'required|numeric|min:50|max:300',
-            'blood_type' => 'required|string|min:1',
-            'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255',
-            'nursing_remarks' => 'string|min:3|max:25'
+            'systole_bp' => 'nullable|string|min:1|max:10',
+            'diastole_bp' => 'nullable|string|min:1|max:10',
+            'cap_refill_pressure' => 'nullable|string|min:1|max:10',
+            'respiratory_rate' => 'nullable|string|min:1|max:10',
+            'spo2_percentage' => 'nullable|string|min:1|max:10',
+            'head_circumference_cm' => 'nullable|string|min:1|max:10',
+            'height_cm' => 'nullable|string|min:1|max:10',
+            'weight_kg' => 'nullable|string|min:1|max:10',
+            'waist_circumference_cm' => 'nullable|string|min:1|max:10',
+            'initial_medication_at_triage' => 'nullable|string|min:1|max:255',
+            'bmi' => 'nullable|string|min:1|max:10',
+            'food_allergy' => 'nullable|string|min:1|max:10',
+            'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/', // allow value up to 2 decimal places between 70 and 500
+            'temperature' => 'nullable|numeric|between:25,50',
+            // 'weight' => 'required|numeric|between:0,2550',
+            // 'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
+            // 'height' => 'required|numeric|min:50|max:300',
+            // 'blood_type' => 'required|string|min:1',
+            // 'disease' => 'string|min:3|max:25',
+            // 'allergies' => 'string|min:2|max:255',
+            // 'nursing_remarks' => 'string|min:3|max:25'
         ]);
 
         count(Vital::selectVitals(null, $request->visit_id, null)) > 0 ? throw new AlreadyExistsException("Vital already exists!!! kindly update instead...") : null; 
 
-        Vital::create([
-            'weight' => $request->weight, 
-            'blood_pressure'=>$request->blood_pressure,
-            'blood_glucose'=>$request->blood_glucose, 
-            'height' => $request->height,
-            'blood_type' => $request->blood_type,
-            'disease'=>$request->disease,
-            'allergies' => $request->allergies,
-            'nursing_remarks' => $request->nursing_remarks,
+        Vital::create([ 
             'visit_id'=> $request->visit_id,
+            'systole_bp'=>$request->systole_bp,
+            'diastole_bp'=>$request->diastole_bp,
+            'cap_refill_pressure'=>$request->cap_refill_pressure,
+            'respiratory_rate'=>$request->respiratory_rate,
+            'spo2_percentage'=>$request->spo2_percentage,
+            'head_circumference_cm'=>$request->head_circumference_cm,
+            'height_cm'=>$request->height_cm,
+            'weight_kg'=>$request->weight_kg,
+            'blood_glucose'=>round($request->blood_glucose, 2),
+            'temperature'=>$request->temperature,
+            'waist_circumference_cm'=>$request->waist_circumference_cm,
+            'initial_medication_at_triage'=>$request->initial_medication_at_triage,
+            'bmi'=>$request->bmi,
+            'food_allergy'=>$request->food_allergy,
+            'drug_allergy'=>$request->drug_allergy,
+            'nursing_remarks' => $request->nursing_remarks,
             'created_by' => Auth::user()->id
         ]);
 
@@ -58,14 +79,19 @@ class VitalController extends Controller
         $request->validate([
             'id'=>'required|exists:vitals,id',
             'visit_id' => 'required|exists:visits,id',
-            'weight' => 'numeric|between:2,255',
-            'blood_pressure' => 'required|regex:/^\d{2,3}\/\d{2,3}$/', // for diastolic or systolic values 
-            'blood_glucose' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
-            'height' => 'required|numeric|min:50|max:300',
-            'blood_type' => 'required|string|min:1',
-            'disease' => 'string|min:3|max:25',
-            'allergies' => 'string|min:2|max:255',
-            'nursing_remarks' => 'string|min:3|max:25'
+            'systole_bp' => 'nullable|string|min:1|max:10',
+            'diastole_bp' => 'nullable|string|min:1|max:10',
+            'cap_refill_pressure' => 'nullable|string|min:1|max:10',
+            'respiratory_rate' => 'nullable|string|min:1|max:10',
+            'spo2_percentage' => 'nullable|string|min:1|max:10',
+            'head_circumference_cm' => 'nullable|string|min:1|max:10',
+            'height_cm' => 'nullable|string|min:1|max:10',
+            'weight_kg' => 'nullable|string|min:1|max:10',
+            'temperature' => 'nullable|numeric|between:25,50',
+            'blood_glucose' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/|between:70,500', // allow value up to 2 decimal places between 70 and 500
+            'waist_circumference_cm' => 'nullable|string|min:1|max:10',
+            'initial_medication_at_triage' => 'nullable|string|min:1|max:10',
+            'bmi' => 'nullable|string|min:1|max:10'
         ]);
 
         $existing = Vital::selectVitals($request->id,$request->visits_id);
@@ -75,16 +101,24 @@ class VitalController extends Controller
         }
 
         Vital::where('id', $request->id)
-                ->update([
-                     'weight' =>$request->weight ,
-                     'blood_pressure' =>$request->blood_pressure, 
-                     'blood_glucose' => $request->blood_glucose, 
-                     'height' =>$request->height,
-                     'blood_type' => $request->blood_type,
-                     'disease' =>$request->disease ,
-                     'allergies' =>$request->allergies ,
-                     'nursing_remarks' =>$request->nursing_remarks ,
-                     'updated_by' => User::getLoggedInUserId()
+                ->update([                     
+                    'systole_bp'=>$request->systole_bp,
+                    'diastole_bp'=>$request->diastole_bp,
+                    'cap_refill_pressure'=>$request->cap_refill_pressure,
+                    'respiratory_rate'=>$request->respiratory_rate,
+                    'spo2_percentage'=>$request->spo2_percentage,
+                    'head_circumference_cm'=>$request->head_circumference_cm,
+                    'height_cm'=>$request->height_cm,
+                    'weight_kg'=>$request->weight_kg,
+                    'blood_glucose'=>round($request->blood_glucose, 2),
+                    'temperature'=>$request->temperature,
+                    'waist_circumference_cm'=>$request->waist_circumference_cm,
+                    'initial_medication_at_triage'=>$request->initial_medication_at_triage,
+                    'bmi'=>$request->bmi,
+                    'food_allergy'=>$request->food_allergy,
+                    'drug_allergy'=>$request->drug_allergy,
+                    'nursing_remarks' => $request->nursing_remarks,
+                    'updated_by' => User::getLoggedInUserId()
                 ]);
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a vital with id: ". $request->id);

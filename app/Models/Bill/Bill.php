@@ -4,7 +4,6 @@ namespace App\Models\Bill;
 
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
-use App\Models\Admin\ServiceRelated\Service;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Patient\Visit;
 use App\Models\User;
@@ -68,15 +67,45 @@ class Bill extends Model
     }
 
     //perform selection
-    public static function selectBills($id, $bill_reference){
+    public static function selectBills($id, $bill_reference, $status){
         $bills_query = Bill::with([
-            'visit:id,patient_id,stage,open',
+            'visit:id,patient_id,stage,open,created_at',
+            'visit.patient:id,firstname,lastname,patient_code,gender',
             'visit.visitType:id,name',
+            'visit.consultation:id,visit_id,consultation_type_id',
+            'visit.consultation.diagnosis:id,name',
             'visit.visitClinics.clinic:id,name',
             'reversedBy:id,email',
-            'billItems:id,one_item_selling_price,discount,description',
+            'billItems:id,bill_id,service_item_id,one_item_selling_price,discount,quantity,unit,amount_paid,status,offer_status,description',
+            'billItems.serviceItem',
+            'billItems.serviceItem.department:id,name',
+            'billItems.serviceItem.consultationCategory:id,name',
+            'billItems.serviceItem.clinic:id,name',
+            'billItems.serviceItem.paymentType:id,name',
+            'billItems.serviceItem.scheme:id,name',
+            'billItems.serviceItem.schemeType:id,name',
+            'billItems.serviceItem.consultationType:id,name',
+            'billItems.serviceItem.visitType:id,name',
+            'billItems.serviceItem.doctor:id,name',
+            'billItems.serviceItem.labTestType:id,name',
+            'billItems.serviceItem.imageTestType:id,name',
+            'billItems.serviceItem.drug:id,name',
+            'billItems.serviceItem.brand:id,name',
+            'billItems.serviceItem.branch:id,name',
+            'billItems.serviceItem.building:id,name',
+            'billItems.serviceItem.wing:id,name',
+            'billItems.serviceItem.ward:id,name',
+            'billItems.serviceItem.office:id,name',
+            'billItems.serviceItem.unit:id,name',
+            'billItems.serviceItem.service:id,name',
             'transactions:id,transaction_reference,third_party_reference,patient_account_no,hospital_account_no,scheme_name,initiation_time,amount,status,reverse_date'
-        ])->whereNull('bills.deleted_by');
+        ])->whereNull('bills.deleted_by')
+            ->orderBy('bills.id', 'desc');
+
+        if($status != null){
+            $bills_query->where('bills.status', $status);
+        }
+
 
         if($id != null){
             $bills_query->where('bills.id', $id);
@@ -86,23 +115,22 @@ class Bill extends Model
         }
 
 
-        else{
-            $paginated_bills = $bills_query->paginate(10);
+        $paginated_bills = $bills_query->paginate(10);
 
-            //return $bills;
-            $paginated_bills->getCollection()->transform(function ($bill) {
-                return Bill::mapResponse($bill);
-            });
-    
-            return $paginated_bills;
-        }
-
-
-        return $bills_query->get()->map(function ($bill) {
-            $bill_details = Bill::mapResponse($bill);
-
-            return $bill_details;
+        //return $bills;
+        $paginated_bills->getCollection()->transform(function ($bill) {
+            return Bill::mapResponse($bill);
         });
+
+        return $paginated_bills;
+      
+
+
+        // return $bills_query->get()->map(function ($bill) {
+        //     $bill_details = Bill::mapResponse($bill);
+
+        //     return $bill_details;
+        // });
 
 
     }
@@ -138,10 +166,12 @@ class Bill extends Model
     
             foreach($request->service_price_details as $service_price_detail){
 
+                !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
+
                 // custom selection.......
                 $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null
+                    null, null, null, $visit_id
                 );
 
                 //test commit2
@@ -210,7 +240,7 @@ class Bill extends Model
 
             //     $existing_service_price_details = ServicePrice::selectFirstExactServicePrice($service_price_detail['id'], null, null, null, null, null, null, null,
             //         null, null, null, null, null, null, null, null, null, null, null,
-            //         null, null, null
+            //         null, null, null, $visit_id
             //     );
 
             //     count($existing_service_price_details) < 1 ? throw new NotFoundException(APIConstants::NAME_SERVICE_PRICE) : null;
@@ -252,8 +282,8 @@ class Bill extends Model
                     );
 
                     // increment bill amount and discount too
-                    $final_bill_amount += $value;
-                    $final_bill_discount += $service_discount_dictionary[$key];
+                    $final_bill_amount += ($value * $service_quantity_dictionary[$key]);
+                    $final_bill_discount += ($service_discount_dictionary[$key] * $service_quantity_dictionary[$key]);
                     
                     if (($amount_to_pay_dictionary[$key]) < ($value - $service_discount_dictionary[$key])) {
                         $amounts_validation_error  =  $amounts_validation_error . " Total for service id " .$key . " : ". ($value - $service_discount_dictionary[$key]) ." is less than amount to be paid by patient which is: " .$amount_to_pay_dictionary[$key];
@@ -296,6 +326,9 @@ class Bill extends Model
 
             $bill_amount_and_discount_details['bill_discount'] += $bill_item->discount * $bill_item->quantity;
         }
+
+        $bill_amount_and_discount_details['bill_amount'] = round($bill_amount_and_discount_details['bill_amount'], 2);
+        $bill_amount_and_discount_details['bill_discount'] = round($bill_amount_and_discount_details['bill_discount'], 2);
 
         return $bill_amount_and_discount_details;
     }
@@ -389,10 +422,18 @@ class Bill extends Model
         return [
             'id' => $bill->id,
             'bill_reference_number'=>$bill->bill_reference_number,
+            'patient_id' => $bill->visit ? $bill->visit->patient_id : null,
+            'patient_first_name' => $bill->visit->patient ? $bill->visit->patient->firstname : null,
+            'patient_last_name' => $bill->visit->patient ? $bill->visit->patient->lastname : null,
+            'patient_code' => $bill->visit->patient ? $bill->visit->patient->patient_code : null, 
+            'patient_gender' => $bill->visit->patient ? $bill->visit->patient->gender : null,
+            'patient_occupation' => $bill->visit->patient ? $bill->visit->patient->occupation : null,
+            'patient_marital_status' => $bill->visit->patient ? $bill->visit->patient->marital_status : null,
+            'patient_age' => $bill->visit->patient ? now()->diffInYears($bill->visit->patient->age)  : null,
             'initiated_at' => $bill->initiated_at,
             'bill_amount' => $bill->bill_amount,
-            'discount' => $bill->discount,
-            'balance' => $bill->bill_amount - $bill->discount - Bill::calculateTotalPaidInTransactions($bill->id),
+            'discount' => round($bill->discount, 2),
+            'balance' => round($bill->bill_amount - $bill->discount - Bill::calculateTotalPaidInTransactions($bill->id), 2),
             'status' => $bill->status,
             'reason' => $bill->reason,
             'is_reversed' => $bill->is_reversed,

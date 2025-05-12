@@ -17,6 +17,7 @@ class VisitInsuranceDetail extends Model
         'claim_number',
         'available_balance',
         'scheme_id',
+        'scheme_type_id',
         'signature',
         'document_path'
     ];

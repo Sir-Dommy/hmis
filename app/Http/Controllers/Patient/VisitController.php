@@ -11,6 +11,7 @@ use App\Models\Admin\Clinic;
 use App\Models\Admin\Department;
 use App\Models\Admin\PaymentType;
 use App\Models\Admin\Scheme;
+use App\Models\Admin\SchemeTypes;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Admin\VisitType;
 use App\Models\Bill\Bill;
@@ -44,7 +45,7 @@ class VisitController extends Controller
             // 'consultation_type'=>'nullable',
             // 'consultation_category'=>'nullable',
             // 'service'=>'required|string|exists:services,name',
-            'schemes' => 'nullable',
+            'schemes' => 'nullable|array',
             'payment_types'=>'required',
             'service_price_details'=>'required',
             'bar_code'=>'nullable|string',
@@ -86,7 +87,7 @@ class VisitController extends Controller
             ]);
 
     
-            $this->validateAndSaveVisitPaymentType( (object) $request->payment_types, $visit->id, $request->schemes);
+            $this->validateAndSaveVisitPaymentType($request->payment_types, $visit->id, $request->schemes);
     
             foreach($request->payment_types as $payment_type){
                 if($payment_type['insurance'] == 1){
@@ -98,6 +99,7 @@ class VisitController extends Controller
                             'claim_number' => 'required|string',
                             'available_balance' => 'required|numeric',
                             'insurer' => 'required|string|exists:schemes,name',
+                            'scheme_type' => 'required|string|exists:scheme_types,name',
                         ]);
 
                         if ($validator->fails()) {
@@ -105,14 +107,22 @@ class VisitController extends Controller
                         }
 
                         $existing_scheme = Scheme::where('name', $scheme['insurer'])->get("id");
-                        
+
                         count($existing_scheme) < 1  ? throw new InputsValidationException("Provide a valid insurer!!!!!!!!") : null;
 
+                        $existing_scheme_type = SchemeTypes::where('name', $scheme['scheme_type'])
+                                                ->where('scheme_id', $existing_scheme[0]['id'])
+                                                ->get("id");
+                        
+                        count($existing_scheme_type) < 1  ? throw new InputsValidationException("Scheme type: ".$scheme['scheme_type']." does not exist or is not related to scheme: ".$scheme['insurer']) : null;
+
+                        
                         VisitInsuranceDetail::create([
                             'visit_id' => $visit->id,
                             'claim_number' => $scheme['claim_number'],
                             'available_balance' => $scheme['available_balance'],
                             'scheme_id' => $existing_scheme[0]['id'],
+                            'scheme_type_id' => $existing_scheme_type[0]['id'],
                             'signature' => $request->signature,
                         ]);
                     }
@@ -259,33 +269,46 @@ class VisitController extends Controller
 
     private function validateAndSaveVisitPaymentType($payment_types, $visit_id, $schemes){
 
-
         foreach($payment_types as $payment_type){
-
+            $payment_method = "";
             if($payment_type['cash'] == 1){
                 $payment_method = "Cash";
+    
+                $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+        
+                if(count($existing_method) < 1){
+                    DB::rollBack();
+                    
+                    throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
+        
+                }
+        
+                VisitPaymentType::create([
+                    'visit_id' => $visit_id,
+                    'payment_type_id' => $existing_method[0]['id']
+                ]);
             }
     
-            else if($payment_type['insurance'] == true){
+            if($payment_type['insurance'] == 1){
                 $payment_method = "Insurance";
-                
                 !$schemes ? throw new InputsValidationException("If Insurance is one of the payment types you must provide scheme details eg... claim number") : null;
+    
+                $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
+        
+                if(count($existing_method) < 1){
+                    DB::rollBack();
+                    
+                    throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
+        
+                }
+        
+                VisitPaymentType::create([
+                    'visit_id' => $visit_id,
+                    'payment_type_id' => $existing_method[0]['id']
+                ]);
             }
-    
-            $existing_method = PaymentType::selectPaymentTypes(null, $payment_method);
-    
-            if(count($existing_method) < 1){
-                DB::rollBack();
-                
-                throw new NotFoundException(APIConstants::NAME_PAYMENT_TYPE ." $payment_method");
-    
-            }
-    
-            VisitPaymentType::create([
-                'visit_id' => $visit_id,
-                'payment_type_id' => $existing_method[0]['id']
-            ]);
         }
+
 
         
     }
@@ -304,7 +327,7 @@ class VisitController extends Controller
                         foreach($request->lab_test_types as $lab_test_type){
                             $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                             $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
-                            $request->wing, $request->ward, $request->office)->toArray()));
+                            $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                         }
                     }
                         
@@ -314,7 +337,7 @@ class VisitController extends Controller
                         foreach($request->image_test_types as $image_test_type){
                             $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                             $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
-                            $request->wing, $request->ward, $request->office)->toArray()));
+                            $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                         }
                     }
         
@@ -325,7 +348,7 @@ class VisitController extends Controller
                         foreach($request->drugs as $drug){
                             $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                             $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
-                            $request->wing, $request->ward, $request->office)->toArray()));
+                            $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                         }
                     }
                     
@@ -343,7 +366,7 @@ class VisitController extends Controller
                                 foreach($request->lab_test_types as $lab_test_type){
                                     $schemes_related_prices_array = array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
                                     $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, $lab_test_type["name"], null, null, null, $request->branch, $request->building,
-                                    $request->wing, $request->ward, $request->office)->toArray()));
+                                    $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                                 }
                             }
                 
@@ -352,7 +375,7 @@ class VisitController extends Controller
                                 foreach($request->image_test_types as $image_test_type){
                                     $schemes_related_prices_array = array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
                                     $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, $image_test_type["name"], null, null, $request->branch, $request->building,
-                                    $request->wing, $request->ward, $request->office)->toArray()));
+                                    $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                                 }
                             }
                 
@@ -363,7 +386,7 @@ class VisitController extends Controller
                                 foreach($request->drugs as $drug){
                                     $schemes_related_prices_array = array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, $request->payment_type, $scheme["name"], $scheme["scheme_type"],
                                     $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, $drug["name"], $drug["brand"], $request->branch, $request->building,
-                                    $request->wing, $request->ward, $request->office)->toArray()));
+                                    $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
                                 }
                             }
                         }
@@ -376,14 +399,14 @@ class VisitController extends Controller
             if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
                 $cash_related_prices_array = array_merge($cash_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "cash", null, null,
                 $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
-                $request->wing, $request->ward, $request->office)->toArray()));
+                $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
             }
 
             // insurance incase of other services    
             if((!is_array($request->drugs)) && (!is_array($request->image_test_types))  && (!is_array($request->lab_test_types))){
                 $schemes_related_prices_array = array_merge($schemes_related_prices_array, (ServicePrice::selectFirstExactServicePrice($request->id, $request->service, $request->department, $request->consultation_category, $request->clinic, "insurance", null, null,
                         $request->consultation_type, $request->visit_type, $request->doctor, $request->current_time, $request->duration, null, null, null, null, $request->branch, $request->building,
-                        $request->wing, $request->ward, $request->office)->toArray()));
+                        $request->wing, $request->ward, $request->office, $request->visit_id)->toArray()));
             }
 
             //return $request;

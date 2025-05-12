@@ -9,10 +9,10 @@ class ConsultationDiagnosisJoin extends Model
 {
     use HasFactory;
 
-    protected $table = 'consultations_diagnosis_join';
+    protected $table = 'consultation_diagnosis_join';
 
     protected $fillable = [
     'consultation_id',
     'diagnosis_id',
-    ]
+    ];
 }

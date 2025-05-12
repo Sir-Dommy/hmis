@@ -2,6 +2,8 @@
 
 namespace App\Models\Admin\ServiceRelated;
 
+use App\Models\Admin\MainServices;
+use App\Models\Branch;
 use App\Utils\CustomUserRelations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +19,8 @@ class Service extends Model
     protected $fillable = [
         'name',
         'service_price_affected_by_time',
+        'main_service_id',
+        'branch_id',
         'description',
         'created_by',
         'updated_by',
@@ -28,11 +32,25 @@ class Service extends Model
         'deleted_at'
     ];
 
+    //relationship with patient
+    public function mainService()
+    {
+        return $this->belongsTo(MainServices::class, 'main_service_id');
+    }
+    
+    //relationship with users ....who to see
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
 
     //perform selection
     public static function selectServices($id, $name){
 
         $services_query = Service::with([
+            'mainService:id,name',
+            'branch:id,name',
             'createdBy:id,email',
             'updatedBy:id,email',
             'approvedBy:id,email'
@@ -53,6 +71,8 @@ class Service extends Model
                 'id' => $service->id,
                 'name' => $service->name,
                 'service_price_affected_by_time' => $service->service_price_affected_by_time,
+                'main_service' => $service->mainService ? $service->mainService->name : null,
+                'branch' => $service->branch ? $service->branch->name : null,
             ];
 
             $related_user =  CustomUserRelations::relatedUsersDetails($service);

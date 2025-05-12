@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exceptions\AlreadyExistsException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Symptom;
+use App\Models\Admin\Diagnosis;
 use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Utils\APIConstants;
@@ -15,29 +15,29 @@ use Illuminate\Http\Request;
 class DiagnosisController extends Controller
 {
     //create
-    public function createSymptom(Request $request){
+    public function createDiagnosis(Request $request){
         $request->validate([
             'name' => 'required|string|min:1|max:255|unique:diagnosis,name',
             'description'=>'string|min:1|max:255'            
         ]);
 
 
-        Symptom::create([
+        Diagnosis::create([
             'name' => $request->name, 
             'description' => $request->description,
             'created_by' => User::getLoggedInUserId()
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Symptom with name: ". $request->name);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Diagnosis with name: ". $request->name);
 
         return response()->json(
-            Symptom::selectSymptoms(null, $request->name)
+            Diagnosis::selectDiagnosis(null, $request->name)
         ,200);
 
     }
 
     //update
-    public function updateSymptom(Request $request){
+    public function updateDiagnosis(Request $request){
         $request->validate([
             'id' => 'required|integer|exists:diagnosis,id',
             'name' => 'required|string|min:1|max:255',
@@ -45,12 +45,12 @@ class DiagnosisController extends Controller
             
         ]);
 
-        $existing = Symptom::selectSymptoms(null, $request->name);
+        $existing = Diagnosis::selectDiagnosis(null, $request->name);
 
-        count($existing) > 0  && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_SYMPTOM) : null;
+        count($existing) > 0  && $existing[0]['id'] != $request->id ? throw new AlreadyExistsException(APIConstants::NAME_DIAGNOSIS) : null;
 
 
-        Symptom::where('id', $request->id)
+        Diagnosis::where('id', $request->id)
             ->update([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -60,74 +60,74 @@ class DiagnosisController extends Controller
                 'approved_at' => null
         ]);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Symptom with name: ". $request->name);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Diagnosis with name: ". $request->name);
 
         return response()->json(
-            Symptom::selectSymptoms($request->id, null)
+            Diagnosis::selectDiagnosis($request->id, null)
         ,200);
 
     }
 
     //     //Get one 
-    public function getSingleSymptom(Request $request){
+    public function getSingleDiagnosis(Request $request){
 
-        $symptom = Symptom::selectSymptoms($request->id, $request->name);
+        $diagnosis = Diagnosis::selectDiagnosis($request->id, $request->name);
 
-        count($symptom) < 1 ? throw new NotFoundException(APIConstants::NAME_SYMPTOM) : null ;
+        count($diagnosis) < 1 ? throw new NotFoundException(APIConstants::NAME_DIAGNOSIS) : null ;
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a Symptom with name: ". $symptom[0]['name']);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched a diagnosis with name: ". $diagnosis[0]['name']);
 
         return response()->json(
-            $symptom
+            $diagnosis
         ,200);
     }
 
 
     //getting all
-    public function getAllSymptoms(){
+    public function getAllDiagnosis(){
 
-        $symptom = Symptom::selectSymptoms(null, null);
+        $diagnosis = Diagnosis::selectDiagnosis(null, null);
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all Symptoms");
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_GET, "Fetched all diagnosis");
 
         return response()->json(
-            $symptom
+            $diagnosis
         ,200);
     }
 
     //approve
-    public function approveSymptoms($id){
+    public function approveDiagnosis($id){
 
-        count(Symptom::selectSymptoms($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_SYMPTOM) : null;
+        count(Diagnosis::selectDiagnosis($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_DIAGNOSIS) : null;
 
-        Symptom::where('id', $id)
+        Diagnosis::where('id', $id)
             ->update([
                 'approved_by' => User::getLoggedInUserId(),
                 'approved_at' => Carbon::now()
         ]);
 
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved a Symptom with id: ".$id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_APPROVE, "Approved a diagnosis with id: ".$id);
 
         return response()->json(
-            Symptom::selectSymptoms($id, null)
+            Diagnosis::selectDiagnosis($id, null)
         ,200);
 
     }
 
     //soft delete
-    public function softDeleteSymptoms($id){
+    public function softDeleteDiagnosis($id){
             
-        count(Symptom::selectSymptoms($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_SYMPTOM) : null;
+        count(Diagnosis::selectDiagnosis($id, null)) < 1 ? throw new NotFoundException(APIConstants::NAME_DIAGNOSIS) : null;
         
-        Symptom::where('id', $id)
+        Diagnosis::where('id', $id)
                 ->update([
                     'deleted_at' => now(),
                     'deleted_by' => User::getLoggedInUserId(),
                 ]);
 
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a Symptom with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_SOFT_DELETE, "Trashed a Diagnosis with id: ". $id);
 
         return response()->json(
             []
@@ -137,9 +137,9 @@ class DiagnosisController extends Controller
     //restore
     public function restoreSoftDeleted($id){ 
         
-        count(Symptom::where('id', $id)->whereNotNull('deleted_by')->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_SYMPTOM) : null;
+        count(Diagnosis::where('id', $id)->whereNotNull('deleted_by')->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_DIAGNOSIS) : null;
         
-        Symptom::where('id', $id)
+        Diagnosis::where('id', $id)
                 ->update([
                     'approved_at' => null,
                     'approved_by' => null,
@@ -148,22 +148,22 @@ class DiagnosisController extends Controller
                 ]);
 
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restored a Symptom with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_RESTORE, "Restored a diagnosis with id: ". $id);
 
         return response()->json(
-            Symptom::selectDiagnosis($id, null)
+            Diagnosis::selectDiagnosis($id, null)
         ,200);
     }
 
     //permanently delete
     public function permanentlyDelete($id){
             
-        count(Symptom::where('id', $id)->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_SYMPTOM) : null;
+        count(Diagnosis::where('id', $id)->get()) < 1 ? throw new NotFoundException(APIConstants::NAME_DIAGNOSIS) : null;
         
-        Symptom::destroy($id);
+        Diagnosis::destroy($id);
 
 
-        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Deleted a Symptom with id: ". $id);
+        UserActivityLog::createUserActivityLog(APIConstants::NAME_PERMANENT_DELETE, "Deleted a diagnosis with id: ". $id);
 
         return response()->json(
             []

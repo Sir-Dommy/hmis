@@ -54,7 +54,7 @@ class EmployeeController extends Controller
 
             foreach ($request->departments as $department) {
 
-                //use this if department will be provide as an array of json objects
+                //use this if department will be provided as an array of json objects
                 // $validator = Validator::make((array) $department, [            
                 //     'name' => 'required|exists:department,name'
                 // ]);

@@ -27,7 +27,7 @@ class VisitPaymentType extends Model
     //relationship with payment type
     public function paymentType()
     {
-        return $this->belongsTo(PaymentType::class, 'fee_type');
+        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
 }
