@@ -97,7 +97,7 @@ class DrugsController extends Controller
             "id" => 'required|integer|exists:drugs,id',
             "brand" => 'string|min:1|max:255|exists:brands,name',
             "name" => 'required|string|min:1|max:255',
-            "in_stock" => 'required|integer|min:0',
+            "amount_in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
             "requires_approval" => 'required|boolean',
             "description" =>'string|min:1|max:255',
