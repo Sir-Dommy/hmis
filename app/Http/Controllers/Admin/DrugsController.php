@@ -26,6 +26,7 @@ class DrugsController extends Controller
             "name" => 'required|string|min:1|max:255|unique:drugs,name',
             "amount_in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
+            "requires_approval" => 'required|boolean',
             "description" =>'string|min:1|max:255',
             "expiry_date" =>'required|date|after_or_equal:today',
         ]);
@@ -41,6 +42,7 @@ class DrugsController extends Controller
                 "brand_id" => $brand[0]['id'],
                 "amount_in_stock" => $request->amount_in_stock,
                 "price_per_item" => $request->price_per_item,
+                "requires_approval" => $request->requires_approval,
                 "description" => $request->description,
                 "expiry_date" => $request->expiry_date,
                 'created_by' => User::getLoggedInUserId()
@@ -97,6 +99,7 @@ class DrugsController extends Controller
             "name" => 'required|string|min:1|max:255',
             "in_stock" => 'required|integer|min:0',
             "price_per_item" => 'required|numeric|min:0',
+            "requires_approval" => 'required|boolean',
             "description" =>'string|min:1|max:255',
             "expiry_date" =>'required|date',
             
@@ -116,6 +119,7 @@ class DrugsController extends Controller
                 "price_per_item" => $request->price_per_item,
                 "description" => $request->description,
                 "expiry_date" => $request->expiry_date,
+                "requires_approval" => $request->requires_approval,
                 'updated_at' => Carbon::now(),
                 'updated_by' => User::getLoggedInUserId(),
                 'approved_by' => null,

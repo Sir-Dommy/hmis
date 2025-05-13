@@ -20,6 +20,7 @@ class Drug extends Model
         "amount_in_stock",
         "price_per_item",
         "description",
+        'requires_approval',
         "expiry_date",
         "created_by",
         "updated_by",
@@ -59,6 +60,8 @@ class Drug extends Model
                 'name' => $drug->name,
                 'brand' => $drug->brand->name,
                 'amount_in_stock' => $drug->amount_in_stock,
+                'requires_approval' => $drug->requires_approval,
+                'price_per_item' => $drug->price_per_item,
                 'expiry_date' => $drug->expiry_date,
                 'description' => $drug->description,
                 
