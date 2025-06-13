@@ -52,7 +52,7 @@ class AdmissionsController extends Controller
             "past_medical_history" => $request->past_medical_history,
             "expected_length_of_stay" => $request->expected_length_of_stay,
             "reason_for_admission" => $request->reason_for_admission,
-            "update_by" => auth()->user()->id,
+            "updated_by" => auth()->user()->id,
         ]);
 
         $updated = Admission::selectAdmission($request->id, null, null, null);
