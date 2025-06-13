@@ -40,7 +40,7 @@ class AdmissionsController extends Controller
     public function updateAdmission(Request $request){
         $request->validate([
             'id' => 'required|exists:admissions,id',
-            'visit_id' => 'required|exists:visits,id|unique:admissions,visit_id',
+            'visit_id' => 'required|exists:visits,id',
             'expected_length_of_stay' => 'required|numeric|min:0'
         ]);
 
