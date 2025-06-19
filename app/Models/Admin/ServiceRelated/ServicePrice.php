@@ -515,7 +515,7 @@ class ServicePrice extends Model
                             $payment_type_to_use = $visit_payment_type->paymentType->name;
     
                             //.$visit_payment_type->payment_type;
-                            $service_prices_query->orWhereHas('paymentType', function ($query) use ($payment_type_to_use) {
+                            $service_prices_query->WhereHas('paymentType', function ($query) use ($payment_type_to_use) {
                                 $query->where('name',"$payment_type_to_use");
                             });
                         }
@@ -528,7 +528,7 @@ class ServicePrice extends Model
                                     $scheme_to_use = $visit_scheme->scheme->name;
     
                                     // select using a scheme
-                                    $service_prices_query->orWhereHas('scheme', function ($query) use ($scheme_to_use) {
+                                    $service_prices_query->WhereHas('scheme', function ($query) use ($scheme_to_use) {
                                         $query->where('name', "$scheme_to_use");
                                     });
 
@@ -663,7 +663,10 @@ class ServicePrice extends Model
 
 
             if($id != null){
-                $service_prices_query->where('service_prices.id', $id);
+                $service_prices_query->where(function ($query) use ($id) {
+                    $query->where('id', $id);
+                });
+                //$service_prices_query->where('service_prices.id', $id);
             }
 
 

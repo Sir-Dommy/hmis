@@ -129,7 +129,7 @@ class SchemesController extends Controller
             //rollback transaction
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
         
 
@@ -245,7 +245,7 @@ class SchemesController extends Controller
             DB::rollBack();
 
             // throw exception
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a Scheme with name: ". $request->name);

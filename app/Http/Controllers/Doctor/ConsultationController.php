@@ -136,7 +136,7 @@ class ConsultationController extends Controller
             //rollback the transaction
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $created->id);
@@ -268,7 +268,7 @@ class ConsultationController extends Controller
             //rollback the transaction
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a consultation: ". $request->id);

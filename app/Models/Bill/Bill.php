@@ -306,7 +306,7 @@ class Bill extends Model
 
         catch(Exception $e){
             DB::rollBack();
-             throw new Exception($e);
+             throw $e;
         }
         
 

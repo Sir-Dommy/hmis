@@ -139,7 +139,7 @@ class VisitController extends Controller
 
         catch(Exception $e){
             DB::rollBack();
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a visit with id: ". $visit->id);
@@ -187,7 +187,7 @@ class VisitController extends Controller
         catch(Exception $e){
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a visit with id: ". $request->id);

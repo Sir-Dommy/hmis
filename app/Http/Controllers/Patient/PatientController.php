@@ -203,7 +203,7 @@ class PatientController extends Controller
         catch(Exception $e){
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
         
 
@@ -413,7 +413,7 @@ class PatientController extends Controller
         catch(Exception $e){
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
         
         UserActivityLog::createUserActivityLog(APIConstants::NAME_UPDATE, "Updated a patient with id: ". $request->id);

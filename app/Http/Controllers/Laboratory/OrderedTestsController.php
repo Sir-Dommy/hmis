@@ -67,7 +67,7 @@ class OrderedTestsController extends Controller
             //rollback transaction
             DB::rollBack();
 
-            throw new Exception($e);
+            throw $e;
         }
 
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Ordered a test with id: ". $created->id);

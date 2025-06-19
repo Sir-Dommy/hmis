@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pharmacy;
 use App\Exceptions\InputsValidationException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Drug;
 use App\Models\Admin\SchemeTypes;
 use App\Models\Admin\ServiceRelated\ServicePrice;
 use App\Models\Bill\Bill;
@@ -16,6 +17,7 @@ use App\Utils\APIConstants;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PrescriptionController extends Controller
@@ -29,15 +31,14 @@ class PrescriptionController extends Controller
         ]);
 
         try{
-            DB::beginTransaction();
-
             
+            DB::beginTransaction();            
 
             foreach($request->service_price_details as $service_price_detail){
 
                 !is_array($service_price_detail) ? throw new InputsValidationException("Each individual price detail must be of array (object) type!") : null;
                 $validator = Validator::make((array) $service_price_detail, [            
-                    'id' => 'required',
+                    'id' => 'required|exists:service_prices,id',
                     'quantity' => 'required|numeric|min:0',
                     'amount_to_pay' => 'required|numeric|min:0',
                     'discount' => 'nullable|numeric|min:0',
@@ -54,15 +55,20 @@ class PrescriptionController extends Controller
 
                 count($existing_service_price_details) < 1 ? throw new NotFoundException("Service price with id: ".$service_price_detail['id']." does not exist!") : null;
 
-                return $service_price_detail['id'];
+                // select drug and check if it exists
+                $existing_drug = Drug::where('name', $existing_service_price_details[0]['drug'])->first();
+
+                if(!$existing_drug){
+                    throw new NotFoundException("Drug with name: ".$existing_service_price_details[0]['drug']." does not exist!");
+                }
 
                 Prescription::create([
                     'visit_id' => $request->visit_id,
                     'drug' => $existing_service_price_details[0]['drug'],
-                    'drug_formula' => $service_price_detail['drug_formula'],
+                    'drug_formula' => $existing_drug ? $existing_drug->drug_formula : null,
                     'brand' => $existing_service_price_details[0]['brand'],
-                    'dosage_instruction' => $service_price_detail['dosage_instruction'],
-                    'prescription_instruction' => $service_price_detail['prescription_instruction'],
+                    'dosage_instruction' => isset($service_price_detail['dosage_instruction']) ? $service_price_detail['dosage_instruction'] : null,
+                    'prescription_instruction' => isset($service_price_detail['prescription_instruction']) ? $service_price_detail['prescription_instruction'] : null,
                     'status' => APIConstants::STATUS_PENDING,
                 ]);
 
@@ -80,7 +86,8 @@ class PrescriptionController extends Controller
             //rollback transaction
             DB::rollBack();
 
-            throw new Exception($e);
+            // throw new Exception($e);
+            throw $e;
         }
         DB::beginTransaction();
         

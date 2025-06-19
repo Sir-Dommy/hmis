@@ -80,7 +80,7 @@ class DrugsController extends Controller
             // rollback transaction
             DB::rollback();
 
-            throw new Exception($e);
+            throw $e;
         }
         
         UserActivityLog::createUserActivityLog(APIConstants::NAME_CREATE, "Created a Drug with name: ". $request->name);

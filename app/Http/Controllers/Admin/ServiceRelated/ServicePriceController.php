@@ -139,7 +139,7 @@ class ServicePriceController extends Controller
 
         catch(Exception $e){
             DB::rollBack();
-            throw new Exception($e);
+            throw $e;
 
         }
 
