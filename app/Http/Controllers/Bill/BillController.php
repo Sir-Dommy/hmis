@@ -53,7 +53,6 @@ class BillController extends Controller
 
         $PartyA ="254".substr($PartyA, -9);
 
-        return response()->json($PartyA, 200);
         
         # Get the timestamp, format YYYYmmddhms -> 20181004151020
         $Timestamp = date('YmdHis');    
@@ -93,7 +92,7 @@ class BillController extends Controller
         
         curl_close($curl);
 
-        // return response()->json($access_token, 200);
+        return response()->json($access_token, 200);
 
 
         # header for stk push
