@@ -52,6 +52,8 @@ class BillController extends Controller
         $Amount = $request->amount;
 
         $PartyA ="254".substr($PartyA, -9);
+
+        return response()->json($PartyA, 200);
         
         # Get the timestamp, format YYYYmmddhms -> 20181004151020
         $Timestamp = date('YmdHis');    
