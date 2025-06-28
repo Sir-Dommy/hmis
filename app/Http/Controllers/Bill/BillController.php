@@ -51,7 +51,7 @@ class BillController extends Controller
         $TransactionDesc = 'Sir Dommy';
         $Amount = $request->amount;
 
-        $PartyA ="254".substr($PartyA,1);
+        $PartyA ="254".substr($PartyA, -9);
         
         # Get the timestamp, format YYYYmmddhms -> 20181004151020
         $Timestamp = date('YmdHis');    
@@ -161,7 +161,7 @@ class BillController extends Controller
         $TransactionDesc = 'Sir Dommy';
         $Amount = $request->amount;
 
-        $PartyA ="254".substr($PartyA,1);
+        $PartyA ="254".substr($PartyA,-9);
         
         # Get the timestamp, format YYYYmmddhms -> 20181004151020
         $Timestamp = date('YmdHis');    
