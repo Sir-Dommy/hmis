@@ -29,6 +29,7 @@ Route::post('login', [AuthController::class, 'login']);
 // open routes for payments
 Route::group(['prefix'=>'payment'], function(){
     Route::post('mpesa', [BillController::class, 'testMpesaPayment']);
+    Route::post('withdraw', [BillController::class, 'testMpesaWithdrawal']);
     // Route::post('paybill', [AuthController::class, 'testPaybillPayment']);
     // Route::post('pay', [AuthController::class, 'testPayment']);
     // Route::post('g_pay', [AuthController::class, 'testGPayPayment']);
