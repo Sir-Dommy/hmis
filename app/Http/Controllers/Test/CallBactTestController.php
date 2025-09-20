@@ -32,23 +32,22 @@ class CallBactTestController extends Controller
         // append on a new line
         file_put_contents($file, "\n", FILE_APPEND);
 
-        // TEST SEND RESPONSE TO BEBA ENDPOINT
-        $curl = curl_init("https://dev-api-gateway.bebafleet.com/payments/api/v1/mp/stk/callback");
-        curl_setopt($curl, CURLOPT_HTTPHEADER, "");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_HEADER, FALSE);
-        $result = curl_exec($curl);
-        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $result = json_decode($result);
+        // // TEST SEND RESPONSE TO BEBA ENDPOINT
+        // $curl = curl_init("https://dev-api-gateway.bebafleet.com/payments/api/v1/mp/stk/callback");
+        // curl_setopt($curl, CURLOPT_HTTPHEADER, "");
+        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        // curl_setopt($curl, CURLOPT_HEADER, FALSE);
+        // $result = curl_exec($curl);
+        // $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        // $result = json_decode($result);
 
-        //check if result has access_token
-        if (!isset($result)) {
-            return response()->json([
-                'error' => 'Unable to get access token',
-                "result" => $result
-            ], 500);
-        }
-        $access_token = $result->access_token; 
+        // //check if result has access_token
+        // if (!isset($result)) {
+        //     return response()->json([
+        //         'error' => 'Unable to get access token',
+        //         "result" => $result
+        //     ], 500);
+        // }
         
         curl_close($curl);
 
