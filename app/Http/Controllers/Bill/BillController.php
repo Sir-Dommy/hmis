@@ -127,7 +127,6 @@ class BillController extends Controller
 
         $response = json_decode($curl_response, true);
     
-
         return response()->json($response, 200);
     }
 
