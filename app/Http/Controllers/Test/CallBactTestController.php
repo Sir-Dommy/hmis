@@ -49,7 +49,7 @@ class CallBactTestController extends Controller
         //     ], 500);
         // }
         
-        curl_close($curl);
+        // curl_close($curl);
 
 
         return response()->json($data);
