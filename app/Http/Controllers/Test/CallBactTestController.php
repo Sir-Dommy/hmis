@@ -33,43 +33,6 @@ class CallBactTestController extends Controller
         // append on a new line
         file_put_contents($file, "\n", FILE_APPEND);
 
-        // // TEST SEND RESPONSE TO BEBA ENDPOINT
-        $response = Http::post(
-            'https://dev-api-gateway.bebafleet.com/payments/api/v1/mp/stk/callback',
-            $data
-        );
-
-        if ($response->failed()) {
-
-            file_put_contents($file, "FAILED\n", FILE_APPEND);
-
-            file_put_contents($file, json_encode($response->body()), FILE_APPEND);
-
-            // append on a new line
-            file_put_contents($file, "\n", FILE_APPEND);
-
-            // append on a new line
-            file_put_contents($file, "\n", FILE_APPEND);
-            return response()->json([
-                'error' => 'Request to failed',
-                'result' => $response->body(),
-            ], 500);
-        }
-
-        else {
-
-            file_put_contents($file, "SUCCESS\n", FILE_APPEND);
-
-            file_put_contents($file, json_encode($response->body()), FILE_APPEND);
-
-            // append on a new line
-            file_put_contents($file, "\n", FILE_APPEND);
-
-            // append on a new line
-            file_put_contents($file, "\n", FILE_APPEND);
-        }
-
-
         return response()->json($data);
     }
 
