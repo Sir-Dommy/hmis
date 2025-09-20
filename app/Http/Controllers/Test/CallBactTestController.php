@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Test;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class CallBactTestController extends Controller
 {
@@ -33,23 +34,40 @@ class CallBactTestController extends Controller
         file_put_contents($file, "\n", FILE_APPEND);
 
         // // TEST SEND RESPONSE TO BEBA ENDPOINT
-        // $curl = curl_init("https://dev-api-gateway.bebafleet.com/payments/api/v1/mp/stk/callback");
-        // curl_setopt($curl, CURLOPT_HTTPHEADER, "");
-        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        // curl_setopt($curl, CURLOPT_HEADER, FALSE);
-        // $result = curl_exec($curl);
-        // $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        // $result = json_decode($result);
+        $response = Http::post(
+            'https://dev-api-gateway.bebafleet.com/payments/api/v1/mp/stk/callback',
+            $data
+        );
 
-        // //check if result has access_token
-        // if (!isset($result)) {
-        //     return response()->json([
-        //         'error' => 'Unable to get access token',
-        //         "result" => $result
-        //     ], 500);
-        // }
-        
-        // curl_close($curl);
+        if ($response->failed()) {
+
+            file_put_contents($file, "FAILED\n", FILE_APPEND);
+
+            file_put_contents($file, json_encode($response->body()), FILE_APPEND);
+
+            // append on a new line
+            file_put_contents($file, "\n", FILE_APPEND);
+
+            // append on a new line
+            file_put_contents($file, "\n", FILE_APPEND);
+            return response()->json([
+                'error' => 'Request to failed',
+                'result' => $response->body(),
+            ], 500);
+        }
+
+        else {
+
+            file_put_contents($file, "SUCCESS\n", FILE_APPEND);
+
+            file_put_contents($file, json_encode($response->body()), FILE_APPEND);
+
+            // append on a new line
+            file_put_contents($file, "\n", FILE_APPEND);
+
+            // append on a new line
+            file_put_contents($file, "\n", FILE_APPEND);
+        }
 
 
         return response()->json($data);
